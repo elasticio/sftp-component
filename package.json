@@ -1,0 +1,31 @@
+{
+  "name": "sftp-component",
+  "version": "0.0.1",
+  "description": "elastic.io SFTP component",
+  "scripts": {
+    "test": "node_modules/.bin/grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:elasticio/sftp-component.git"
+  },
+  "author": "elastic.io GmbH",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "async": "^1.5.0",
+    "elasticio-node": "0.0.5",
+    "elasticio-rest-node": "0.0.6",
+    "elasticio-sailor-nodejs": "^1.0.2",
+    "lodash": "^3.10.1",
+    "q": "^1.4.1",
+    "ssh2": "0.3.4"
+  },
+  "engine": {
+      "node": "5.0.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-jasmine-node": "^0.3.1"
+  }
+}

@@ -1,0 +1,64 @@
+{
+    "title": "SFTP",
+    "description": "Provides file access and transfer using SSH File Transfer Protocol",
+    "credentials" : {
+        "fields": {
+            "host":{
+                "viewClass":"TextFieldView",
+                "label":"Host",
+                "required":true,
+                "placeholder":"Name of the host"
+            },
+            "username": {
+                "viewClass": "TextFieldView",
+                "label": "User Name",
+                "required": true,
+                "placeholder": "Paste your SFTP user name"
+            },
+            "password": {
+                "viewClass": "TextFieldView",
+                "label": "Password",
+                "required": true,
+                "placeholder": "Paste your SFTP password"
+            }
+        }
+    },
+    "triggers": {
+        "read": {
+            "main": "./lib/triggers/read.js",
+            "title": "Read files",
+            "type": "polling",
+            "fields":{
+                "directory":{
+                    "viewClass":"TextFieldView",
+                    "label":"Directory Name",
+                    "required":true,
+                    "placeholder":"Directory"
+                },
+                "pattern":{
+                    "viewClass":"TextFieldView",
+                    "label":"Pattern to Match Files",
+                    "required":false,
+                    "placeholder":"Pattern"
+                }
+            },
+            "metadata": {
+                "out" : {
+                    "type": "object",
+                    "properties" : {
+                        "filename" : {
+                            "title": "File Name",
+                            "type": "string",
+                            "required": true
+                        },
+                        "size" : {
+                            "title": "File Size",
+                            "type": "number",
+                            "required": true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
