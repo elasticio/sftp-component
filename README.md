@@ -22,8 +22,10 @@ After configuring (and verifying) the credentials you should configure incoming 
 
 ### How it works
 
-After file is found on SFTP it is pulled and uploaded (streamed) to attachment storage (aka. steward) and will
-generate one message per file with following structure:
+After file is found on SFTP it does following:
+ * It moves the file to the (hidden) ``.elasticio_processed`` directory
+ * It pulls it and upload (stream) the file to the attachment storage (aka. steward)
+ * After upload is completed, READ-URL of the file will be used to generate one message with the content like below:
 
 ```json
 {
@@ -40,4 +42,4 @@ generate one message per file with following structure:
 }
 ```
 
-next component may just read from the URL in attachment in oder to get the memory efficient way to read/parse data.
+next component may just read from the URL in attachment in oder to get the memory efficient way to read/parse data. Please note that if multiple files are found, SFTP component will generate one message per file.
