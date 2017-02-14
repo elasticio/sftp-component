@@ -46,3 +46,7 @@ next component may just read from the URL in attachment in oder to get the memor
 Please note that if multiple files are found, SFTP component will generate one message per file.
 
 > NOTE: you may need to consider cleaning up the ``.elasticio_processed`` directory manually
+
+### Limitations
+
+Currently the maximum file size that is accepted by SFTP component is limited to 10 Megabyte, see [here](https://github.com/elasticio/sftp-component/blob/master/lib/triggers/read.js#L8) for more information
