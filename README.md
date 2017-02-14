@@ -42,4 +42,7 @@ After file is found on SFTP it does following:
 }
 ```
 
-next component may just read from the URL in attachment in oder to get the memory efficient way to read/parse data. Please note that if multiple files are found, SFTP component will generate one message per file.
+next component may just read from the URL in attachment in oder to get the memory efficient way to read/parse data. 
+Please note that if multiple files are found, SFTP component will generate one message per file.
+
+> NOTE: you may need to consider cleaning up the ``.elasticio_processed`` directory manually
