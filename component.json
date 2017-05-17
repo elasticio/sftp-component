@@ -23,6 +23,22 @@
             }
         }
     },
+    "actions": {
+        "upload": {
+            "main": "./lib/actions/upload.js",
+            "title": "Upload files",
+            "description": "Upload files (attachments) to SFTP directory",
+            "fields": {
+                "directory":{
+                    "viewClass":"TextFieldView",
+                    "label":"Directory Name",
+                    "required":true,
+                    "placeholder":"/foo/bar",
+                    "note": "Directory will be created if not exists, attachments with the same name would be overwritten"
+                }
+            }
+        }
+    },
     "triggers": {
         "read": {
             "main": "./lib/triggers/read.js",
