@@ -1,9 +1,9 @@
 'use strict';
 const expect = require('chai').expect;
-const publish = require('../lib/actions/publish');
-const consume = require('../lib/triggers/consume');
+const upload = require('../lib/actions/upload');
 const EventEmitter = require('events');
 const co = require('co');
+const url = require('url');
 
 class TestEmitter extends EventEmitter {
 
@@ -25,73 +25,40 @@ class TestEmitter extends EventEmitter {
 
 describe('SFTP integration test', () => {
 
-
     before(() => {
         if (!process.env.SFTP_URL) throw new Error("Please set SFTP_URL env variable to proceed");
     });
 
-    describe('subscribe then publish', () => {
+    describe('upload then download', () => {
+        const parsed = url.parse(process.env.SFTP_URL);
+        const [username, password] = parsed.auth.split(':');
         const cfg = {
-            amqpURI : process.env.AMQP_URL,
-            topic: 'integartion-testing-' + (process.env.TRAVIS_COMMIT || 'local')
-                + '-' + (process.env.TRAVIS_NODE_VERSION || 'local'),
-            bindingKeys: 'foo.bar'
+            host: parsed.hostname,
+            username: username,
+            password: password,
+            directory: '/www/integration-test/'
         };
 
-        before(() => publish.init(cfg).then(consume.init(cfg)));
+        before(() => upload.init(cfg));
 
 
-        it('send and receive', () => co(function* gen() {
+        it('upload attachment', () => co(function* gen() {
             console.log('Starting test');
-            const receiver = new TestEmitter();
             const sender = new TestEmitter();
-            const msg1 = {
-                id: 'one',
+            const msg = {
                 body: {
-                    routingKey: 'foo.bar',
-                    payload: {
-                        value: 'foo.bar'
-                    }
                 },
                 attachments: {
-                    one: 'http://one.com'
-                }
-            };
-            const msg2 = {
-                id: 'two',
-                body: {
-                    routingKey: 'foo.baz',
-                    payload: {
-                        value: 'foo.baz'
+                    "logo.svg": {
+                        url: "https://app.elastic.io/img/logo.svg"
                     }
-                },
-                attachments: {
-                    two: 'http://two.com'
                 }
             };
-            console.log('Initializing receiver');
-            yield consume.process.call(receiver, {}, cfg);
-            yield new Promise((ok) => setTimeout(ok, 1000));
-            console.log('Sending messages');
-            const out1 = yield publish.process.call(sender, msg1, cfg);
-            const out2 = yield publish.process.call(sender, msg2, cfg);
-            expect(out1).deep.equal(msg1);
-            expect(out2).deep.equal(msg2);
-            console.log('Sending completed, now wait');
-            yield new Promise((ok) => setTimeout(ok, 1000));
+            yield upload.process.call(sender, msg, cfg);
             console.log('Lets check');
-            expect(receiver.data.length).equal(1);
-            expect(receiver.data[0]).deep.equal({
-                id: 'one',
-                body: {
-                    value: 'foo.bar'
-                },
-                attachments: {
-                    one: 'http://one.com'
-                },
-                headers: {},
-                metadata: {}
-            });
+            expect(sender.data.length).equal(1);
+            expect(sender.data[0].body.results).to.be.an('array')
+            expect(sender.data[0].body.results.length).equal(1);
         })).timeout(5000);
     });
 
