@@ -4,6 +4,7 @@ const upload = require('../lib/actions/upload');
 const EventEmitter = require('events');
 const co = require('co');
 const url = require('url');
+const Client = require('ssh2-sftp-client');
 
 class TestEmitter extends EventEmitter {
 
@@ -36,18 +37,21 @@ describe('SFTP integration test', () => {
             host: parsed.hostname,
             username: username,
             password: password,
-            directory: '/www/integration-test/'
+            directory: '/www/integration-test/test-' + Math.floor(Math.random()*10000) + '/'
         };
+        const sftp = new Client();
 
-        before(() => upload.init(cfg));
+        before(() => co(function* gen() {
+            yield upload.init(cfg);
+            yield sftp.connect(cfg);
+        }));
 
 
         it('upload attachment', () => co(function* gen() {
             console.log('Starting test');
             const sender = new TestEmitter();
             const msg = {
-                body: {
-                },
+                body: {},
                 attachments: {
                     "logo.svg": {
                         url: "https://app.elastic.io/img/logo.svg"
@@ -55,11 +59,21 @@ describe('SFTP integration test', () => {
                 }
             };
             yield upload.process.call(sender, msg, cfg);
-            console.log('Lets check');
+            console.log('Checking response');
             expect(sender.data.length).equal(1);
-            expect(sender.data[0].body.results).to.be.an('array')
+            expect(sender.data[0].body.results).to.be.an('array');
             expect(sender.data[0].body.results.length).equal(1);
+            console.log('Checking SFTP contents');
+            const list = yield sftp.list(cfg.directory);
+            expect(list.length).equal(1);
+            expect(list[0].name).equal("logo.svg");
+            expect(list[0].size).equal(4379);
         })).timeout(5000);
+
+        after(() => co(function* gen() {
+            console.log('Cleaning-up directory %s', cfg.directory);
+            yield sftp.rmdir(cfg.directory, true);
+        }));
     });
 
 });
