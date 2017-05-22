@@ -42,7 +42,7 @@ describe("SFTP", function () {
         spyOn(sftp, 'close').andCallFake(function () {
         });
 
-        spyOn(attachments, 'addS3StreamAttachment').andCallFake(function (msg, fileName, stream, contentType) {
+        spyOn(attachments, 'addAttachment').andCallFake(function (msg, fileName, stream, contentType) {
             msg.attachments[fileName] = {
                 url: "http://loremipsum"
             };
@@ -327,7 +327,7 @@ describe("SFTP", function () {
 
             expect(attachment.url).toEqual("http://loremipsum");
 
-            expect(attachments.addS3StreamAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
+            expect(attachments.addAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
 
             expect(newSnapshot).toBeUndefined();
 
@@ -392,7 +392,7 @@ describe("SFTP", function () {
 
             expect(attachment.url).toEqual("http://loremipsum");
 
-            expect(attachments.addS3StreamAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
+            expect(attachments.addAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
 
 
             expect(newSnapshot).toBeUndefined();
@@ -463,9 +463,9 @@ describe("SFTP", function () {
 
             expect(attachment.url).toEqual("http://loremipsum");
 
-            expect(attachments.addS3StreamAttachment).toHaveBeenCalled();
+            expect(attachments.addAttachment).toHaveBeenCalled();
 
-            expect(attachments.addS3StreamAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
+            expect(attachments.addAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
 
 
             expect(newSnapshot).toBeUndefined();
