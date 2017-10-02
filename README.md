@@ -49,4 +49,7 @@ Please note that if multiple files are found, SFTP component will generate one m
 
 ### Limitations
 
-Currently the maximum file size that is accepted by SFTP component is limited to 10 Megabyte, see [here](https://github.com/elasticio/sftp-component/blob/master/lib/triggers/read.js#L8) for more information
+Currently the maximum file size that is accepted by SFTP component is limited to
+100 MiB, see
+[here](https://github.com/elasticio/sftp-component/blob/master/lib/triggers/read.js#L8)
+for more information
