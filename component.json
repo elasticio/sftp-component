@@ -16,7 +16,7 @@
                 "placeholder": "Paste your SFTP user name"
             },
             "password": {
-                "viewClass": "TextFieldView",
+                "viewClass": "PasswordFieldView",
                 "label": "Password",
                 "required": true,
                 "placeholder": "Paste your SFTP password"
