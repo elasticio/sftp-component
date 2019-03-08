@@ -36,13 +36,10 @@ describe('SFTP integration test - upload then download', () => {
     };
     const sftp = new Client();
 
-    before(async () => {
+    it('upload attachment', async () => {
         await upload.init(cfg);
         await sftp.connect(cfg);
-    });
 
-
-    it('upload attachment', async () => {
         console.log('Starting test');
         const sender = new TestEmitter();
         const msg = {
@@ -63,7 +60,7 @@ describe('SFTP integration test - upload then download', () => {
         expect(list.length).equal(1);
         expect(list[0].name).equal("logo.svg");
         expect(list[0].size).equal(4379);
-    }).timeout(5000);
+    }).timeout(10000);
 
     after(async () => {
         console.log('Cleaning-up directory %s', cfg.directory);
