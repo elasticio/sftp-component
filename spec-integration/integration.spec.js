@@ -71,5 +71,5 @@ describe('SFTP integration test - upload then download', () => {
         console.log('Cleanup completed, closing connection');
         sftp.end();
         upload.shutdown();
-    });
-});
+    })
+}).timeout(20000);
