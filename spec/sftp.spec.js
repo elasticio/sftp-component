@@ -204,8 +204,13 @@ describe("SFTP", function () {
         var stream = fs.createReadStream(__dirname+"/data.txt");
 
         var client = {
-            createReadStream : null
+            createReadStream : null,
+            mkdir: null
         };
+
+        spyOn(client, 'mkdir').andCallFake(function (path) {
+            return true;
+        });
 
         spyOn(client, 'createReadStream').andCallFake(function (path) {
             return stream;

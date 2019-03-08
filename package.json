@@ -4,7 +4,7 @@
   "description": "elastic.io SFTP component",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/jasmine-node/bin/jasmine-node  --verbose ./spec/*",
-    "integration-test": "NODE_ENV=test mocha spec-integration/*"
+    "integration-test": "NODE_ENV=test mocha --exit spec-integration/*"
   },
   "repository": {
     "type": "git",
