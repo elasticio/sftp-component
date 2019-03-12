@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "elastic.io SFTP component",
   "scripts": {
-    "integration-test": "NODE_ENV=test mocha spec-integration/*"
+    "test": "NODE_ENV=test ./node_modules/jasmine-node/bin/jasmine-node  --verbose ./spec/*",
+    "integration-test": "NODE_ENV=test mocha --exit spec-integration/*"
   },
   "repository": {
     "type": "git",
@@ -12,29 +13,27 @@
   "author": "elastic.io GmbH",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "async": "^1.5.0",
+    "async": "^2.6.2",
     "aws-sdk": "^2.2.42",
     "co": "^4.6.0",
     "debug": "^4.1.1",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.1.1",
     "elasticio-sailor-nodejs": "2.2.3-dev.2",
-    "lodash": "^3.10.1",
-    "q": "^1.4.1",
-    "request": "^2.81.0",
-    "ssh2": "0.5.4",
-    "ssh2-sftp-client": "^1.0.5",
-    "stream": "0.0.2"
+    "lodash": "^4.17.11",
+    "q": "^1.5.1",
+    "request": "^2.88.0",
+    "ssh2": "0.8.2",
+    "ssh2-sftp-client": "^2.5.0",
+    "wtfnode": "^0.8.0"
   },
   "engines": {
-    "node": "6.10.3"
+    "node": ">=10"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.2.0",
     "dotenv": "^6.2.0",
-    "grunt": "^1.0.1",
-    "grunt-cli": "^1.2.0",
-    "grunt-jasmine-node": "^0.3.1",
-    "mocha": "^3.4.1"
+    "jasmine-node": "^1.16.2",
+    "mocha": "^6.0.2"
   }
 }

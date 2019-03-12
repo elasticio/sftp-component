@@ -1,74 +1,74 @@
 describe("SFTP Verify Credentials", function () {
 
-    var verifyCredentials = require('../verifyCredentials.js');
-    var sftp = require('../lib/sftp.js');
+  var verifyCredentials = require('../verifyCredentials.js');
+  var sftp = require('../lib/sftp.js');
 
-    var verifyCallback;
+  var verifyCallback;
 
 
-    beforeEach(function () {
-        verifyCallback = jasmine.createSpy('verifyCallback');
+  beforeEach(function () {
+    verifyCallback = jasmine.createSpy('verifyCallback');
 
-        spyOn(sftp, 'close').andCallFake(function () {
-        });
+    spyOn(sftp, 'close').andCallFake(function () {
+    });
+  });
+
+
+  it('should verify successfully', function () {
+
+    spyOn(sftp, 'connect').andCallFake(function (cfg, callback) {
+      callback(null, {});
     });
 
 
-    it('should verify successfully', function () {
+    runAndWait(
+      function () {
+        verifyCredentials({}, verifyCallback);
+      },
+      function () {
+        return verifyCallback.calls.length > 0;
+      },
+      function () {
+        expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
 
-        spyOn(sftp, 'connect').andCallFake(function (cfg, callback) {
-            callback(null, {});
-        });
+        expect(sftp.close).toHaveBeenCalled();
 
+        expect(verifyCallback).toHaveBeenCalledWith(null, { verified: true });
+      }
+    );
+  });
 
-        runAndWait(
-            function () {
-                verifyCredentials({}, verifyCallback);
-            },
-            function () {
-                return verifyCallback.calls.length > 0;
-            },
-            function () {
-                expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
+  it('should not verify if connection failed', function () {
 
-                expect(sftp.close).toHaveBeenCalled();
-
-                expect(verifyCallback).toHaveBeenCalledWith(null, {verified: true});
-            }
-        );
-    });
-
-    it('should not verify if connection failed', function () {
-
-        spyOn(sftp, 'connect').andCallFake(function (cfg, callback) {
-            callback(new Error("Connection error"));
-        });
-
-
-        runAndWait(
-            function () {
-                verifyCredentials({}, verifyCallback);
-            },
-            function () {
-                return verifyCallback.calls.length > 0;
-            },
-            function () {
-                expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
-
-                expect(sftp.close).not.toHaveBeenCalled();
-
-                expect(verifyCallback).toHaveBeenCalledWith(jasmine.any(Error));
-            }
-        );
+    spyOn(sftp, 'connect').andCallFake(function (cfg, callback) {
+      callback(new Error("Connection error"));
     });
 
 
-    var runAndWait = function (runner, waiter, expector) {
+    runAndWait(
+      function () {
+        verifyCredentials({}, verifyCallback);
+      },
+      function () {
+        return verifyCallback.calls.length > 0;
+      },
+      function () {
+        expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
 
-        runs(runner);
+        expect(sftp.close).not.toHaveBeenCalled();
 
-        waitsFor(waiter, "Next must have been called", 500);
+        expect(verifyCallback).toHaveBeenCalledWith(jasmine.any(Error));
+      }
+    );
+  });
 
-        runs(expector);
-    };
+
+  var runAndWait = function (runner, waiter, expector) {
+
+    runs(runner);
+
+    waitsFor(waiter, "Next must have been called", 500);
+
+    runs(expector);
+  };
 });

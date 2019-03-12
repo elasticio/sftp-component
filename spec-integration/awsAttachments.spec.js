@@ -1,6 +1,5 @@
 const fs = require('fs');
 const chai = require('chai');
-const { Readable } = require('stream');
 
 const { expect } = chai;
 
