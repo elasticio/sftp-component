@@ -26,7 +26,7 @@ describe('Aws attachment', function () {
 
   it('adding attachment', async () => {
     const stream = fs.createReadStream(testFilePath + filename);
-    const result = await awsAttachments.addAttachment({}, filename, stream, 1215);
+    const result = await awsAttachments.addAttachment({}, filename, stream, 30);
     expect(Object.keys(result.attachments)[0]).to.eql(filename);
   });
 
