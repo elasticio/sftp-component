@@ -25,6 +25,7 @@
     "request": "^2.88.0",
     "ssh2": "0.8.2",
     "ssh2-sftp-client": "^2.5.0",
+    "stream": "0.0.2",
     "wtfnode": "^0.8.0"
   },
   "engines": {
