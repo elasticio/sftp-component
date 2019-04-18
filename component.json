@@ -5,9 +5,10 @@
         "fields": {
             "host":{
                 "viewClass":"TextFieldView",
-                "label":"Host",
+                "label":"Server Url",
                 "required":true,
-                "placeholder":"Name of the host"
+                "placeholder":"sftp://host:port",
+                "note":"Use an SFTP url in the format <code>sftp://host:port</code> or <code>sftp://host</code> which defaults to port 22"
             },
             "username": {
                 "viewClass": "TextFieldView",
@@ -35,6 +36,52 @@
                     "required":true,
                     "placeholder":"/foo/bar",
                     "note": "Directory will be created if not exists, attachments with the same name would be overwritten"
+                }
+            }
+        },
+        "put": {
+            "main": "./lib/actions/put.js",
+            "title": "Put files in director",
+            "description": "Put files (attachments) to SFTP existing directory",
+            "fields": {
+                "directory":{
+                    "viewClass":"TextFieldView",
+                    "label":"Directory Name",
+                    "required":true,
+                    "placeholder":"/foo/bar",
+                    "note": "Directory must exist, attachments with the same name would be overwritten"
+                }
+            }
+        },
+        "readdir": {
+            "main": "./lib/actions/readdir.js",
+            "title": "Read files from directory",
+            "description": "Read files from SFTP directory and emit each file as an attachment",
+            "fields": {
+                "directory": {
+                    "viewClass": "TextFieldView",
+                    "label": "Directory Name",
+                    "required": true,
+                    "placeholder": "/foo/bar",
+                    "note": "Read files from sftp directory"
+                },
+                "glob": {
+                    "viewClass": "TextFieldView",
+                    "label": "Glob pattern",
+                    "required": false,
+                    "placeholder": "*.xml",
+                    "note": "Glob pattern match file names to be read"
+                },
+                "regexp": {
+                    "viewClass": "TextFieldView",
+                    "label": "Regular expression",
+                    "required": false,
+                    "placeholder": "^order_[0-9]+\\.pdf$",
+                    "note": "Regular expression to match file names to be read"
+                },
+                "deleteAfterRead": {
+                    "viewClass": "CheckBoxView",
+                    "label": "Delete files after processing"
                 }
             }
         }
