@@ -28,19 +28,19 @@
             "awsBucket": {
                 "viewClass": "TextFieldView",
                 "label": "AWS Bucket (attachments)",
-                "required": true,
+                "required": false,
                 "placeholder": "Put the name of AWS S3 bucket for attachments"
             },
             "accessKeyId": {
                 "viewClass": "TextFieldView",
                 "label": "AWS Access Key ID (attachments)",
-                "required": true,
+                "required": false,
                 "placeholder": "Put the access key ID of AWS S3 account for attachments"
             },
             "secretAccessKey": {
                 "viewClass": "TextFieldView",
                 "label": "AWS Access Key Secret (attachments)",
-                "required": true,
+                "required": false,
                 "placeholder": "Put the access key secret of AWS S3 account for attachments"
             }
         }
