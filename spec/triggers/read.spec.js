@@ -271,7 +271,7 @@ describe("SFTP", function () {
         ];
 
         runAndExpect(msg, cfg, function (err, newMsg, newSnapshot) {
-            expect(err).toBeUndefined();
+            expect(err).toBeDefined();
 
             expect(newMsg).toBeUndefined();
 
