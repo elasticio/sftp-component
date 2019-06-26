@@ -53,3 +53,8 @@ Currently the maximum file size that is accepted by SFTP component is limited to
 100 MiB, see
 [here](https://github.com/elasticio/sftp-component/blob/master/lib/triggers/read.js#L8)
 for more information
+
+Attachments limitations:
+
+1. Maximal possible size for an attachment is 10 MB.
+2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
