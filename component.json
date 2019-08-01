@@ -9,6 +9,12 @@
                 "required":true,
                 "placeholder":"Name of the host"
             },
+            "port": {
+                "viewClass":"TextFieldView",
+                "label":"Port",
+                "required":true,
+                "placeholder":"Name of Port",
+            },
             "username": {
                 "viewClass": "TextFieldView",
                 "label": "User Name",
