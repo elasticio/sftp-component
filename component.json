@@ -6,14 +6,15 @@
             "host":{
                 "viewClass":"TextFieldView",
                 "label":"Host",
-                "required":true,
-                "placeholder":"Name of the host"
+                "required": true,
+                "placeholder":"Name of the host",
+
             },
             "port": {
                 "viewClass":"TextFieldView",
                 "label":"Port",
-                "required":true,
-                "placeholder":"Name of Port",
+                "required": true,
+                "placeholder":"Paste your port"
             },
             "username": {
                 "viewClass": "TextFieldView",

@@ -1,23 +1,23 @@
 var ip = require('../lib/ip.js');
 
-describe("SFTP IP", function () {
+describe('SFTP IP', function () {
 
     it('IPv4', function () {
 
         var result;
 
         runs(function () {
-            ip.resolve("127.0.0.1").then(function(r) {
+            ip.resolve('127.0.0.1').then(function (r) {
                 result = r;
             });
         });
 
         waitsFor(function () {
             return result;
-        }, "Promise must have returned", 150);
+        }, 'Promise must have returned', 150);
 
         runs(function () {
-            expect(result).toEqual([ '127.0.0.1', 4 ]);
+            expect(result).toEqual(['127.0.0.1', 4]);
         });
 
     });
@@ -27,17 +27,17 @@ describe("SFTP IP", function () {
         var result;
 
         runs(function () {
-            ip.resolve("0:0:0:0:0:0:0:1").then(function(r) {
+            ip.resolve('0:0:0:0:0:0:0:1').then(function (r) {
                 result = r;
             });
         });
 
         waitsFor(function () {
             return result;
-        }, "Promise must have returned", 750);
+        }, 'Promise must have returned', 750);
 
         runs(function () {
-            expect(result).toEqual([ '0:0:0:0:0:0:0:1', 6 ]);
+            expect(result).toEqual(['0:0:0:0:0:0:0:1', 6]);
         });
 
     });
@@ -47,17 +47,17 @@ describe("SFTP IP", function () {
         var result;
 
         runs(function () {
-            ip.resolve("localhost").then(function(r) {
+            ip.resolve('localhost').then(function (r) {
                 result = r;
             }).done();
         });
 
         waitsFor(function () {
             return result;
-        }, "Promise must have returned", 5000);
+        }, 'Promise must have returned', 5000);
 
         runs(function () {
-            expect(result).toEqual([ '127.0.0.1', 4 ]);
+            expect(result).toEqual(['127.0.0.1', 4]);
         });
 
     });
