@@ -1,78 +1,56 @@
+'use strict';
+
 const sftp = require('../lib/sftp.js');
 const ip = require('../lib/ip.js');
 const Q = require('q');
 const fs = require('fs');
+const expect = require('chai').expect;
 const sinon = require('sinon');
 
 describe('SFTP', () => {
-
-    beforeEach(() => {
-        sinon.spy(ip, 'resolve').andCallFake(() => {
-            return Q.fcall(function () {
-                return '127.0.0.1';
-            });
-        });
+    afterEach(() => {
+        sinon.reset();
     });
 
-    it('create connection options', () => {
+    it('create connection options', async() => {
         const cfg = {
             host: 'localhost',
+            port: '22',
             username: 'root',
             password: 'secret'
         };
 
         let result;
 
-        runs(() => {
-            sftp.createConnectionOptions(cfg).then((opts) => {
-                result = opts;
-            });
+        await sftp.createConnectionOptions(cfg).then((opts) => {
+            result = opts;
         });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-
-            expect(result).toEqual({
-                host: 'localhost',
-                port: 22,
-                username: 'root',
-                password: 'secret'
-            });
+        expect(result).to.eql({
+            host: 'localhost',
+            port: 22,
+            username: 'root',
+            password: 'secret'
         });
-
-
     });
 
-    it('create connection options with protocol', () => {
+    it('create connection options with protocol', async () => {
         const cfg = {
             host: 'sftp://localhost',
+            port: '88',
             username: 'root',
             password: 'secret'
         };
 
         let result;
 
-        runs(() => {
-            sftp.createConnectionOptions(cfg).then((opts) => {
-                result = opts;
-            });
+        await sftp.createConnectionOptions(cfg).then((opts) => {
+            result = opts;
         });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-
-            expect(result).toEqual({
-                host: 'localhost',
-                port: 22,
-                username: 'root',
-                password: 'secret'
-            });
+        expect(result).to.eql({
+            host: 'localhost',
+            port: 88,
+            username: 'root',
+            password: 'secret'
         });
 
     });
