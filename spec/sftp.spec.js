@@ -35,7 +35,7 @@ describe('SFTP', () => {
 
     it('create connection options with protocol', async () => {
         const cfg = {
-            host: 'sftp://localhost',
+            host: 'localhost',
             port: '88',
             username: 'root',
             password: 'secret'
