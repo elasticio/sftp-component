@@ -1,64 +1,34 @@
-var ip = require('../lib/ip.js');
+'use-strict';
+const ip = require('../lib/ip.js');
+const expect = require('chai').expect;
 
-describe('SFTP IP', function () {
-
-    it('IPv4', function () {
-
-        var result;
-
-        runs(function () {
-            ip.resolve('127.0.0.1').then(function (r) {
-                result = r;
-            });
+describe('SFTP IP', async () => {
+    it('IPv4', async () => {
+        let result;
+        await ip.resolve('127.0.0.1').then((r) => {
+            result = r;
         });
 
-        waitsFor(function () {
-            return result;
-        }, 'Promise must have returned', 150);
-
-        runs(function () {
-            expect(result).toEqual(['127.0.0.1', 4]);
-        });
+        expect(result).to.deep.equal(['127.0.0.1', 4]);
 
     });
 
-    it('IPv6', function () {
+    it('IPv6', async () => {
+        let result;
 
-        var result;
-
-        runs(function () {
-            ip.resolve('0:0:0:0:0:0:0:1').then(function (r) {
-                result = r;
-            });
+        await ip.resolve('0:0:0:0:0:0:0:1').then((r) => {
+            result = r;
         });
-
-        waitsFor(function () {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(function () {
-            expect(result).toEqual(['0:0:0:0:0:0:0:1', 6]);
-        });
+        expect(result).to.deep.equal(['0:0:0:0:0:0:0:1', 6]);
 
     });
 
-    it('Host', function () {
-
-        var result;
-
-        runs(function () {
-            ip.resolve('localhost').then(function (r) {
-                result = r;
-            }).done();
+    it('Host', async () => {
+        let result;
+        await ip.resolve('localhost').then((r) => {
+            result = r;
         });
-
-        waitsFor(function () {
-            return result;
-        }, 'Promise must have returned', 5000);
-
-        runs(function () {
-            expect(result).toEqual(['127.0.0.1', 4]);
-        });
+        expect(result).to.deep.equal(['127.0.0.1', 4]);
 
     });
 });
