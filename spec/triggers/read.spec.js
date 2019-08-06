@@ -115,8 +115,8 @@ describe('SFTP', () => {
     });
 
     it('Failed to read directory', () => {
-        var msg = {};
-        var cfg = {};
+        const msg = {};
+        const cfg = {};
 
         readDirError = new Error('Failed to read given directory');
 
