@@ -55,131 +55,25 @@ describe('SFTP', () => {
 
     });
 
-    it('create connection options with port', () => {
+
+    it('create connection options with no port', async () => {
         const cfg = {
-            host: 'localhost:6789',
+            host: 'localhost:123',
             username: 'root',
             password: 'secret'
         };
 
+        let spy = sinon.spy(sftp, 'createConnectionOptions');
         let result;
 
-        runs(() => {
-            sftp.createConnectionOptions(cfg).then((opts) => {
-                result = opts;
-            });
+        await sftp.createConnectionOptions(cfg).then((opts) => {
+            result = opts;
         });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-
-            expect(result).toEqual({
-                host: 'localhost',
-                port: 6789,
-                username: 'root',
-                password: 'secret'
-            });
-        });
-
+        expect(spy.errorsWithCallStack.length).to.eql(1);
+        expect(result).to.eql(undefined);
     });
 
-    it('create connection options with colon but no port', () => {
-        const cfg = {
-            host: 'localhost:',
-            username: 'root',
-            password: 'secret'
-        };
-
-        let result;
-
-        runs(() => {
-            sftp.createConnectionOptions(cfg).then((opts) => {
-                result = opts;
-            });
-        });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-
-            expect(result).toEqual({
-                host: 'localhost',
-                port: 22,
-                username: 'root',
-                password: 'secret'
-            });
-        });
-
-    });
-
-    it('create connection options with non-numeric port', () => {
-        const cfg = {
-            host: 'localhost:aaa',
-            username: 'root',
-            password: 'secret'
-        };
-
-        let result;
-
-        runs(() => {
-            sftp.createConnectionOptions(cfg).then((opts) => {
-                result = opts;
-            });
-        });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-
-            expect(result).toEqual({
-                host: 'localhost',
-                port: 22,
-                username: 'root',
-                password: 'secret'
-            });
-        });
-
-    });
-
-    it('create connection options with host to be trimmed', () => {
-        const cfg = {
-            host: '    localhost ',
-            username: 'root',
-            password: 'secret'
-        };
-
-        let result;
-
-        runs(() => {
-            sftp.createConnectionOptions(cfg).then((opts) => {
-                result = opts;
-            });
-        });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-
-            expect(result).toEqual({
-                host: 'localhost',
-                port: 22,
-                username: 'root',
-                password: 'secret'
-            });
-        });
-
-    });
-
-    it('read file', () => {
+    it('read file', async () => {
         const stream = fs.createReadStream(__dirname + '/data.txt');
 
         const client = {
@@ -187,29 +81,19 @@ describe('SFTP', () => {
             mkdir: null
         };
 
-        spyOn(client, 'mkdir').andCallFake((path) => {
+        sinon.stub(client, 'mkdir').callsFake((path) => {
             return true;
         });
 
-        spyOn(client, 'createReadStream').andCallFake((path) => {
+        sinon.stub(client, 'createReadStream').callsFake((path) => {
             return stream;
         });
 
         let result;
 
-        runs(() => {
-            sftp.readFile(client, '/foo/bar/baz', (err, buffer) => {
+        await sftp.readFile(client, '/foo/bar/baz', (err, buffer) => {
                 result = buffer;
             });
+        expect(result.toString('utf8')).toEqual('Lorem ipsum');
         });
-
-        waitsFor(() => {
-            return result;
-        }, 'Promise must have returned', 750);
-
-        runs(() => {
-            expect(result.toString('utf8')).toEqual('Lorem ipsum');
-        });
-
-    });
 });
