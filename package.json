@@ -1,8 +1,9 @@
 {
   "name": "sftp-component",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "description": "elastic.io SFTP component",
   "scripts": {
+    "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
     "test": "NODE_ENV=test ./node_modules/jasmine-node/bin/jasmine-node  --verbose ./spec/*",
     "integration-test": "NODE_ENV=test mocha --exit spec-integration/*"
   },
