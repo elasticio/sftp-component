@@ -15,24 +15,17 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "async": "2.6.2",
-<<<<<<< HEAD
     "co": "4.6.0",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.4.2",
-=======
-    "babel-eslint": "0.0.2",
-    "co": "4.6.0",
-    "elasticio-node": "0.0.9",
-    "elasticio-rest-node": "1.2.3",
-    "elasticio-sailor-nodejs": "2.2.5",
->>>>>>> 645619e71785541ba068467d724ed282c698d3dd
     "lodash": "4.17.15",
     "q": "1.5.1",
     "request": "2.88.0",
     "ssh2": "0.8.4",
     "ssh2-sftp-client": "2.5.0",
-    "wtfnode": "0.8.0"
+    "wtfnode": "0.8.0",
+    "sinon": "latest"
   },
   "engines": {
     "node": ">=10"
@@ -40,11 +33,6 @@
   "devDependencies": {
     "chai": "4.2.0",
     "eslint": "6.1.0",
-<<<<<<< HEAD
-=======
-    "eslint-plugin-babel": "5.3.0",
-    "jasmine-node": "3.0.0",
->>>>>>> 645619e71785541ba068467d724ed282c698d3dd
     "mocha": "6.2.0",
     "sinon": "7.3.2"
   }
