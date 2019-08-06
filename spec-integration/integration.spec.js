@@ -23,7 +23,7 @@ class TestEmitter extends EventEmitter {
 
 }
 
-if (!process.env.SFTP_URL) throw new Error("Please set SFTP_URL env variable to proceed");
+if (!process.env.SFTP_URL) {throw new Error('Please set SFTP_URL env variable to proceed');}
 
 describe('SFTP integration test - upload then download', () => {
     const parsed = url.parse(process.env.SFTP_URL);
@@ -45,8 +45,8 @@ describe('SFTP integration test - upload then download', () => {
         const msg = {
             body: {},
             attachments: {
-                "logo.svg": {
-                    url: "https://app.elastic.io/img/logo.svg"
+                'logo.svg': {
+                    url: 'https://app.elastic.io/img/logo.svg'
                 }
             }
         };
@@ -58,7 +58,7 @@ describe('SFTP integration test - upload then download', () => {
         console.log('Checking SFTP contents');
         const list = await sftp.list(cfg.directory);
         expect(list.length).equal(1);
-        expect(list[0].name).equal("logo.svg");
+        expect(list[0].name).equal('logo.svg');
         expect(list[0].size).equal(4379);
     }).timeout(10000);
 
@@ -68,5 +68,5 @@ describe('SFTP integration test - upload then download', () => {
         console.log('Cleanup completed, closing connection');
         sftp.end();
         upload.shutdown();
-    })
+    });
 }).timeout(20000);
