@@ -8,7 +8,8 @@ const NEVER = 'never';
 module.exports = {
     env: {
         node: true,
-        mocha: true
+        mocha: true,
+        es6: true
     },
     parserOptions: {
         ecmaVersion: 8
@@ -125,9 +126,9 @@ module.exports = {
         'space-infix-ops': ERROR,
         'keyword-spacing': ERROR,
         'space-before-blocks': ERROR,
-        'no-invalid-this': ERROR,
-        'consistent-this': ERROR,
-        'no-this-before-super': ERROR,
+        'no-invalid-this': 0,
+        'consistent-this': 0,
+        'no-this-before-super': WARN,
         'no-unreachable': ERROR,
         'no-sparse-arrays': ERROR,
         'array-callback-return': ERROR,

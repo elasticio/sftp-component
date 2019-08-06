@@ -4,7 +4,7 @@
   "description": "elastic.io SFTP component",
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
-    "test": "NODE_ENV=test ./node_modules/jasmine-node/bin/jasmine-node  --verbose ./spec/*",
+    "test": "mocha spec --recursive",
     "integration-test": "NODE_ENV=test mocha --exit spec-integration/*"
   },
   "repository": {
@@ -15,11 +15,13 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "async": "2.6.2",
+    "babel-eslint": "^0.0.2",
     "co": "4.6.0",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.2.5",
-    "lodash": "4.17.11",
+    "eslint-plugin-babel": "^5.3.0",
+    "lodash": "4.17.15",
     "q": "1.5.1",
     "request": "2.88.0",
     "ssh2": "0.8.4",
@@ -32,8 +34,8 @@
   "devDependencies": {
     "chai": "4.2.0",
     "eslint": "6.1.0",
-    "jasmine-node": "1.16.2",
-    "mocha": "6.0.2",
+    "jasmine-node": "3.0.0",
+    "mocha": "^6.2.0",
     "sinon": "7.3.2"
   }
 }
