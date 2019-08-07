@@ -1,12 +1,11 @@
+'use strict';
 const sftp = require('./lib/sftp.js');
-
-module.exports = verify;
 
 function verify(cfg, cb) {
 
-    console.log('Verifying the SFTP account');
+    this.logger.info('Verifying the SFTP account');
 
-    sftp.connect(cfg, function (err, client) {
+    sftp.connect(cfg, (err, client) => {
 
         if (err) {
             return cb(err);
@@ -18,7 +17,9 @@ function verify(cfg, cb) {
             verified: true
         });
 
-        console.log('SFTP account verified successfully');
+        this.logger.info('SFTP account verified successfully');
     });
 
 }
+
+module.exports = verify;

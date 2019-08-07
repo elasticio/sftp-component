@@ -1,5 +1,4 @@
 'use strict';
-
 const sftp = require('../lib/sftp.js');
 const fs = require('fs');
 const expect = require('chai').expect;
@@ -10,7 +9,7 @@ describe('SFTP', () => {
         sinon.reset();
     });
 
-    it('create connection options', async() => {
+    it('create connection options', async () => {
         const cfg = {
             host: 'localhost',
             port: '22',
@@ -22,12 +21,12 @@ describe('SFTP', () => {
 
         await sftp.createConnectionOptions(cfg).then((opts) => {
             result = opts;
-        });
-        expect(result).to.eql({
-            host: 'localhost',
-            port: 22,
-            username: 'root',
-            password: 'secret'
+            expect(result).to.deep.equal({
+                host: 'localhost',
+                port: 22,
+                username: 'root',
+                password: 'secret'
+            });
         });
     });
 
@@ -62,11 +61,9 @@ describe('SFTP', () => {
         };
 
         let spy = sinon.spy(sftp, 'createConnectionOptions');
-        let result;
 
-        await sftp.createConnectionOptions(cfg).then((opts) => {
-            result = opts;
-        });
+        // eslint-disable-next-line no-empty-function
+        await sftp.createConnectionOptions(cfg);
         expect(spy.errorsWithCallStack.length).to.eql(1);
     });
 
@@ -74,23 +71,19 @@ describe('SFTP', () => {
         const stream = fs.createReadStream(__dirname + '/data.txt');
 
         const client = {
-            createReadStream: () => {},
+            createReadStream: () => null,
             mkdir: null
         };
 
-        sinon.stub(client, 'mkdir').callsFake((path) => {
-            return true;
-        });
+        sinon.stub(client, 'mkdir').callsFake(() => true);
 
-        sinon.stub(client, 'createReadStream').callsFake((path) => {
-            return stream;
-        });
+        sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
         let result;
 
         await sftp.readFile(client, '/foo/bar/baz', (err, buffer) => {
-                result = buffer;
-                expect(result.toString('utf8')).to.equal('Lorem ipsum');
-            });
+            result = buffer;
+            expect(result.toString('utf8')).to.equal('Lorem ipsum');
         });
+    });
 });

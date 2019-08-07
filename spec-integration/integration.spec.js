@@ -2,7 +2,6 @@
 const expect = require('chai').expect;
 const upload = require('../lib/actions/upload');
 const EventEmitter = require('events');
-const url = require('url');
 const Client = require('ssh2-sftp-client');
 const fs = require('fs');
 
@@ -44,7 +43,7 @@ describe('SFTP integration test - upload then download', function () {
     });
     const sftp = new Client();
 
-    it('upload attachment', async () => {
+    it('upload attachment', async function test() {
         cfg = {
             host: host,
             username: username,
@@ -55,7 +54,7 @@ describe('SFTP integration test - upload then download', function () {
         await upload.init(cfg);
         await sftp.connect(cfg);
 
-        console.log('Starting test');
+        this.logger.info('Starting test');
         const sender = new TestEmitter();
         const msg = {
             body: {},
@@ -66,21 +65,21 @@ describe('SFTP integration test - upload then download', function () {
             }
         };
         await upload.process.call(sender, msg, cfg);
-        console.log('Checking response');
+        this.logger.info('Checking response');
         expect(sender.data.length).equal(1);
         expect(sender.data[0].body.results).to.be.an('array');
         expect(sender.data[0].body.results.length).equal(1);
-        console.log('Checking SFTP contents');
+        this.logger.info('Checking SFTP contents');
         // const list = await sftp.list(cfg.directory);
         // expect(list.length).equal(1);
         // expect(list[0].name).equal('logo.svg');
         // expect(list[0].size).equal(4379);
     });
 
-    after(async () => {
-        console.log('Cleaning-up directory %s', cfg.directory);
+    after(async function after() {
+        this.logger.info('Cleaning-up directory %s', cfg.directory);
         await sftp.rmdir(cfg.directory, true);
-        console.log('Cleanup completed, closing connection');
+        this.logger.info('Cleanup completed, closing connection');
         sftp.end();
         upload.shutdown();
     });

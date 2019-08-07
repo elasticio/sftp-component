@@ -1,7 +1,4 @@
-
-'use-strict';
-
-const _ = require('lodash');
+'use strict';
 const component = require('../../lib/triggers/read.js');
 const sftp = require('../../lib/sftp.js');
 const attachments = require('../../lib/attachments.js');
@@ -17,14 +14,13 @@ describe('SFTP', () => {
     let attachmentsStub;
     let opendirStub;
     let mkdirStub;
-    let readdirStub;
     let renameStub;
     const client = {
-        opendir: () => {},
-        readdir: () => {},
-        rename: () => {},
-        mkdir: () => {},
-        createReadStream: () => {}
+        opendir: () => null,
+        readdir: () => null,
+        rename: () => null,
+        mkdir: () => null,
+        createReadStream: () => null
     };
 
     let files = [];
@@ -42,7 +38,7 @@ describe('SFTP', () => {
             callback(opendirError);
         });
 
-        readdirStub = sinon.stub(client, 'readdir').callsFake((handle, callback) => {
+        sinon.stub(client, 'readdir').callsFake((handle, callback) => {
             const result = readdirCalled ? false : files;
 
             readdirCalled = true;
@@ -78,6 +74,29 @@ describe('SFTP', () => {
         readdirCalled = false;
         sinon.restore();
     });
+    const runAndExpect = async (msg, cfg, cb) => {
+
+        // eslint-disable-next-line no-unused-vars
+        let done = false;
+
+        let newMsg; let newSnapshot; let err;
+        const emitter = new EventEmitter();
+
+        emitter
+            .on('data', (data) => {
+                newMsg = data;
+            })
+            .on('error', (e) => {
+                err = e;
+            })
+            .on('end', () => {
+                done = true;
+            });
+
+        await component.process.call(emitter, msg, cfg);
+
+        cb(err, newMsg, newSnapshot);
+    };
 
 
     it('Failed to connect', () => {
@@ -293,14 +312,10 @@ describe('SFTP', () => {
             }
         ];
 
-        const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
-
         const stream = new Stream();
         stream.id = 'I\'m a stream';
 
-        sinon.stub(client, 'createReadStream').callsFake((path) => {
-            return stream;
-        });
+        sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
         runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
             expect(err).to.equal(undefined);
@@ -351,9 +366,7 @@ describe('SFTP', () => {
         const stream = new Stream();
         stream.id = 'I\'m a stream';
 
-        sinon.stub(client, 'createReadStream').callsFake((path) => {
-            return stream;
-        });
+        sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
         runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
             expect(err).to.equal(undefined);
@@ -415,9 +428,7 @@ describe('SFTP', () => {
         const stream = new Stream();
         stream.id = 'I\'m a stream';
 
-        sinon.stub(client, 'createReadStream').callsFake((path) => {
-            return stream;
-        });
+        sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
         runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
             expect(err).to.equal(undefined);
@@ -453,28 +464,5 @@ describe('SFTP', () => {
         });
 
     });
-
-    const runAndExpect = async (msg, cfg, cb) => {
-
-        let done = false;
-
-        let newMsg; let newSnapshot; let err;
-        const emitter = new EventEmitter();
-
-        emitter
-            .on('data', (data) => {
-                newMsg = data;
-            })
-            .on('error', (e) => {
-                err = e;
-            })
-            .on('end', () => {
-                done = true;
-            });
-
-        await component.process.call(emitter, msg, cfg);
-
-        cb(err, newMsg, newSnapshot);
-    };
 });
 

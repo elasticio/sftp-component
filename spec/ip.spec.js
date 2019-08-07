@@ -1,4 +1,4 @@
-'use-strict';
+'use strict';
 const ip = require('../lib/ip.js');
 const expect = require('chai').expect;
 
