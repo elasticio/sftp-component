@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circletci/node:10
+      - image: circleci/node:12-stretch
     steps:
       - checkout
       - restore_cache:
@@ -16,7 +16,7 @@ jobs:
             - node_modules
       - run:
           name: Running Mocha Tests
-          command: npm test; npm run integration-test
+          command: npm test
 workflows:
   version: 2
   build_and_test:
