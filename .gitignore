@@ -31,4 +31,5 @@ node_modules
 
 .DS_Store
 
-
+# Env Vars
+.env

@@ -90,7 +90,7 @@ describe('SFTP', () => {
 
         await sftp.readFile(client, '/foo/bar/baz', (err, buffer) => {
                 result = buffer;
+                expect(result.toString('utf8')).to.equal('Lorem ipsum');
             });
-        //expect(result.toString('utf8')).toEqual('Lorem ipsum');
         });
 });
