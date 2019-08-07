@@ -4,7 +4,7 @@
   "description": "elastic.io SFTP component",
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
-    "test": "mocha spec --recursive",
+    "test": "mocha spec --recursive"
   },
   "repository": {
     "type": "git",
