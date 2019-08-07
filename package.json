@@ -5,7 +5,6 @@
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
     "test": "mocha spec --recursive",
-    "integration-test": "mocha --exit spec-integration/*"
   },
   "repository": {
     "type": "git",
@@ -24,7 +23,6 @@
     "request": "2.88.0",
     "ssh2": "0.8.4",
     "ssh2-sftp-client": "2.5.0",
-    "travis": "0.1.1",
     "wtfnode": "0.8.0"
   },
   "engines": {
