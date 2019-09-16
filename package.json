@@ -14,7 +14,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "async": "^2.6.2",
-    "aws-sdk": "^2.2.42",
+    "aws-sdk": "2.528.0",
     "co": "^4.6.0",
     "debug": "^4.1.1",
     "elasticio-node": "0.0.9",
