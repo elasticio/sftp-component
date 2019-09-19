@@ -13,24 +13,24 @@
   "author": "elastic.io GmbH",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "async": "^2.6.2",
-    "co": "^4.6.0",
+    "async": "2.6.2",
+    "co": "4.6.0",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.2.5",
-    "lodash": "^4.17.11",
-    "q": "^1.5.1",
-    "request": "^2.88.0",
+    "lodash": "4.17.11",
+    "q": "1.5.1",
+    "request": "2.88.0",
     "ssh2": "0.8.4",
-    "ssh2-sftp-client": "^2.5.0",
-    "wtfnode": "^0.8.0"
+    "ssh2-sftp-client": "2.5.0",
+    "wtfnode": "0.8.0"
   },
   "engines": {
     "node": ">=10"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "jasmine-node": "^1.16.2",
-    "mocha": "^6.0.2"
+    "chai": "4.2.0",
+    "jasmine-node": "1.16.2",
+    "mocha": "6.0.2"
   }
 }
