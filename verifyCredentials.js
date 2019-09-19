@@ -1,7 +1,5 @@
 const sftp = require('./lib/sftp.js');
 
-module.exports = verify;
-
 function verify(cfg, cb) {
   console.log('Verifying the SFTP account');
 
@@ -17,3 +15,5 @@ function verify(cfg, cb) {
     console.log('SFTP account verified successfully');
   });
 }
+
+module.exports = verify;
