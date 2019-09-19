@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const url = require('url');
 const Client = require('ssh2-sftp-client');
+const fs = require('fs');
 const upload = require('../lib/actions/upload');
 
 class TestEmitter extends EventEmitter {
@@ -20,20 +20,34 @@ class TestEmitter extends EventEmitter {
   }
 }
 
-if (!process.env.SFTP_URL) throw new Error('Please set SFTP_URL env variable to proceed');
-
-describe('SFTP integration test - upload then download', () => {
-  const parsed = url.parse(process.env.SFTP_URL);
-  const [username, password] = parsed.auth.split(':');
-  const cfg = {
-    host: parsed.hostname,
-    username,
-    password,
-    directory: `/www/integration-test/test-${Math.floor(Math.random() * 10000)}/`,
-  };
+// eslint-disable-next-line func-names
+describe('SFTP integration test - upload then download', function () {
+  this.timeout(20000000);
+  let host;
+  let username;
+  let password;
+  let port;
+  let cfg;
+  before(() => {
+    if (fs.existsSync('.env')) {
+      require('dotenv').config();
+    }
+    if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
+    host = process.env.HOSTNAME;
+    username = process.env.USER;
+    password = process.env.PASSWORD;
+    port = process.env.PORT;
+  });
   const sftp = new Client();
 
   it('upload attachment', async () => {
+    cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory: `/home/eiotesti/www/integration-test/test-${Math.floor(Math.random() * 10000)}/`,
+    };
     await upload.init(cfg);
     await sftp.connect(cfg);
 
@@ -57,7 +71,7 @@ describe('SFTP integration test - upload then download', () => {
     expect(list.length).equal(1);
     expect(list[0].name).equal('logo.svg');
     expect(list[0].size).equal(4379);
-  }).timeout(10000);
+  });
 
   after(async () => {
     console.log('Cleaning-up directory %s', cfg.directory);
@@ -66,4 +80,4 @@ describe('SFTP integration test - upload then download', () => {
     sftp.end();
     upload.shutdown();
   });
-}).timeout(20000);
+});
