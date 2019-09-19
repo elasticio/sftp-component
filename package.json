@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "description": "elastic.io SFTP component",
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/jasmine-node/bin/jasmine-node  --verbose ./spec/*",
-    "integration-test": "NODE_ENV=test mocha --exit spec-integration/*"
+    "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
+    "test": "mocha spec --recursive --timeout 50000",
+    "integration-test": "mocha spec-integration --timeout 50000"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,9 @@
   },
   "devDependencies": {
     "chai": "4.2.0",
+    "eslint": "6.4.0",
+    "eslint-config-airbnb-base": "14.0.0",
+    "eslint-plugin-import": "2.18.2",
     "jasmine-node": "1.16.2",
     "mocha": "6.0.2"
   }
