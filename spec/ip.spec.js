@@ -1,64 +1,51 @@
-var ip = require('../lib/ip.js');
+const ip = require('../lib/ip.js');
 
-describe("SFTP IP", function () {
+describe('SFTP IP', () => {
+  it('IPv4', () => {
+    let result;
 
-    it('IPv4', function () {
-
-        var result;
-
-        runs(function () {
-            ip.resolve("127.0.0.1").then(function(r) {
-                result = r;
-            });
-        });
-
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 150);
-
-        runs(function () {
-            expect(result).toEqual([ '127.0.0.1', 4 ]);
-        });
-
+    runs(() => {
+      ip.resolve('127.0.0.1').then((r) => {
+        result = r;
+      });
     });
 
-    it('IPv6', function () {
+    waitsFor(() => result, 'Promise must have returned', 150);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual(['127.0.0.1', 4]);
+    });
+  });
 
-        runs(function () {
-            ip.resolve("0:0:0:0:0:0:0:1").then(function(r) {
-                result = r;
-            });
-        });
+  it('IPv6', () => {
+    let result;
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
-
-        runs(function () {
-            expect(result).toEqual([ '0:0:0:0:0:0:0:1', 6 ]);
-        });
-
+    runs(() => {
+      ip.resolve('0:0:0:0:0:0:0:1').then((r) => {
+        result = r;
+      });
     });
 
-    it('Host', function () {
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
-
-        runs(function () {
-            ip.resolve("localhost").then(function(r) {
-                result = r;
-            }).done();
-        });
-
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 5000);
-
-        runs(function () {
-            expect(result).toEqual([ '127.0.0.1', 4 ]);
-        });
-
+    runs(() => {
+      expect(result).toEqual(['0:0:0:0:0:0:0:1', 6]);
     });
+  });
+
+  it('Host', () => {
+    let result;
+
+    runs(() => {
+      ip.resolve('localhost').then((r) => {
+        result = r;
+      }).done();
+    });
+
+    waitsFor(() => result, 'Promise must have returned', 5000);
+
+    runs(() => {
+      expect(result).toEqual(['127.0.0.1', 4]);
+    });
+  });
 });

@@ -1,236 +1,199 @@
-describe("SFTP", function () {
-    var sftp = require('../lib/sftp.js');
-    var ip = require('../lib/ip.js');
-    var Q = require('q');
-    var fs = require("fs");
+describe('SFTP', () => {
+  const sftp = require('../lib/sftp.js');
+  const ip = require('../lib/ip.js');
+  const Q = require('q');
+  const fs = require('fs');
 
-    beforeEach(function () {
-        spyOn(ip, 'resolve').andCallFake(function () {
-            return Q.fcall(function () {
-                return "127.0.0.1";
-            });
-        });
+  beforeEach(() => {
+    spyOn(ip, 'resolve').andCallFake(() => Q.fcall(() => '127.0.0.1'));
+  });
+
+  it('create connection options', () => {
+    const cfg = {
+      host: 'localhost',
+      username: 'root',
+      password: 'secret',
+    };
+
+    let result;
+
+    runs(() => {
+      sftp.createConnectionOptions(cfg).then((opts) => {
+        result = opts;
+      });
     });
 
-    it('create connection options', function () {
-        var cfg = {
-            host: "localhost",
-            username: "root",
-            password: "secret"
-        };
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual({
+        host: 'localhost',
+        port: 22,
+        username: 'root',
+        password: 'secret',
+      });
+    });
+  });
 
-        runs(function () {
-            sftp.createConnectionOptions(cfg).then(function(opts) {
-                result = opts;
-            });
-        });
+  it('create connection options with protocol', () => {
+    const cfg = {
+      host: 'sftp://localhost',
+      username: 'root',
+      password: 'secret',
+    };
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
+    let result;
 
-        runs(function () {
-
-            expect(result).toEqual({
-                host : 'localhost',
-                port : 22,
-                username : 'root',
-                password : 'secret'
-            });
-        });
-
-
-
+    runs(() => {
+      sftp.createConnectionOptions(cfg).then((opts) => {
+        result = opts;
+      });
     });
 
-    it('create connection options with protocol', function () {
-        var cfg = {
-            host: "sftp://localhost",
-            username: "root",
-            password: "secret"
-        };
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual({
+        host: 'localhost',
+        port: 22,
+        username: 'root',
+        password: 'secret',
+      });
+    });
+  });
 
-        runs(function () {
-            sftp.createConnectionOptions(cfg).then(function(opts) {
-                result = opts;
-            });
-        });
+  it('create connection options with port', () => {
+    const cfg = {
+      host: 'localhost:6789',
+      username: 'root',
+      password: 'secret',
+    };
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
+    let result;
 
-        runs(function () {
-
-            expect(result).toEqual({
-                host : 'localhost',
-                port : 22,
-                username : 'root',
-                password : 'secret'
-            });
-        });
-
+    runs(() => {
+      sftp.createConnectionOptions(cfg).then((opts) => {
+        result = opts;
+      });
     });
 
-    it('create connection options with port', function () {
-        var cfg = {
-            host: "localhost:6789",
-            username: "root",
-            password: "secret"
-        };
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual({
+        host: 'localhost',
+        port: 6789,
+        username: 'root',
+        password: 'secret',
+      });
+    });
+  });
 
-        runs(function () {
-            sftp.createConnectionOptions(cfg).then(function(opts) {
-                result = opts;
-            });
-        });
+  it('create connection options with colon but no port', () => {
+    const cfg = {
+      host: 'localhost:',
+      username: 'root',
+      password: 'secret',
+    };
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
+    let result;
 
-        runs(function () {
-
-            expect(result).toEqual({
-                host : 'localhost',
-                port : 6789,
-                username : 'root',
-                password : 'secret'
-            });
-        });
-
+    runs(() => {
+      sftp.createConnectionOptions(cfg).then((opts) => {
+        result = opts;
+      });
     });
 
-    it('create connection options with colon but no port', function () {
-        var cfg = {
-            host: "localhost:",
-            username: "root",
-            password: "secret"
-        };
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual({
+        host: 'localhost',
+        port: 22,
+        username: 'root',
+        password: 'secret',
+      });
+    });
+  });
 
-        runs(function () {
-            sftp.createConnectionOptions(cfg).then(function(opts) {
-                result = opts;
-            });
-        });
+  it('create connection options with non-numeric port', () => {
+    const cfg = {
+      host: 'localhost:aaa',
+      username: 'root',
+      password: 'secret',
+    };
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
+    let result;
 
-        runs(function () {
-
-            expect(result).toEqual({
-                host : 'localhost',
-                port : 22,
-                username : 'root',
-                password : 'secret'
-            });
-        });
-
+    runs(() => {
+      sftp.createConnectionOptions(cfg).then((opts) => {
+        result = opts;
+      });
     });
 
-    it('create connection options with non-numeric port', function () {
-        var cfg = {
-            host: "localhost:aaa",
-            username: "root",
-            password: "secret"
-        };
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual({
+        host: 'localhost',
+        port: 22,
+        username: 'root',
+        password: 'secret',
+      });
+    });
+  });
 
-        runs(function () {
-            sftp.createConnectionOptions(cfg).then(function(opts) {
-                result = opts;
-            });
-        });
+  it('create connection options with host to be trimmed', () => {
+    const cfg = {
+      host: '    localhost ',
+      username: 'root',
+      password: 'secret',
+    };
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
+    let result;
 
-        runs(function () {
-
-            expect(result).toEqual({
-                host : 'localhost',
-                port : 22,
-                username : 'root',
-                password : 'secret'
-            });
-        });
-
+    runs(() => {
+      sftp.createConnectionOptions(cfg).then((opts) => {
+        result = opts;
+      });
     });
 
-    it('create connection options with host to be trimmed', function () {
-        var cfg = {
-            host: "    localhost ",
-            username: "root",
-            password: "secret"
-        };
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var result;
+    runs(() => {
+      expect(result).toEqual({
+        host: 'localhost',
+        port: 22,
+        username: 'root',
+        password: 'secret',
+      });
+    });
+  });
 
-        runs(function () {
-            sftp.createConnectionOptions(cfg).then(function(opts) {
-                result = opts;
-            });
-        });
+  it('read file', () => {
+    const stream = fs.createReadStream(`${__dirname}/data.txt`);
 
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
+    const client = {
+      createReadStream: null,
+      mkdir: null,
+    };
 
-        runs(function () {
+    spyOn(client, 'mkdir').andCallFake((path) => true);
 
-            expect(result).toEqual({
-                host : 'localhost',
-                port : 22,
-                username : 'root',
-                password : 'secret'
-            });
-        });
+    spyOn(client, 'createReadStream').andCallFake((path) => stream);
 
+    let result;
+
+    runs(() => {
+      sftp.readFile(client, '/foo/bar/baz', (err, buffer) => {
+        result = buffer;
+      });
     });
 
-    it('read file', function () {
-        var stream = fs.createReadStream(__dirname+"/data.txt");
+    waitsFor(() => result, 'Promise must have returned', 750);
 
-        var client = {
-            createReadStream : null,
-            mkdir: null
-        };
-
-        spyOn(client, 'mkdir').andCallFake(function (path) {
-            return true;
-        });
-
-        spyOn(client, 'createReadStream').andCallFake(function (path) {
-            return stream;
-        });
-
-        var result;
-
-        runs(function () {
-            sftp.readFile(client, "/foo/bar/baz", function(err, buffer) {
-                result = buffer;
-            });
-        });
-
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
-
-        runs(function () {
-            expect(result.toString('utf8')).toEqual("Lorem ipsum");
-        });
-
+    runs(() => {
+      expect(result.toString('utf8')).toEqual('Lorem ipsum');
     });
+  });
 });
