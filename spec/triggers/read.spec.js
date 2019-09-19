@@ -48,6 +48,7 @@ describe('SFTP', () => {
     closeStub = sinon.stub(sftp, 'close').callsFake(() => {});
 
     attachmentsStub = sinon.stub(attachments, 'addAttachment').callsFake((msg, fileName) => {
+      // eslint-disable-next-line no-param-reassign
       msg.attachments[fileName] = {
         url: 'http://loremipsum',
       };
@@ -353,8 +354,8 @@ describe('SFTP', () => {
 
     const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
 
-    sinon.stub(sftp, 'readFile').callsFake((client, path, callback) => {
-      callback(null, new Buffer(xml));
+    sinon.stub(sftp, 'readFile').callsFake((client2, path, callback) => {
+      callback(null, Buffer.from(xml));
     });
 
     const stream = new Stream();
@@ -413,8 +414,8 @@ describe('SFTP', () => {
 
     const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
 
-    sinon.stub(sftp, 'readFile').callsFake((client, path, callback) => {
-      callback(null, new Buffer(xml));
+    sinon.stub(sftp, 'readFile').callsFake((client2, path, callback) => {
+      callback(null, Buffer.from(xml));
     });
 
     const stream = new Stream();

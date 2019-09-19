@@ -5,14 +5,14 @@ function verify(cfg, cb) {
 
   sftp.connect(cfg, (err, client) => {
     if (err) {
-      return cb(err);
+      cb(err, { verified: false });
+      return { verified: false };
     }
 
     sftp.close(client);
-
     cb(null, { verified: true });
-
     console.log('SFTP account verified successfully');
+    return { verified: true };
   });
 }
 

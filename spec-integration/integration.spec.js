@@ -14,7 +14,7 @@ class TestEmitter extends EventEmitter {
     this.on('data', (value) => this.data.push(value));
     this.on('error', (value) => this.error.push(value));
     this.on('end', () => {
-      this.end++;
+      this.end += 1;
       done();
     });
   }
@@ -30,6 +30,7 @@ describe('SFTP integration test - upload then download', function () {
   let cfg;
   before(() => {
     if (fs.existsSync('.env')) {
+      // eslint-disable-next-line global-require
       require('dotenv').config();
     }
     if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
@@ -51,7 +52,6 @@ describe('SFTP integration test - upload then download', function () {
     await upload.init(cfg);
     await sftp.connect(cfg);
 
-    console.log('Starting test');
     const sender = new TestEmitter();
     const msg = {
       body: {},
@@ -62,11 +62,9 @@ describe('SFTP integration test - upload then download', function () {
       },
     };
     await upload.process.call(sender, msg, cfg);
-    console.log('Checking response');
     expect(sender.data.length).equal(1);
     expect(sender.data[0].body.results).to.be.an('array');
     expect(sender.data[0].body.results.length).equal(1);
-    console.log('Checking SFTP contents');
     const list = await sftp.list(cfg.directory);
     expect(list.length).equal(1);
     expect(list[0].name).equal('logo.svg');
@@ -74,9 +72,7 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   after(async () => {
-    console.log('Cleaning-up directory %s', cfg.directory);
     await sftp.rmdir(cfg.directory, true);
-    console.log('Cleanup completed, closing connection');
     sftp.end();
     upload.shutdown();
   });
