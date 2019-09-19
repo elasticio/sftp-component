@@ -1,51 +1,30 @@
+const { expect } = require('chai');
 const ip = require('../lib/ip.js');
 
-describe('SFTP IP', () => {
-  it('IPv4', () => {
+describe('SFTP IP', async () => {
+  it('IPv4', async () => {
     let result;
-
-    runs(() => {
-      ip.resolve('127.0.0.1').then((r) => {
-        result = r;
-      });
+    await ip.resolve('127.0.0.1').then((res) => {
+      result = res;
     });
 
-    waitsFor(() => result, 'Promise must have returned', 150);
-
-    runs(() => {
-      expect(result).toEqual(['127.0.0.1', 4]);
-    });
+    expect(result).to.deep.equal(['127.0.0.1', 4]);
   });
 
-  it('IPv6', () => {
+  it('IPv6', async () => {
     let result;
 
-    runs(() => {
-      ip.resolve('0:0:0:0:0:0:0:1').then((r) => {
-        result = r;
-      });
+    await ip.resolve('0:0:0:0:0:0:0:1').then((res) => {
+      result = res;
     });
-
-    waitsFor(() => result, 'Promise must have returned', 750);
-
-    runs(() => {
-      expect(result).toEqual(['0:0:0:0:0:0:0:1', 6]);
-    });
+    expect(result).to.deep.equal(['0:0:0:0:0:0:0:1', 6]);
   });
 
-  it('Host', () => {
+  it('Host', async () => {
     let result;
-
-    runs(() => {
-      ip.resolve('localhost').then((r) => {
-        result = r;
-      }).done();
+    await ip.resolve('localhost').then((res) => {
+      result = res;
     });
-
-    waitsFor(() => result, 'Promise must have returned', 5000);
-
-    runs(() => {
-      expect(result).toEqual(['127.0.0.1', 4]);
-    });
+    expect(result).to.deep.equal(['127.0.0.1', 4]);
   });
 });

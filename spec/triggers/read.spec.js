@@ -1,18 +1,25 @@
-const _ = require('lodash');
 const Q = require('q');
 const Stream = require('stream');
 const { EventEmitter } = require('events');
-const component = require('../../lib/triggers/read.js');
-const sftp = require('../../lib/sftp.js');
+const sinon = require('sinon');
+const { expect } = require('chai');
 const attachments = require('../../lib/attachments.js');
+const sftp = require('../../lib/sftp.js');
+const component = require('../../lib/triggers/read.js');
 
 describe('SFTP', () => {
+  let closeStub;
+  let connectStub;
+  let attachmentsStub;
+  let opendirStub;
+  let mkdirStub;
+  let renameStub;
   const client = {
-    opendir: null,
-    readdir: null,
-    rename: null,
-    mkdir: null,
-    createReadStream: null,
+    opendir: () => null,
+    readdir: () => null,
+    rename: () => null,
+    mkdir: () => null,
+    createReadStream: () => null,
   };
 
   let files = [];
@@ -22,15 +29,15 @@ describe('SFTP', () => {
   let readdirCalled = false;
 
   beforeEach(() => {
-    spyOn(sftp, 'connect').andCallFake((cfg, callback) => {
+    connectStub = sinon.stub(sftp, 'connect').callsFake((cfg, callback) => {
       callback(createClientError, client);
     });
 
-    spyOn(client, 'opendir').andCallFake((dir, callback) => {
+    opendirStub = sinon.stub(client, 'opendir').callsFake((dir, callback) => {
       callback(opendirError);
     });
 
-    spyOn(client, 'readdir').andCallFake((handle, callback) => {
+    sinon.stub(client, 'readdir').callsFake((handle, callback) => {
       const result = readdirCalled ? false : files;
 
       readdirCalled = true;
@@ -38,15 +45,22 @@ describe('SFTP', () => {
       callback(readDirError, result);
     });
 
-    spyOn(sftp, 'close').andCallFake(() => {
-    });
+    closeStub = sinon.stub(sftp, 'close').callsFake(() => {});
 
-    spyOn(attachments, 'addAttachment').andCallFake((msg, fileName, stream, contentType) => {
+    attachmentsStub = sinon.stub(attachments, 'addAttachment').callsFake((msg, fileName) => {
       msg.attachments[fileName] = {
         url: 'http://loremipsum',
       };
 
       return Q(msg);
+    });
+
+    renameStub = sinon.stub(client, 'rename').callsFake((oldName, newName, callback) => {
+      callback();
+    });
+
+    mkdirStub = sinon.stub(client, 'mkdir').callsFake((path, opts, cb) => {
+      cb(null);
     });
   });
 
@@ -56,7 +70,30 @@ describe('SFTP', () => {
     opendirError = null;
     readDirError = null;
     readdirCalled = false;
+    sinon.restore();
   });
+  const runAndExpect = async (msg, cfg, cb) => {
+    // eslint-disable-next-line no-unused-vars
+    let done = false;
+
+    let newMsg; let newSnapshot; let err;
+    const emitter = new EventEmitter();
+
+    emitter
+      .on('data', (data) => {
+        newMsg = data;
+      })
+      .on('error', (e) => {
+        err = e;
+      })
+      .on('end', () => {
+        done = true;
+      });
+
+    await component.process.call(emitter, msg, cfg);
+
+    cb(err, newMsg, newSnapshot);
+  };
 
 
   it('Failed to connect', () => {
@@ -67,15 +104,13 @@ describe('SFTP', () => {
     createClientError = new Error('Ouch!');
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).toEqual('Ouch!');
+      expect(err.message).to.equal('Ouch!');
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
-
-      expect(sftp.close).not.toHaveBeenCalled();
+      expect(closeStub.callCount).to.equal(0);
     });
   });
 
@@ -86,17 +121,13 @@ describe('SFTP', () => {
     opendirError = new Error('No such file or directory');
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).toEqual('No such file or directory');
+      expect(err.message).to.equal('No such file or directory');
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount).to.equal(1);
     });
   });
 
@@ -107,17 +138,13 @@ describe('SFTP', () => {
     readDirError = new Error('Failed to read given directory');
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).toEqual('Failed to read given directory');
+      expect(err.message).to.equal('Failed to read given directory');
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -132,17 +159,13 @@ describe('SFTP', () => {
     files = false;
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).toEqual('Invalid regular expression: /***/: Nothing to repeat');
+      expect(err.message).to.equal('Invalid regular expression: /***/: Nothing to repeat');
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -153,17 +176,13 @@ describe('SFTP', () => {
     files = false;
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith({}, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -177,17 +196,13 @@ describe('SFTP', () => {
     files = false;
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/aDir', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -209,17 +224,13 @@ describe('SFTP', () => {
     ];
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -239,17 +250,13 @@ describe('SFTP', () => {
     ];
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -263,24 +270,20 @@ describe('SFTP', () => {
         filename: 'data.xml',
         longname: '-rw-r--r--    1 democommercetools ftpcreator       94 Aug 14 08:25 data.xml',
         attrs: {
-          size: 20971520,
+          size: 104857601,
         },
 
       },
     ];
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeDefined();
+      expect(err).to.equal(undefined);
 
-      expect(newMsg).toBeUndefined();
+      expect(newMsg).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
+      expect(closeStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -306,40 +309,30 @@ describe('SFTP', () => {
       },
     ];
 
-    const xml = "<?xml version='1.0' encoding='UTF-8' ?><root><child/></root>";
-
     const stream = new Stream();
-    stream.id = "I'm a stream";
+    stream.id = 'I\'m a stream';
 
-    spyOn(client, 'createReadStream').andCallFake((path) => stream);
-
-    spyOn(client, 'rename').andCallFake((oldName, newName, callback) => {
-      callback();
-    });
+    sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
       const attachment = newMsg.attachments['data.xml'];
 
-      expect(attachment.url).toEqual('http://loremipsum');
+      expect(attachment.url).to.equal('http://loremipsum');
+      expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
+      expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
+      expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
+      expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
+      expect(newSnapshot).to.equal(undefined);
+      expect(connectStub.getCall(0).args[0]).to.equal(cfg);
+      expect(opendirStub.getCall(0).args[0]).to.equal('/');
+      expect(closeStub.callCount > 0).to.equal(true);
+      expect(renameStub.callCount > 0).to.equal(true);
 
-      expect(attachments.addAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
-
-      expect(newSnapshot).toBeUndefined();
-
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
-
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
-
-      expect(client.rename).toHaveBeenCalled();
-
-      const renameCall = client.rename.calls[0];
-      expect(renameCall.args[0]).toEqual('/data.xml');
-      expect(renameCall.args[1].indexOf('/.elasticio_processed/data.xml')).toEqual(0);
-      expect(renameCall.args[2]).toEqual(jasmine.any(Function));
+      const renameCall = renameStub.getCall(0);
+      expect(renameCall.args[0]).to.equal('/data.xml');
+      expect(renameCall.args[1].includes('/.elasticio_processed/data.xml')).to.equal(true);
     });
   });
 
@@ -358,52 +351,46 @@ describe('SFTP', () => {
       },
     ];
 
-    const xml = "<?xml version='1.0' encoding='UTF-8' ?><root><child/></root>";
+    const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
 
-    spyOn(sftp, 'readFile').andCallFake((client, path, callback) => {
+    sinon.stub(sftp, 'readFile').callsFake((client, path, callback) => {
       callback(null, new Buffer(xml));
     });
 
-    spyOn(client, 'rename').andCallFake((oldName, newName, callback) => {
-      callback();
-    });
-
-    spyOn(client, 'mkdir').andCallFake((path, opts, cb) => {
-      cb(null);
-    });
-
     const stream = new Stream();
-    stream.id = "I'm a stream";
+    stream.id = 'I\'m a stream';
 
-    spyOn(client, 'createReadStream').andCallFake((path) => stream);
+    sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
       const attachment = newMsg.attachments['data.xml'];
 
-      expect(attachment.url).toEqual('http://loremipsum');
+      expect(attachment.url).to.equal('http://loremipsum');
 
-      expect(attachments.addAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
+      expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
+      expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
+      expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
+      expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
 
+      expect(newSnapshot).to.equal(undefined);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(connectStub.getCall(0).args[0]).to.equal(cfg);
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
+      expect(opendirStub.getCall(0).args[0]).to.equal('/');
+      expect(closeStub.callCount > 0).to.equal(true);
 
-      expect(client.opendir).toHaveBeenCalledWith('/', jasmine.any(Function));
+      expect(mkdirStub.getCall(0).args[0]).to.equal('/.elasticio_processed');
+      expect(mkdirStub.getCall(0).args[1]).to.deep.equal({
+        mode: 16877,
+      });
 
-      expect(sftp.close).toHaveBeenCalled();
+      expect(renameStub.callCount > 0).to.equal(true);
 
-      expect(client.mkdir).toHaveBeenCalledWith('/.elasticio_processed', { mode: 16877 }, jasmine.any(Function));
-
-
-      expect(client.rename).toHaveBeenCalled();
-
-      const renameCall = client.rename.calls[0];
-      expect(renameCall.args[0]).toEqual('/data.xml');
-      expect(renameCall.args[1].indexOf('/.elasticio_processed/data.xml')).toEqual(0);
-      expect(renameCall.args[2]).toEqual(jasmine.any(Function));
+      const renameCall = renameStub.getCall(0);
+      expect(renameCall.args[0]).to.equal('/data.xml');
+      expect(renameCall.args[1].includes('/.elasticio_processed/data.xml')).to.equal(true);
     });
   });
 
@@ -424,83 +411,48 @@ describe('SFTP', () => {
       },
     ];
 
-    const xml = "<?xml version='1.0' encoding='UTF-8' ?><root><child/></root>";
+    const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
 
-    spyOn(sftp, 'readFile').andCallFake((client, path, callback) => {
+    sinon.stub(sftp, 'readFile').callsFake((client, path, callback) => {
       callback(null, new Buffer(xml));
     });
 
-    spyOn(client, 'rename').andCallFake((oldName, newName, callback) => {
-      callback();
-    });
-
-    spyOn(client, 'mkdir').andCallFake((path, opts, cb) => {
-      cb(null);
-    });
-
     const stream = new Stream();
-    stream.id = "I'm a stream";
+    stream.id = 'I\'m a stream';
 
-    spyOn(client, 'createReadStream').andCallFake((path) => stream);
+    sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).toBeUndefined();
+      expect(err).to.equal(undefined);
 
       const attachment = newMsg.attachments['data.xml'];
 
-      expect(attachment.url).toEqual('http://loremipsum');
+      expect(attachment.url).to.equal('http://loremipsum');
 
-      expect(attachments.addAttachment).toHaveBeenCalled();
+      expect(attachmentsStub.callCount > 0).to.equal(true);
+      expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
+      expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
+      expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
+      expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
 
-      expect(attachments.addAttachment).toHaveBeenCalledWith(newMsg, 'data.xml', stream, 10);
+      expect(newSnapshot).to.equal(undefined);
 
+      expect(connectStub.getCall(0).args[0]).to.equal(cfg);
 
-      expect(newSnapshot).toBeUndefined();
+      expect(opendirStub.getCall(0).args[0]).to.equal('/verylongdirectoryname');
 
-      expect(sftp.connect).toHaveBeenCalledWith(cfg, jasmine.any(Function));
+      expect(closeStub.callCount > 0).to.equal(true);
 
-      expect(client.opendir).toHaveBeenCalledWith('/verylongdirectoryname', jasmine.any(Function));
-
-      expect(sftp.close).toHaveBeenCalled();
-
-      expect(client.mkdir).toHaveBeenCalledWith('/verylongdirectoryname/.elasticio_processed', { mode: 16877 }, jasmine.any(Function));
-
-
-      expect(client.rename).toHaveBeenCalled();
-
-      const renameCall = client.rename.calls[0];
-      expect(renameCall.args[0]).toEqual('/verylongdirectoryname/data.xml');
-      expect(renameCall.args[1].indexOf('/verylongdirectoryname/.elasticio_processed/data.xml')).toEqual(0);
-      expect(renameCall.args[2]).toEqual(jasmine.any(Function));
-    });
-  });
-
-  var runAndExpect = function (msg, cfg, cb) {
-    let done = false;
-
-    let newMsg; let newSnapshot; let
-      err;
-    const emitter = new EventEmitter();
-
-    emitter
-      .on('data', (data) => {
-        newMsg = data;
-      })
-      .on('error', (e) => {
-        err = e;
-      })
-      .on('end', () => {
-        done = true;
+      expect(mkdirStub.getCall(0).args[0]).to.equal('/verylongdirectoryname/.elasticio_processed');
+      expect(mkdirStub.getCall(0).args[1]).to.deep.equal({
+        mode: 16877,
       });
 
-    runs(() => {
-      component.process.call(emitter, msg, cfg);
-    });
+      expect(renameStub.callCount > 0).to.equal(true);
 
-    waitsFor(() => done, 'Next must have been called', 750);
-
-    runs(() => {
-      cb(err, newMsg, newSnapshot);
+      const renameCall = renameStub.getCall(0);
+      expect(renameCall.args[0]).to.equal('/verylongdirectoryname/data.xml');
+      expect(renameCall.args[1].includes('/verylongdirectoryname/.elasticio_processed/data.xml')).to.equal(true);
     });
-  };
+  });
 });
