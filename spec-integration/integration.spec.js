@@ -61,6 +61,7 @@ describe('SFTP integration test - upload then download', function () {
         },
       },
     };
+
     await upload.process.call(sender, msg, cfg);
     expect(sender.data.length).equal(1);
     expect(sender.data[0].body.results).to.be.an('array');
@@ -72,7 +73,8 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   after(async () => {
-    await sftp.rmdir(cfg.directory, true);
+    await sftp.delete(`${cfg.directory}logo.svg`);
+    await sftp.rmdir(cfg.directory, false);
     sftp.end();
     upload.shutdown();
   });

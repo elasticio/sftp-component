@@ -22,7 +22,7 @@
     "q": "1.5.1",
     "request": "2.88.0",
     "ssh2": "0.8.4",
-    "ssh2-sftp-client": "2.5.0"
+    "ssh2-sftp-client": "4.1.0"
   },
   "engines": {
     "node": ">=10"
