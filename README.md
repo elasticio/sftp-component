@@ -86,7 +86,7 @@ for more information
 
 Attachments limitations:
 
-1. Maximal possible size for an attachment is 10 MB.
+1. Maximal possible size for an attachment is 100 MiB.
 2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
 
 ## Documentation links
