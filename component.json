@@ -12,7 +12,6 @@
       "port": {
         "viewClass": "TextFieldView",
         "label": "Port",
-        "required": true,
         "placeholder": "Port of the host"
       },
       "username": {
