@@ -63,13 +63,13 @@ describe('SFTP integration test - upload then download', function () {
     };
 
     await upload.process.call(sender, msg, cfg);
-    expect(sender.data.length).equal(1);
+    expect(sender.data.length).to.equal(1);
     expect(sender.data[0].body.results).to.be.an('array');
-    expect(sender.data[0].body.results.length).equal(1);
+    expect(sender.data[0].body.results.length).to.equal(1);
     const list = await sftp.list(cfg.directory);
-    expect(list.length).equal(1);
-    expect(list[0].name).equal('logo.svg');
-    expect(list[0].size).equal(4379);
+    expect(list.length).to.equal(1);
+    expect(list[0].name).to.equal('logo.svg');
+    expect(list[0].size).to.equal(4379);
   });
 
   after(async () => {

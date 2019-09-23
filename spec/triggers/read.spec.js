@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const Q = require('q');
 const Stream = require('stream');
 const { EventEmitter } = require('events');
@@ -107,9 +108,9 @@ describe('SFTP', () => {
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err.message).to.equal('Ouch!');
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount).to.equal(0);
     });
@@ -124,9 +125,9 @@ describe('SFTP', () => {
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err.message).to.equal('No such file or directory');
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount).to.equal(1);
     });
@@ -141,9 +142,9 @@ describe('SFTP', () => {
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err.message).to.equal('Failed to read given directory');
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -162,9 +163,9 @@ describe('SFTP', () => {
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err.message).to.equal('Invalid regular expression: /***/: Nothing to repeat');
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -177,11 +178,11 @@ describe('SFTP', () => {
     files = false;
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -197,11 +198,11 @@ describe('SFTP', () => {
     files = false;
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -225,11 +226,11 @@ describe('SFTP', () => {
     ];
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -251,11 +252,11 @@ describe('SFTP', () => {
     ];
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -278,11 +279,11 @@ describe('SFTP', () => {
     ];
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
-      expect(newMsg).to.equal(undefined);
+      expect(newMsg).to.be.undefined;
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(closeStub.callCount > 0).to.equal(true);
     });
@@ -316,7 +317,7 @@ describe('SFTP', () => {
     sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
       const attachment = newMsg.attachments['data.xml'];
 
@@ -325,7 +326,7 @@ describe('SFTP', () => {
       expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
       expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
       expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
       expect(connectStub.getCall(0).args[0]).to.equal(cfg);
       expect(opendirStub.getCall(0).args[0]).to.equal('/');
       expect(closeStub.callCount > 0).to.equal(true);
@@ -364,7 +365,7 @@ describe('SFTP', () => {
     sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
       const attachment = newMsg.attachments['data.xml'];
 
@@ -375,7 +376,7 @@ describe('SFTP', () => {
       expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
       expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(connectStub.getCall(0).args[0]).to.equal(cfg);
 
@@ -424,7 +425,7 @@ describe('SFTP', () => {
     sinon.stub(client, 'createReadStream').callsFake(() => stream);
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.equal(undefined);
+      expect(err).to.be.undefined;
 
       const attachment = newMsg.attachments['data.xml'];
 
@@ -436,7 +437,7 @@ describe('SFTP', () => {
       expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
       expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
 
-      expect(newSnapshot).to.equal(undefined);
+      expect(newSnapshot).to.be.undefined;
 
       expect(connectStub.getCall(0).args[0]).to.equal(cfg);
 

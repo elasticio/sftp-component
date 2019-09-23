@@ -42,7 +42,7 @@ describe('SFTP', () => {
     await sftp.createConnectionOptions(cfg).then((opts) => {
       result = opts;
     });
-    expect(result).to.eql({
+    expect(result).to.deep.equal({
       host: 'localhost',
       port: 88,
       username: 'root',
@@ -61,7 +61,7 @@ describe('SFTP', () => {
     const spy = sinon.spy(sftp, 'createConnectionOptions');
 
     await sftp.createConnectionOptions(cfg);
-    expect(spy.errorsWithCallStack.length).to.eql(1);
+    expect(spy.errorsWithCallStack.length).to.equal(1);
   });
 
   it('read file', async () => {
