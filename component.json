@@ -12,7 +12,8 @@
       "port": {
         "viewClass": "TextFieldView",
         "label": "Port",
-        "placeholder": "Port of the host"
+        "placeholder": "Port of the host",
+        "note": "If no port is provided, 22 will be used"
       },
       "username": {
         "viewClass": "TextFieldView",
