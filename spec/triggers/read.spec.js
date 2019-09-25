@@ -6,7 +6,6 @@ const { expect } = require('chai');
 const attachments = require('../../lib/attachments.js');
 const readFile = require('../utils/readFile');
 const sftp = require('../../lib/sftp.js');
-const readFile = require('../utils');
 const component = require('../../lib/triggers/read.js');
 
 describe('SFTP', () => {
