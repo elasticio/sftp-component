@@ -39,7 +39,7 @@ describe('SFTP integration test - upload then download', function () {
     password = process.env.PASSWORD;
     port = process.env.PORT;
   });
-  const sftp = new Client();
+  const client = new Client();
 
   it('upload attachment', async () => {
     cfg = {
@@ -50,7 +50,7 @@ describe('SFTP integration test - upload then download', function () {
       directory: `/home/eiotesti/www/integration-test/test-${Math.floor(Math.random() * 10000)}/`,
     };
     await upload.init(cfg);
-    await sftp.connect(cfg);
+    await client.connect(cfg);
 
     const sender = new TestEmitter();
     const msg = {
@@ -66,16 +66,16 @@ describe('SFTP integration test - upload then download', function () {
     expect(sender.data.length).to.equal(1);
     expect(sender.data[0].body.results).to.be.an('array');
     expect(sender.data[0].body.results.length).to.equal(1);
-    const list = await sftp.list(cfg.directory);
+    const list = await client.list(cfg.directory);
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
   });
 
   after(async () => {
-    await sftp.delete(`${cfg.directory}logo.svg`);
-    await sftp.rmdir(cfg.directory, false);
-    sftp.end();
+    await client.delete(`${cfg.directory}logo.svg`);
+    await client.rmdir(cfg.directory, false);
+    client.end();
     upload.shutdown();
   });
 });
