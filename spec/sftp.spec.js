@@ -3,6 +3,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const { readFile } = require('./utils/readFile');
 const sftp = require('../lib/sftp.js');
+const { readFile } = require('./utils');
 
 describe('SFTP', () => {
   afterEach(() => {
