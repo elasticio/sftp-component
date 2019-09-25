@@ -17,16 +17,12 @@ describe('SFTP', () => {
       password: 'secret',
     };
 
-    let result;
-
-    await sftp.createConnectionOptions(cfg).then((opts) => {
-      result = opts;
-      expect(result).to.deep.equal({
-        host: 'localhost',
-        port: 22,
-        username: 'root',
-        password: 'secret',
-      });
+    const opts = await sftp.createConnectionOptions(cfg);
+    expect(opts).to.deep.equal({
+      host: 'localhost',
+      port: 22,
+      username: 'root',
+      password: 'secret',
     });
   });
 
@@ -38,12 +34,8 @@ describe('SFTP', () => {
       password: 'secret',
     };
 
-    let result;
-
-    await sftp.createConnectionOptions(cfg).then((opts) => {
-      result = opts;
-    });
-    expect(result).to.deep.equal({
+    const opts = await sftp.createConnectionOptions(cfg);
+    expect(opts).to.deep.equal({
       host: 'localhost',
       port: 88,
       username: 'root',
