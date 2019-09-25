@@ -4,6 +4,7 @@ const { EventEmitter } = require('events');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const attachments = require('../../lib/attachments.js');
+const readFile = require('../utils/readFile');
 const sftp = require('../../lib/sftp.js');
 const component = require('../../lib/triggers/read.js');
 
@@ -353,7 +354,7 @@ describe('SFTP', () => {
 
     const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
 
-    sinon.stub(sftp, 'readFile').callsFake((client2, path, callback) => {
+    sinon.stub(readFile, 'readFile').callsFake((client2, path, callback) => {
       callback(null, Buffer.from(xml));
     });
 
@@ -413,7 +414,7 @@ describe('SFTP', () => {
 
     const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
 
-    sinon.stub(sftp, 'readFile').callsFake((client2, path, callback) => {
+    sinon.stub(readFile, 'readFile').callsFake((client2, path, callback) => {
       callback(null, Buffer.from(xml));
     });
 

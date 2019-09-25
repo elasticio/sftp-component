@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { expect } = require('chai');
 const sinon = require('sinon');
+const { readFile } = require('./utils/readFile');
 const sftp = require('../lib/sftp.js');
 
 describe('SFTP', () => {
@@ -78,7 +79,7 @@ describe('SFTP', () => {
 
     let result;
 
-    await sftp.readFile(client, '/foo/bar/baz', (err, buffer) => {
+    readFile(client, '/foo/bar/baz', (err, buffer) => {
       result = buffer;
       expect(result.toString('utf8')).to.equal('Lorem ipsum');
     });
