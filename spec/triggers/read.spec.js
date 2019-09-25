@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-const Q = require('q');
 const Stream = require('stream');
 const { EventEmitter } = require('events');
 const sinon = require('sinon');
@@ -53,8 +52,7 @@ describe('SFTP', () => {
       msg.attachments[fileName] = {
         url: 'http://loremipsum',
       };
-
-      return Q(msg);
+      return new Promise((res) => res(msg));
     });
 
     renameStub = sinon.stub(client, 'rename').callsFake((oldName, newName, callback) => {

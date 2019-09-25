@@ -19,7 +19,6 @@
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.2.5",
     "lodash": "4.17.11",
-    "q": "1.5.1",
     "request": "2.88.0",
     "ssh2": "0.8.4",
     "ssh2-sftp-client": "4.1.0"
