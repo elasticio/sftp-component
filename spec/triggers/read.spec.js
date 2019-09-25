@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-const Stream = require('stream');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const { EventEmitter } = require('events');
 const sinon = require('sinon');
 const { expect } = require('chai');
@@ -46,7 +46,7 @@ describe('SFTP', () => {
       callback(readDirError, result);
     });
 
-    closeStub = sinon.stub(sftp, 'close').callsFake(() => {});
+    closeStub = sinon.stub(sftp, 'close').callsFake(() => { });
 
     attachmentsStub = sinon.stub(attachments, 'addAttachment').callsFake((msg, fileName) => {
       // eslint-disable-next-line no-param-reassign
@@ -310,10 +310,12 @@ describe('SFTP', () => {
       },
     ];
 
-    const stream = new Stream();
-    stream.id = 'I\'m a stream';
+    const attachmentProcessor = new AttachmentProcessor();
 
-    sinon.stub(client, 'createReadStream').callsFake(() => stream);
+    sinon.stub(attachmentProcessor, 'getAttachment').callsFake(() => ({
+      filename: 'data.xml',
+      size: 10,
+    }));
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err).to.be.undefined;
@@ -323,7 +325,7 @@ describe('SFTP', () => {
       expect(attachment.url).to.equal('http://loremipsum');
       expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
       expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
-      expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
+      // expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
       expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
       expect(newSnapshot).to.be.undefined;
       expect(connectStub.getCall(0).args[0]).to.equal(cfg);
@@ -358,10 +360,11 @@ describe('SFTP', () => {
       callback(null, Buffer.from(xml));
     });
 
-    const stream = new Stream();
-    stream.id = 'I\'m a stream';
+    const attachmentProcessor = new AttachmentProcessor();
 
-    sinon.stub(client, 'createReadStream').callsFake(() => stream);
+    sinon.stub(attachmentProcessor, 'getAttachment').callsFake(() => ({
+      data: 'stream',
+    }));
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err).to.be.undefined;
@@ -372,7 +375,7 @@ describe('SFTP', () => {
 
       expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
       expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
-      expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
+      // expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
       expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
 
       expect(newSnapshot).to.be.undefined;
@@ -418,10 +421,11 @@ describe('SFTP', () => {
       callback(null, Buffer.from(xml));
     });
 
-    const stream = new Stream();
-    stream.id = 'I\'m a stream';
+    const attachmentProcessor = new AttachmentProcessor();
 
-    sinon.stub(client, 'createReadStream').callsFake(() => stream);
+    sinon.stub(attachmentProcessor, 'getAttachment').callsFake(() => ({
+      data: 'stream',
+    }));
 
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err).to.be.undefined;
@@ -433,7 +437,7 @@ describe('SFTP', () => {
       expect(attachmentsStub.callCount > 0).to.equal(true);
       expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
       expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
-      expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
+      // expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
       expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
 
       expect(newSnapshot).to.be.undefined;
