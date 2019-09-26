@@ -76,6 +76,5 @@ describe('SFTP integration test - upload then download', function () {
     await client.delete(`${cfg.directory}logo.svg`);
     await client.rmdir(cfg.directory, false);
     client.end();
-    upload.shutdown();
   });
 });
