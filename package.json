@@ -21,7 +21,6 @@
     "elasticio-sailor-nodejs": "2.2.5",
     "lodash": "4.17.11",
     "request": "2.88.0",
-    "ssh2": "0.8.4",
     "ssh2-sftp-client": "4.1.0"
   },
   "engines": {
