@@ -1,7 +1,8 @@
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const Client = require('ssh2-sftp-client');
+const bunyan = require('bunyan');
 const fs = require('fs');
+const Sftp = require('../lib/Sftp');
 const upload = require('../lib/actions/upload');
 
 class TestEmitter extends EventEmitter {
@@ -23,34 +24,26 @@ class TestEmitter extends EventEmitter {
 // eslint-disable-next-line func-names
 describe('SFTP integration test - upload then download', function () {
   this.timeout(20000000);
-  let host;
-  let username;
-  let password;
-  let port;
   let cfg;
+  let sftp;
   before(() => {
     if (fs.existsSync('.env')) {
       // eslint-disable-next-line global-require
       require('dotenv').config();
     }
     if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
-    host = process.env.HOSTNAME;
-    username = process.env.USER;
-    password = process.env.PASSWORD;
-    port = process.env.PORT;
-  });
-  const client = new Client();
-
-  it('upload attachment', async () => {
     cfg = {
-      host,
-      username,
-      password,
-      port,
+      host: process.env.HOSTNAME,
+      username: process.env.USER,
+      password: process.env.PASSWORD,
+      port: process.env.PORT,
       directory: `/home/eiotesti/www/integration-test/test-${Math.floor(Math.random() * 10000)}/`,
     };
-    await upload.init(cfg);
-    await client.connect(cfg);
+  });
+
+  it('upload attachment', async () => {
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
 
     const sender = new TestEmitter();
     const msg = {
@@ -66,15 +59,15 @@ describe('SFTP integration test - upload then download', function () {
     expect(sender.data.length).to.equal(1);
     expect(sender.data[0].body.results).to.be.an('array');
     expect(sender.data[0].body.results.length).to.equal(1);
-    const list = await client.list(cfg.directory);
+    const list = await sftp.list(cfg.directory);
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
   });
 
   after(async () => {
-    await client.delete(`${cfg.directory}logo.svg`);
-    await client.rmdir(cfg.directory, false);
-    client.end();
+    await sftp.delete(`${cfg.directory}logo.svg`);
+    await sftp.rmdir(cfg.directory, false);
+    await sftp.end();
   });
 });
