@@ -2,7 +2,7 @@ const fs = require('fs');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { readFile } = require('./utils/readFile');
-const sftp = require('../lib/sftp.js');
+const sftp = require('../lib/Sftp');
 
 describe('SFTP', () => {
   afterEach(() => {

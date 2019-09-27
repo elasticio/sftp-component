@@ -3,10 +3,10 @@ const { AttachmentProcessor } = require('@elastic.io/component-commons-library')
 const { EventEmitter } = require('events');
 const sinon = require('sinon');
 const { expect } = require('chai');
-const attachments = require('../../lib/attachments.js');
+const attachments = require('../../lib/attachments');
 const readFile = require('../utils/readFile');
-const sftp = require('../../lib/sftp.js');
-const component = require('../../lib/triggers/read.js');
+const sftp = require('../../lib/Sftp');
+const component = require('../../lib/triggers/read');
 
 describe('SFTP', () => {
   let closeStub;
