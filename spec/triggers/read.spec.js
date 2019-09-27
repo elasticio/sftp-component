@@ -1,15 +1,27 @@
 /* eslint-disable no-unused-expressions */
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const { EventEmitter } = require('events');
+const bunyan = require('bunyan');
+const fs = require('fs');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const attachments = require('../../lib/attachments');
 const readFile = require('../utils/readFile');
-const sftp = require('../../lib/Sftp');
+const Sftp = require('../../lib/Sftp');
 const component = require('../../lib/triggers/read');
 
 describe('SFTP', () => {
-  let closeStub;
+  if (fs.existsSync('.env')) {
+    // eslint-disable-next-line global-require
+    require('dotenv').config();
+  }
+  const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), {
+    host: process.env.HOSTNAME,
+    port: process.env.PORT,
+    username: process.env.USER,
+    password: process.env.PASSWORD,
+  });
+  let endStub;
   let connectStub;
   let attachmentsStub;
   let opendirStub;
@@ -24,15 +36,12 @@ describe('SFTP', () => {
   };
 
   let files = [];
-  let createClientError = null;
   let opendirError = null;
   let readDirError = null;
   let readdirCalled = false;
 
   beforeEach(() => {
-    connectStub = sinon.stub(sftp, 'connect').callsFake((cfg, callback) => {
-      callback(createClientError, client);
-    });
+    connectStub = sinon.stub(sftp, 'connect').callsFake();
 
     opendirStub = sinon.stub(client, 'opendir').callsFake((dir, callback) => {
       callback(opendirError);
@@ -46,7 +55,7 @@ describe('SFTP', () => {
       callback(readDirError, result);
     });
 
-    closeStub = sinon.stub(sftp, 'close').callsFake(() => { });
+    endStub = sinon.stub(sftp, 'end').callsFake();
 
     attachmentsStub = sinon.stub(attachments, 'addAttachment').callsFake((msg, fileName) => {
       // eslint-disable-next-line no-param-reassign
@@ -67,7 +76,6 @@ describe('SFTP', () => {
 
   afterEach(() => {
     files = [];
-    createClientError = null;
     opendirError = null;
     readDirError = null;
     readdirCalled = false;
@@ -101,9 +109,6 @@ describe('SFTP', () => {
     const msg = {};
     const cfg = {};
 
-
-    createClientError = new Error('Ouch!');
-
     runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
       expect(err.message).to.equal('Ouch!');
 
@@ -111,7 +116,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount).to.equal(0);
+      expect(endStub.callCount).to.equal(0);
     });
   });
 
@@ -128,7 +133,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount).to.equal(1);
+      expect(endStub.callCount).to.equal(1);
     });
   });
 
@@ -145,7 +150,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -166,7 +171,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -183,7 +188,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -203,7 +208,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -231,7 +236,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -257,7 +262,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -284,7 +289,7 @@ describe('SFTP', () => {
 
       expect(newSnapshot).to.be.undefined;
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
     });
   });
 
@@ -330,7 +335,7 @@ describe('SFTP', () => {
       expect(newSnapshot).to.be.undefined;
       expect(connectStub.getCall(0).args[0]).to.equal(cfg);
       expect(opendirStub.getCall(0).args[0]).to.equal('/');
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
       expect(renameStub.callCount > 0).to.equal(true);
 
       const renameCall = renameStub.getCall(0);
@@ -383,7 +388,7 @@ describe('SFTP', () => {
       expect(connectStub.getCall(0).args[0]).to.equal(cfg);
 
       expect(opendirStub.getCall(0).args[0]).to.equal('/');
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
 
       expect(mkdirStub.getCall(0).args[0]).to.equal('/.elasticio_processed');
       expect(mkdirStub.getCall(0).args[1]).to.deep.equal({
@@ -446,7 +451,7 @@ describe('SFTP', () => {
 
       expect(opendirStub.getCall(0).args[0]).to.equal('/verylongdirectoryname');
 
-      expect(closeStub.callCount > 0).to.equal(true);
+      expect(endStub.callCount > 0).to.equal(true);
 
       expect(mkdirStub.getCall(0).args[0]).to.equal('/verylongdirectoryname/.elasticio_processed');
       expect(mkdirStub.getCall(0).args[1]).to.deep.equal({

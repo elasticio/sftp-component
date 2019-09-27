@@ -1,8 +1,9 @@
+const bunyan = require('bunyan');
 const fs = require('fs');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { readFile } = require('./utils/readFile');
-const sftp = require('../lib/Sftp');
+const Sftp = require('../lib/Sftp');
 
 describe('SFTP', () => {
   afterEach(() => {
@@ -12,27 +13,31 @@ describe('SFTP', () => {
   it('create connection options', async () => {
     const cfg = {
       host: 'localhost',
-      port: '22',
+      port: 22,
       username: 'root',
       password: 'secret',
     };
+    const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
 
-    const opts = await sftp.createConnectionOptions(cfg);
+    const opts = await sftp.createConnectionOptions();
     expect(opts).to.deep.equal({
       host: 'localhost',
       port: 22,
       username: 'root',
       password: 'secret',
+      retries: 1,
+      readyTimeout: 10000,
     });
   });
 
   it('create connection options with protocol', async () => {
     const cfg = {
       host: 'localhost',
-      port: '88',
+      port: 88,
       username: 'root',
       password: 'secret',
     };
+    const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
 
     const opts = await sftp.createConnectionOptions(cfg);
     expect(opts).to.deep.equal({
@@ -40,6 +45,8 @@ describe('SFTP', () => {
       port: 88,
       username: 'root',
       password: 'secret',
+      retries: 1,
+      readyTimeout: 10000,
     });
   });
 
@@ -50,6 +57,7 @@ describe('SFTP', () => {
       username: 'root',
       password: 'secret',
     };
+    const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
 
     const spy = sinon.spy(sftp, 'createConnectionOptions');
 
