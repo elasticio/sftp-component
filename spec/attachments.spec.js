@@ -15,7 +15,7 @@ const name = 'file';
 const stream = new Stream();
 const contentLength = 10;
 
-describe('These are my attachment tests', () => {
+describe('Attachment tests', () => {
   afterEach(() => {
     uploadAttachment.restore();
     self.emit.resetHistory();
