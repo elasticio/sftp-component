@@ -15,19 +15,17 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@elastic.io/component-commons-library": "0.0.5-dev.2",
-    "async": "2.6.2",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.2.5",
-    "lodash": "4.17.11",
     "request": "2.88.0",
-    "ssh2": "0.8.4",
     "ssh2-sftp-client": "4.1.0"
   },
   "engines": {
     "node": ">=10"
   },
   "devDependencies": {
+    "bunyan": "1.8.12",
     "chai": "4.2.0",
     "dotenv": "8.1.0",
     "eslint": "6.4.0",

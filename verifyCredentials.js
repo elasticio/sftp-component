@@ -1,16 +1,16 @@
-const sftp = require('./lib/sftp.js');
+const { Logger } = require('@elastic.io/component-commons-library');
+const Sftp = require('./lib/Sftp');
 
-function verify(cfg, cb) {
-  sftp.connect(cfg, (err, client) => {
-    if (err) {
-      cb(err, { verified: false });
-      return { verified: false };
-    }
-
-    sftp.close(client);
-    cb(null, { verified: true });
-    return { verified: true };
-  });
-}
-
-module.exports = verify;
+module.exports = async function verify(cfg, cb) {
+  const logger = Logger.getLogger();
+  try {
+    const sftp = new Sftp(logger, cfg);
+    await sftp.connect();
+    await sftp.end();
+    logger.info('SFTP verified');
+    return cb(null, { verified: true });
+  } catch (err) {
+    logger.error(err);
+    return cb(err, { verified: false });
+  }
+};

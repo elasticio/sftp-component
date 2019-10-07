@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const ip = require('../lib/ip.js');
+const ip = require('../lib/ip');
 
 describe('SFTP IP', async () => {
   it('IPv4', async () => {
