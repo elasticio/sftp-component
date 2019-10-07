@@ -4,9 +4,12 @@ const bunyan = require('bunyan');
 const fs = require('fs');
 const Sftp = require('../lib/Sftp');
 const upload = require('../lib/actions/upload');
+const read = require('../lib/triggers/read');
+
+const PROCESSED_FOLDER_NAME = '.elasticio_processed';
 
 class TestEmitter extends EventEmitter {
-  constructor(done) {
+  constructor() {
     super();
     this.data = [];
     this.end = 0;
@@ -16,7 +19,6 @@ class TestEmitter extends EventEmitter {
     this.on('error', (value) => this.error.push(value));
     this.on('end', () => {
       this.end += 1;
-      done();
     });
   }
 }
@@ -24,24 +26,35 @@ class TestEmitter extends EventEmitter {
 // eslint-disable-next-line func-names
 describe('SFTP integration test - upload then download', function () {
   this.timeout(20000000);
-  let cfg;
   let sftp;
+  let host;
+  let username;
+  let password;
+  let port;
+  let directory;
+  const testNumber = Math.floor(Math.random() * 10000);
+
   before(() => {
     if (fs.existsSync('.env')) {
       // eslint-disable-next-line global-require
       require('dotenv').config();
     }
     if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
-    cfg = {
-      host: process.env.HOSTNAME,
-      username: process.env.USER,
-      password: process.env.PASSWORD,
-      port: process.env.PORT,
-      directory: `/home/eiotesti/www/integration-test/test-${Math.floor(Math.random() * 10000)}/`,
-    };
+    host = process.env.HOSTNAME;
+    username = process.env.USER;
+    password = process.env.PASSWORD;
+    port = process.env.PORT;
+    directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
   });
 
-  it('upload attachment', async () => {
+  it('Uploads attachment', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
     sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
     await sftp.connect();
 
@@ -54,8 +67,8 @@ describe('SFTP integration test - upload then download', function () {
         },
       },
     };
-
     await upload.process.call(sender, msg, cfg);
+
     expect(sender.data.length).to.equal(1);
     expect(sender.data[0].body.results).to.be.an('array');
     expect(sender.data[0].body.results.length).to.equal(1);
@@ -63,11 +76,95 @@ describe('SFTP integration test - upload then download', function () {
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
-  });
-
-  after(async () => {
     await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
+  });
+
+  it('Uploads and reads attachments', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: {},
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+        'logo2.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const receiver = new TestEmitter();
+    const msg = {};
+    await read.process.call(receiver, msg, cfg);
+    expect(receiver.data.length).to.equal(2);
+    expect(receiver.data[0].body.filename).to.equal('logo.svg');
+    expect(receiver.data[0].body.size).to.equal(4379);
+    expect(receiver.data[1].body.filename).to.equal('logo2.svg');
+    expect(receiver.data[1].body.size).to.equal(4379);
+    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
+    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
+    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
+    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await sftp.rmdir(cfg.directory, false);
+  });
+
+  it('Uploads, reads, and filters files by pattern match', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+      pattern: 'pattern',
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: {},
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+        'pattern.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const list = await sftp.list(cfg.directory);
+    expect(list.length).to.equal(2);
+    expect(list[0].name).to.equal('logo.svg');
+    expect(list[0].size).to.equal(4379);
+    expect(list[1].name).to.equal('pattern.svg');
+    expect(list[1].size).to.equal(4379);
+
+    const receiver = new TestEmitter();
+    const msg = {};
+    await read.process.call(receiver, msg, cfg);
+
+    expect(receiver.data.length).to.equal(1);
+    expect(receiver.data[0].body.filename).to.equal('pattern.svg');
+    expect(receiver.data[0].body.size).to.equal(4379);
+    await sftp.delete(`${cfg.directory}logo.svg`);
+    const patternFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${patternFilename}`);
+    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await sftp.rmdir(cfg.directory, false);
+  });
+
+  afterEach(async () => {
     await sftp.end();
   });
 });
