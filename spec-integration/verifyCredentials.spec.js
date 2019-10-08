@@ -1,19 +1,15 @@
 /* eslint-disable no-unused-expressions */
 const bunyan = require('bunyan');
 const { expect } = require('chai');
-const fs = require('fs');
 const sinon = require('sinon');
 const verifyCredentials = require('../verifyCredentials');
+require('dotenv').config();
 
 describe('verifyCredentials Test', () => {
   const spy = sinon.spy();
   let credentials;
 
   before(() => {
-    if (fs.existsSync('.env')) {
-      // eslint-disable-next-line global-require
-      require('dotenv').config();
-    }
     credentials = {
       host: process.env.HOSTNAME,
       port: process.env.PORT,

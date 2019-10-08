@@ -2,19 +2,15 @@
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const { EventEmitter } = require('events');
 const bunyan = require('bunyan');
-const fs = require('fs');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const attachments = require('../../lib/attachments');
 const readFile = require('../utils/readFile');
 const Sftp = require('../../lib/Sftp');
 const component = require('../../lib/triggers/read');
+require('dotenv').config();
 
 describe('SFTP', () => {
-  if (fs.existsSync('.env')) {
-    // eslint-disable-next-line global-require
-    require('dotenv').config();
-  }
   const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), {
     host: process.env.HOSTNAME,
     port: process.env.PORT,

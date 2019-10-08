@@ -1,10 +1,10 @@
 const { expect } = require('chai');
 const EventEmitter = require('events');
 const bunyan = require('bunyan');
-const fs = require('fs');
 const Sftp = require('../lib/Sftp');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
+require('dotenv').config();
 
 const PROCESSED_FOLDER_NAME = '.elasticio_processed';
 
@@ -35,10 +35,6 @@ describe('SFTP integration test - upload then download', function () {
   const testNumber = Math.floor(Math.random() * 10000);
 
   before(() => {
-    if (fs.existsSync('.env')) {
-      // eslint-disable-next-line global-require
-      require('dotenv').config();
-    }
     if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
     host = process.env.HOSTNAME;
     username = process.env.USER;
