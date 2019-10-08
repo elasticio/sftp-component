@@ -84,6 +84,7 @@ describe('SFTP', () => {
     let newMsg; let newSnapshot; let err;
     const emitter = new EventEmitter();
 
+    emitter.logger = bunyan.createLogger({ name: 'dummy' });
     emitter
       .on('data', (data) => {
         newMsg = data;

@@ -14,6 +14,7 @@ class TestEmitter extends EventEmitter {
     this.data = [];
     this.end = 0;
     this.error = [];
+    this.logger = bunyan.createLogger({ name: 'dummy' });
 
     this.on('data', (value) => this.data.push(value));
     this.on('error', (value) => this.error.push(value));

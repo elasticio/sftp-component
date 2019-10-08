@@ -17,7 +17,7 @@
     "@elastic.io/component-commons-library": "0.0.6",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
-    "elasticio-sailor-nodejs": "2.2.5",
+    "elasticio-sailor-nodejs": "2.5.1",
     "ssh2-sftp-client": "4.1.0"
   },
   "engines": {
