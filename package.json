@@ -14,7 +14,7 @@
   "author": "elastic.io GmbH",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@elastic.io/component-commons-library": "0.0.5-dev.2",
+    "@elastic.io/component-commons-library": "0.0.6",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.2.5",
