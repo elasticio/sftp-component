@@ -1,60 +1,50 @@
 # SFTP Component [![CircleCI](https://circleci.com/gh/elasticio/sftp-component.svg?style=svg)](https://circleci.com/gh/elasticio/sftp-component)
-## Table of Contents
 
+## Table of Contents
 * [General information](#general-information)
    * [Description and Purpose](#description-and-purpose)
-   * [How it works](#how-it-works)
 * [Credentials](#credentials)
+     * [User Name](#user-name)
+     * [Password](#password)
+     * [Host](#host)
+     * [Port](#port)
 * [Triggers](#triggers)
    * [Read](#read)
 * [Actions](#actions)
    * [Upload](#upload)
-* [Additional info](#additional-info)
-* [Other Limitations](#other-limitations)
-* [API and Documentation links](#api-and-documentation-links)
+* [Known limitations](#known-limitations)
+* [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
-## General information
+## General Information
+
 ### Description and Purpose
+
 This component creates a connection to an SFTP server to read and upload files.
 
-### How it works
-In this component you have the following trigger:
-* READ: read takes a directory path and optional pattern match to file name, and will return matching files in said directory
-The following action is available:
-* UPLOAD: upload a file to a given directory location
-
-### Credentials
-
-The following are the credential fields are used for SFTP:
+## Credentials
+### User Name
+Username for SFTP server
+### Password
+Password for SFTP server
+### Host
+Host name of SFTP server
+### Port
+Optional, port of SFTP server. Defaults to 22 if not set.
 
 ![image](https://user-images.githubusercontent.com/35310862/65412296-3a818600-ddef-11e9-9064-8b9db7a650d5.png)
 
-The port will default to 22 if not set.
-
 ## Triggers
+
 ### Read
+
 The following configuration fields are available:
-* DIRECTORY: The directory path of the files you would like to read from
-* PATTERN: Optional pattern match for file name
-The Read trigger will return the files that match the pattern, or all files in the directory if no pattern is given.
+* **Directory**: The directory of the files to read from.
+* **Pattern**: Optional regex pattern for file names. If no pattern is given, no matching is done.
 
-#### Known Limitations
-The directories do not currently have an option to be parsed through recursively
-
-## Actions
-### Upload
-The following configuration fields are available:
-* DIRECTORY: The directory path to where you want to upload the file
-The Upload action will upload a file into the given directory.
-
-#### Known Limitations
-If the directory path does not exist, it will create it, at the risk of possibly overwriting any files that may have the same name.
-
-## Additional info
-After file is found on SFTP it does following:
- * It moves the file to the (hidden) ``.elasticio_processed`` directory
- * It pulls it and upload (stream) the file to the attachment storage (aka. steward)
- * After upload is completed, READ-URL of the file will be used to generate one message with the content like below:
+After a file is found:
+ * It is moved to the (hidden) directory `.elasticio_processed`
+ * It is pulled and uploaded (streamed) to the attachment storage (a.k.a. steward)
+ * After the upload, the READ-URL of the file will be used to generate a message with content like below:
 
 ```json
 {
@@ -71,22 +61,24 @@ After file is found on SFTP it does following:
 }
 ```
 
-next component may just read from the URL in attachment in oder to get the memory efficient way to read/parse data. 
-Please note that if multiple files are found, SFTP component will generate one message per file.
+The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. Please note that if multiple files are found, SFTP component will generate one message per file.
 
-> NOTE: you may need to consider cleaning up the ``.elasticio_processed`` directory manually
+* Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
-## Other Limitations
+## Actions
 
-Currently the maximum file size that is accepted by SFTP component is limited to
-100 MiB, see
-[here](https://github.com/elasticio/sftp-component/blob/master/lib/triggers/read.js#L8)
-for more information
+### Upload
 
-Attachments limitations:
+The following configuration fields are available:
+|* **Directory**: The directory where the file will be uploaded to.
 
-1. Maximal possible size for an attachment is 100 MiB.
-2. Attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
+* Note: if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
 
-## Documentation links
-Uses the [ssh2-sftp-client](https://www.npmjs.com/package/ssh2-sftp-client)
+## Known limitations
+
+* The maximum file size accepted by the SFTP component is limited to 100 MiB (Mebibytes)
+* The attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
+
+## SSH2 SFTP Client API and Documentation links
+
+The SFTP component uses [ssh2-sftp-client](https://www.npmjs.com/package/ssh2-sftp-client).
