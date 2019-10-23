@@ -1,81 +1,88 @@
 {
-    "title": "SFTP",
-    "description": "Provides file access and transfer using SSH File Transfer Protocol",
-    "credentials" : {
-        "fields": {
-            "host":{
-                "viewClass":"TextFieldView",
-                "label":"Host",
-                "required":true,
-                "placeholder":"Name of the host"
-            },
-            "username": {
-                "viewClass": "TextFieldView",
-                "label": "User Name",
-                "required": true,
-                "placeholder": "Paste your SFTP user name"
-            },
-            "password": {
-                "viewClass": "PasswordFieldView",
-                "label": "Password",
-                "required": true,
-                "placeholder": "Paste your SFTP password"
-            }
-        }
-    },
-    "actions": {
-        "upload": {
-            "main": "./lib/actions/upload.js",
-            "title": "Upload files",
-            "description": "Upload files (attachments) to SFTP directory",
-            "fields": {
-                "directory":{
-                    "viewClass":"TextFieldView",
-                    "label":"Directory Name",
-                    "required":true,
-                    "placeholder":"/foo/bar",
-                    "note": "Directory will be created if not exists, attachments with the same name would be overwritten"
-                }
-            }
-        }
-    },
-    "triggers": {
-        "read": {
-            "main": "./lib/triggers/read.js",
-            "title": "Read files",
-            "type": "polling",
-            "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
-            "fields":{
-                "directory":{
-                    "viewClass":"TextFieldView",
-                    "label":"Directory Name",
-                    "required":true,
-                    "placeholder":"Directory"
-                },
-                "pattern":{
-                    "viewClass":"TextFieldView",
-                    "label":"Pattern to Match Files",
-                    "required":false,
-                    "placeholder":"Pattern"
-                }
-            },
-            "metadata": {
-                "out" : {
-                    "type": "object",
-                    "properties" : {
-                        "filename" : {
-                            "title": "File Name",
-                            "type": "string",
-                            "required": true
-                        },
-                        "size" : {
-                            "title": "File Size",
-                            "type": "number",
-                            "required": true
-                        }
-                    }
-                }
-            }
-        }
+  "title": "SFTP",
+  "buildType": "docker",
+  "description": "Provides file access and transfer using SSH File Transfer Protocol",
+  "credentials": {
+    "fields": {
+      "host": {
+        "viewClass": "TextFieldView",
+        "label": "Host",
+        "required": true,
+        "placeholder": "Name of the host"
+      },
+      "port": {
+        "viewClass": "TextFieldView",
+        "label": "Port",
+        "placeholder": "Port of the host",
+        "note": "If no port is provided, 22 will be used"
+      },
+      "username": {
+        "viewClass": "TextFieldView",
+        "label": "User Name",
+        "required": true,
+        "placeholder": "Paste your SFTP user name"
+      },
+      "password": {
+        "viewClass": "PasswordFieldView",
+        "label": "Password",
+        "required": true,
+        "placeholder": "Paste your SFTP password"
+      }
     }
+  },
+  "actions": {
+    "upload": {
+      "main": "./lib/actions/upload.js",
+      "title": "Upload files",
+      "description": "Upload files (attachments) to SFTP directory",
+      "fields": {
+        "directory": {
+          "viewClass": "TextFieldView",
+          "label": "Directory Name",
+          "required": true,
+          "placeholder": "/foo/bar",
+          "note": "Directory will be created if not exists, attachments with the same name would be overwritten"
+        }
+      }
+    }
+  },
+  "triggers": {
+    "read": {
+      "main": "./lib/triggers/read.js",
+      "title": "Read files",
+      "type": "polling",
+      "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
+      "fields": {
+        "directory": {
+          "viewClass": "TextFieldView",
+          "label": "Directory Name",
+          "required": true,
+          "placeholder": "Directory"
+        },
+        "pattern": {
+          "viewClass": "TextFieldView",
+          "label": "Pattern to Match Files",
+          "required": false,
+          "placeholder": "Pattern"
+        }
+      },
+      "metadata": {
+        "out": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "title": "File Name",
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            }
+          }
+        }
+      }
+    }
+  }
 }

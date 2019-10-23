@@ -1,64 +1,19 @@
-var ip = require('../lib/ip.js');
+const { expect } = require('chai');
+const ip = require('../lib/ip');
 
-describe("SFTP IP", function () {
+describe('SFTP IP', async () => {
+  it('IPv4', async () => {
+    const result = await ip.resolve('127.0.0.1');
+    expect(result).to.deep.equal(['127.0.0.1', 4]);
+  });
 
-    it('IPv4', function () {
+  it('IPv6', async () => {
+    const result = await ip.resolve('0:0:0:0:0:0:0:1');
+    expect(result).to.deep.equal(['0:0:0:0:0:0:0:1', 6]);
+  });
 
-        var result;
-
-        runs(function () {
-            ip.resolve("127.0.0.1").then(function(r) {
-                result = r;
-            });
-        });
-
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 150);
-
-        runs(function () {
-            expect(result).toEqual([ '127.0.0.1', 4 ]);
-        });
-
-    });
-
-    it('IPv6', function () {
-
-        var result;
-
-        runs(function () {
-            ip.resolve("0:0:0:0:0:0:0:1").then(function(r) {
-                result = r;
-            });
-        });
-
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 750);
-
-        runs(function () {
-            expect(result).toEqual([ '0:0:0:0:0:0:0:1', 6 ]);
-        });
-
-    });
-
-    it('Host', function () {
-
-        var result;
-
-        runs(function () {
-            ip.resolve("localhost").then(function(r) {
-                result = r;
-            }).done();
-        });
-
-        waitsFor(function () {
-            return result;
-        }, "Promise must have returned", 5000);
-
-        runs(function () {
-            expect(result).toEqual([ '127.0.0.1', 4 ]);
-        });
-
-    });
+  it('Host', async () => {
+    const result = await ip.resolve('localhost');
+    expect(result).to.deep.equal(['127.0.0.1', 4]);
+  });
 });

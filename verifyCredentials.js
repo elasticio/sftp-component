@@ -1,21 +1,15 @@
-var sftp = require("./lib/sftp.js");
+const Sftp = require('./lib/Sftp');
 
-module.exports = verify;
-
-function verify(cfg, cb) {
-
-    console.log("Verifying the SFTP account");
-
-    sftp.connect(cfg, function (err, client) {
-
-        if (err) {
-            return cb(err);
-        }
-
-        sftp.close(client);
-
-        cb(null, {verified: true});
-
-        console.log("SFTP account verified successfully");
-    });
-}
+module.exports = async function verify(cfg, cb) {
+  try {
+    const sftp = new Sftp(this.logger, cfg);
+    await sftp.connect();
+    await sftp.end();
+    this.logger.info('SFTP verified');
+    return cb(null, { verified: true });
+  } catch (err) {
+    this.logger.error('SFTP failed to verify');
+    this.logger.error(err);
+    return cb(err, { verified: false });
+  }
+};
