@@ -33,8 +33,8 @@
   "actions": {
     "upload": {
       "main": "./lib/actions/upload.js",
-      "title": "Upload files",
-      "description": "Upload files (attachments) to SFTP directory",
+      "title": "Upload files from attachments.",
+      "description": "Upload incoming files (attachments) to SFTP directory. Manipulation of the file names is not possible.",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -47,7 +47,7 @@
     },
     "upsertFile": {
       "main": "./lib/actions/upsertFile.js",
-      "title": "Upsert Object",
+      "title": "Upsert File",
       "description": "Given an attachment URL and a filename, store the contents of the attachment in the file.",
       "fields": {
         "updateBehavior": {
