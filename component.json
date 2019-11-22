@@ -44,6 +44,46 @@
           "note": "Directory will be created if not exists, attachments with the same name would be overwritten"
         }
       }
+    },
+    "upsertFile": {
+      "main": "./lib/actions/upsertFile.js",
+      "title": "Upsert Object",
+      "description": "Given an attachment URL and a filename, store the contents of the attachment in the file.",
+      "fields": {
+        "updateBehavior": {
+          "label": "Behavior When File Already Exists",
+          "viewClass": "SelectView",
+          "required": true,
+          "prompt": "Select a Behavior",
+          "model": {
+            "error": "Throw an Error",
+            "overwrite": "Overwrite the File",
+            "append": "Append the File Contents"
+          }
+        }
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "required": true,
+          "properties": {
+            "filename": {
+              "title": "File Name and Path",
+              "type": "string",
+              "required": true
+            },
+            "attachmentUrl": {
+              "title": "Attachment URL",
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "required": true
+        }
+      }
     }
   },
   "triggers": {
