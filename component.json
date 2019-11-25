@@ -43,6 +43,53 @@
           "placeholder": "/foo/bar",
           "note": "Directory will be created if not exists, attachments with the same name would be overwritten"
         }
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "title": "File Name",
+              "type": "string",
+              "required": false
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "title": "Result",
+              "type": "object",
+              "required": true,
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "attachment": {
+                        "title": "Attachment Name",
+                        "type": "string",
+                        "required": true
+                      },
+                      "uploadedOn": {
+                        "title": "Uploaded on",
+                        "type": "string",
+                        "required": true
+                      },
+                      "fileName": {
+                        "title": "File Name",
+                        "type": "string",
+                        "required": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
