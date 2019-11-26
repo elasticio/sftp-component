@@ -36,9 +36,9 @@ describe('SFTP integration test - upload then download', function () {
   const testNumber = Math.floor(Math.random() * 10000);
 
   before(() => {
-    if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
-    host = process.env.HOSTNAME;
-    username = process.env.USER;
+    if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
+    host = process.env.SFTP_HOSTNAME;
+    username = process.env.USERNAME;
     password = process.env.PASSWORD;
     port = process.env.PORT;
     directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;

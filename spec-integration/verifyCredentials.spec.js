@@ -13,9 +13,9 @@ describe('verifyCredentials', function () {
 
   before(() => {
     credentials = {
-      host: process.env.HOSTNAME,
+      host: process.env.SFTP_HOSTNAME,
       port: Number(process.env.PORT),
-      username: process.env.USER,
+      username: process.env.USERNAME,
       password: process.env.PASSWORD,
     };
   });
