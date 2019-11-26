@@ -5,15 +5,17 @@ const sinon = require('sinon');
 const verifyCredentials = require('../verifyCredentials');
 require('dotenv').config();
 
-describe('verifyCredentials', () => {
+describe('verifyCredentials', function () {
+  this.timeout(100000);
+
   const spy = sinon.spy();
   let credentials;
 
   before(() => {
     credentials = {
-      host: process.env.HOSTNAME,
+      host: process.env.SFTP_HOSTNAME,
       port: Number(process.env.PORT),
-      username: process.env.USER,
+      username: process.env.USERNAME,
       password: process.env.PASSWORD,
     };
   });
