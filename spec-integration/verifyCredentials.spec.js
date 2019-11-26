@@ -6,7 +6,7 @@ const verifyCredentials = require('../verifyCredentials');
 require('dotenv').config();
 
 describe('verifyCredentials', function () {
-  this.timeout(10000);
+  this.timeout(100000);
 
   const spy = sinon.spy();
   let credentials;
