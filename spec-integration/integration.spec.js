@@ -128,7 +128,7 @@ describe('SFTP integration test - upload then download', function () {
     await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
-      body: {},
+      body: { filename: 'custom.svg' },
       attachments: {
         'logo.svg': {
           url: 'https://app.elastic.io/img/logo.svg',
@@ -140,7 +140,7 @@ describe('SFTP integration test - upload then download', function () {
     }, cfg);
 
     const receiver = new TestEmitter();
-    const msg = { body: { filename: 'custom.svg' } };
+    const msg = {};
     await read.process.call(receiver, msg, cfg);
     expect(receiver.data.length).to.equal(2);
     expect(receiver.data[0].body.filename).to.equal('custom_logo.svg');
