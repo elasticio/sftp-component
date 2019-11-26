@@ -76,7 +76,7 @@ The following configuration fields are available:
 
 Input metadata:
 
-- **Filename**: Custom name for uploadad file.
+- **Filename**: Custom name for uploaded file.
 
 ## Known limitations
 
