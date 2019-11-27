@@ -91,6 +91,41 @@
           }
         }
       }
+    },
+    "delete": {
+      "main": "./lib/actions/delete.js",
+      "title": "Delete files",
+      "description": "Delete file by name in provided package",
+      "fields": {
+        "directory": {
+          "viewClass": "TextFieldView",
+          "label": "Directory Name",
+          "required": true,
+          "placeholder": "/foo/bar"
+        }
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "title": "File Name",
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "title": "File Name",
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      }
     }
   },
   "triggers": {
