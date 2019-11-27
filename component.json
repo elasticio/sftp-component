@@ -94,8 +94,8 @@
     },
     "delete": {
       "main": "./lib/actions/delete.js",
-      "title": "Delete files",
-      "description": "Delete file by name in provided package",
+      "title": "Delete file",
+      "description": "Delete file by name in provided path",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
