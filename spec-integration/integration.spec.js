@@ -198,8 +198,8 @@ describe('SFTP integration test - upload then download', function () {
     const deleteResult2 = await deleteAction.process.call(receiver,
       { body: { filename: logo2Filename } }, upgradedCfg);
 
-    expect(deleteResult.body.filename).to.equal('custom_logo.svg');
-    expect(deleteResult2.body.filename).to.equal('custom_logo2.svg');
+    expect(deleteResult.body.id).to.equal('custom_logo.svg');
+    expect(deleteResult2.body.id).to.equal('custom_logo2.svg');
 
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);

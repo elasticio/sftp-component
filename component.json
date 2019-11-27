@@ -118,7 +118,7 @@
         "out": {
           "type": "object",
           "properties": {
-            "filename": {
+            "id": {
               "title": "File Name",
               "type": "string",
               "required": true
