@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const EventEmitter = require('events');
 const bunyan = require('bunyan');
 const Sftp = require('../lib/Sftp');
+const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 require('dotenv').config();
@@ -151,6 +152,48 @@ describe('SFTP integration test - upload then download', function () {
     const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
     await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
     await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
+    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await sftp.rmdir(cfg.directory, false);
+  });
+
+  it('Uploads and deletes attachments with custom name', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: { filename: 'custom.svg' },
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+        'logo2.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const receiver = new TestEmitter();
+    const msg = {};
+    await read.process.call(receiver, msg, cfg);
+    expect(receiver.data.length).to.equal(2);
+    expect(receiver.data[0].body.filename).to.equal('custom_logo.svg');
+    expect(receiver.data[0].body.size).to.equal(4379);
+    expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
+    expect(receiver.data[1].body.size).to.equal(4379);
+
+    await deleteAction.process({ body: { filename: 'custom_logo.svg' } }, cfg);
+    await deleteAction.process({ body: { filename: 'custom_logo2.svg' } }, cfg);
+
+    expect(receiver.data[2].body.filename).to.equal('custom_logo.svg');
+    expect(receiver.data[3].body.filename).to.equal('custom_logo2.svg');
+
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);
   });
