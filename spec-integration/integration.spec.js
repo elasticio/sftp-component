@@ -156,7 +156,7 @@ describe('SFTP integration test - upload then download', function () {
     await sftp.rmdir(cfg.directory, false);
   });
 
-  it('Uploads and deletes attachments with custom name', async () => {
+  it('Uploads, read and deletes attachments with custom name', async () => {
     const cfg = {
       host,
       username,
@@ -188,8 +188,10 @@ describe('SFTP integration test - upload then download', function () {
     expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
 
-    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo.svg' } }, cfg);
-    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo2.svg' } }, cfg);
+    const upgadedCfg = JSON.parse(JSON.stringify(cfg));
+    upgadedCfg.directory = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
+    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo.svg' } }, upgadedCfg);
+    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo2.svg' } }, upgadedCfg);
 
     expect(receiver.data[2].body.filename).to.equal('custom_logo.svg');
     expect(receiver.data[3].body.filename).to.equal('custom_logo2.svg');
