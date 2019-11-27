@@ -188,8 +188,8 @@ describe('SFTP integration test - upload then download', function () {
     expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
 
-    await deleteAction.process({ body: { filename: 'custom_logo.svg' } }, cfg);
-    await deleteAction.process({ body: { filename: 'custom_logo2.svg' } }, cfg);
+    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo.svg' } }, cfg);
+    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo2.svg' } }, cfg);
 
     expect(receiver.data[2].body.filename).to.equal('custom_logo.svg');
     expect(receiver.data[3].body.filename).to.equal('custom_logo2.svg');
