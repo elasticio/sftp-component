@@ -188,13 +188,18 @@ describe('SFTP integration test - upload then download', function () {
     expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
 
-    const upgadedCfg = JSON.parse(JSON.stringify(cfg));
-    upgadedCfg.directory = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
-    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo.svg' } }, upgadedCfg);
-    await deleteAction.process.call(receiver, { body: { filename: 'custom_logo2.svg' } }, upgadedCfg);
+    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
 
-    expect(receiver.data[2].body.filename).to.equal('custom_logo.svg');
-    expect(receiver.data[3].body.filename).to.equal('custom_logo2.svg');
+    const upgradedCfg = JSON.parse(JSON.stringify(cfg));
+    upgradedCfg.directory = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
+    const deleteResult = await deleteAction.process.call(receiver,
+      { body: { filename: logoFilename } }, upgradedCfg);
+    const deleteResult2 = await deleteAction.process.call(receiver,
+      { body: { filename: logo2Filename } }, upgradedCfg);
+
+    expect(deleteResult.body.filename).to.equal('custom_logo.svg');
+    expect(deleteResult2.body.filename).to.equal('custom_logo2.svg');
 
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);
