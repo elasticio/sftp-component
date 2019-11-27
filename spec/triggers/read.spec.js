@@ -13,7 +13,7 @@ require('dotenv').config();
 describe('SFTP', () => {
   const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), {
     host: process.env.SFTP_HOSTNAME,
-    port: process.env.PORT,
+    port: Number(process.env.PORT),
     username: process.env.USERNAME,
     password: process.env.PASSWORD,
   });
