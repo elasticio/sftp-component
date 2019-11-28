@@ -159,9 +159,9 @@
           "label": "Number of search terms",
           "required": false,
           "placeholder": "0"
-        },
-        "dynamicMetadata": true
-      }
+        }
+      },
+      "dynamicMetadata": true
     }
   },
   "triggers": {
