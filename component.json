@@ -138,12 +138,6 @@
           "required": true,
           "placeholder": "/foo/bar"
         },
-        "numSearchTerms": {
-          "viewClass": "TextFieldView",
-          "label": "Number of search terms",
-          "required": false,
-          "placeholder": "0"
-        },
         "emitBehaviour": {
           "viewClass": "SelectView",
           "label": "Behavior",
@@ -159,6 +153,12 @@
           "label": "Max Result Size",
           "required": false,
           "placeholder": "Default: 250, maximum allowed number: 250. Works only with Fetch All behaviour."
+        },
+        "numSearchTerms": {
+          "viewClass": "TextFieldView",
+          "label": "Number of search terms",
+          "required": false,
+          "placeholder": "0"
         },
         "dynamicMetadata": true
       }
