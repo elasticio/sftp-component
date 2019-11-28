@@ -93,25 +93,60 @@
       }
     },
     "delete": {
-      "main": "./lib/actions/delete.js",
-      "title": "Delete file",
-      "description": "Delete file by name in provided path",
+      "main": "./lib/actions/lookupFiles.js",
+      "title": "Lookup files",
+      "description": "Load files from directory to attachments",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
           "label": "Directory Name",
           "required": true,
           "placeholder": "/foo/bar"
+        },
+        "numSearchTerms": {
+          "viewClass": "TextFieldView",
+          "label": "Number of search terms",
+          "required": false,
+          "placeholder": "0"
+        },
+        "emitBehaviour": {
+          "viewClass": "SelectView",
+          "label": "Behavior",
+          "required": true,
+          "model": {
+            "emitIndividually": "Emit Individually",
+            "fetchAll": "Fetch All"
+          },
+          "prompt": "Choose a Behavior type"
+        },
+        "maxResultSize": {
+          "viewClass": "TextFieldView",
+          "label": "Max Result Size",
+          "required": false,
+          "placeholder": "Default: 250, maximum allowed number: 250. Works only with Fetch All behaviour."
         }
       },
       "metadata": {
         "in": {
           "type": "object",
           "properties": {
-            "filename": {
-              "title": "File Name",
+            "fileName": {
+              "title": "File Name Mask",
               "type": "string",
-              "required": true
+              "required": true,
+              "default": "*"
+            },
+            "fileSize": {
+              "title": "File size",
+              "type": "string",
+              "required": true,
+              "default": "*"
+            },
+            "filename": {
+              "title": "File Name Mask",
+              "type": "string",
+              "required": true,
+              "default": "*"
             }
           }
         },
@@ -126,6 +161,30 @@
           }
         }
       }
+    },
+    "lookupObjects": {
+      "main": "./lib/actions/lookupObjects.js",
+      "title": "Lookup Objects",
+      "description": "Retrieves list of objects",
+      "fields": {
+        "behavior": {
+          "viewClass": "SelectView",
+          "label": "Behavior",
+          "required": true,
+          "model": {
+            "emitIndividually": "Emit Individually",
+            "fetchAll": "Fetch All"
+          },
+          "prompt": "Choose a Behavior type"
+        },
+        "maxSize": {
+          "viewClass": "TextFieldView",
+          "label": "Max Result Size",
+          "required": false,
+          "placeholder": "Default: 250, maximum allowed number: 250. Works only with Fetch All behaviour."
+        }
+      },
+      "dynamicMetadata": true
     }
   },
   "triggers": {
