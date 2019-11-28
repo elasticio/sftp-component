@@ -186,7 +186,7 @@
       },
       "metadata": {
         "out": {
-          "type": "object",
+          "type": "objectTrigger",
           "properties": {
             "filename": {
               "title": "File Name",
@@ -199,7 +199,7 @@
               "required": true
             }
           }
-        }
+        }Trigger
       }
     }
   }
