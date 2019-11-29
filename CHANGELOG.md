@@ -1,6 +1,7 @@
 # 1.1.0 (November 27, 2019)
 ## Actions
     * Add Delete Object action
+    * Add Get new abd updated files trigger
     * Add custom name for uploaded file
 # 1.0.0 (October 8, 2019)
     * Initial release

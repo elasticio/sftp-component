@@ -168,7 +168,7 @@
     },
     "pollingTrigger": {
       "main": "./lib/triggers/read.js",
-      "title": "Read files",
+      "title": "Get new abd updated files",
       "type": "polling",
       "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
       "fields": {
