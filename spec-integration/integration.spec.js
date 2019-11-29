@@ -263,6 +263,34 @@ describe('SFTP integration test', function () {
       filename = `${directory}test.file`;
     });
 
+    it('Relative Path Test Test', async () => {
+      const cfg = {
+        host,
+        username,
+        password,
+        port,
+        updateBehavior: 'error'
+      };
+
+      sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+      await sftp.connect();
+
+      const sender = new TestEmitter();
+      const msg = {
+        body: {
+          filename: filename.replace('/home/eiotesti/', './'),
+          attachmentUrl: attachmentUrl1,
+        },
+      };
+      const result = await upsertFile.process.call(sender, msg, cfg);
+
+      expect(result.body.size).to.equal(attachmentUrl1ContentSize);
+      const list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl1ContentSize);
+    });
+
 
     it('Error Mode', async () => {
       const cfg = {
