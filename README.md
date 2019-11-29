@@ -74,6 +74,10 @@ The following configuration fields are available:
 
 * Note: if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
 
+Input metadata:
+
+- **Filename**: Custom name for uploaded file.
+
 ## Known limitations
 
 * The maximum file size accepted by the SFTP component is limited to 100 MiB (Mebibytes)
