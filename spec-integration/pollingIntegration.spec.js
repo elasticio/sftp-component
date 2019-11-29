@@ -45,10 +45,10 @@ describe('SFTP integration test - polling', function () {
 
   it('Uploads and poll attachment', async () => {
     nock('http://api-service.platform.svc.cluster.local.:9000/', { encodedQueryParams: true })
-    .post('/v2/resources/storage/signed-url')
-    .reply(200, { put_url: 'http://api.io/some', get_url: 'http://api.io/some' });
+      .post('/v2/resources/storage/signed-url')
+      .reply(200, { put_url: 'http://api.io/some', get_url: 'http://api.io/some' });
     nock('http://api.io/', { encodedQueryParams: true })
-    .put('/some').reply(200, { signedUrl: { put_url: 'http://api.io/some' } });
+      .put('/some').reply(200, { signedUrl: { put_url: 'http://api.io/some' } });
 
     const cfg = {
       host,
@@ -79,7 +79,7 @@ describe('SFTP integration test - polling', function () {
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
 
-    await poll.process.call({}. cfg, {});
+    await poll.process.call({}.cfg, {});
 
     expect(sender.data[0].body.filename).to.equal('logo.svg');
     expect(sender.data[0].body.size).to.equal(4379);
