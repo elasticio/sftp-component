@@ -15,7 +15,7 @@ describe('verifyCredentials', function () {
     credentials = {
       host: process.env.SFTP_HOSTNAME,
       port: Number(process.env.PORT),
-      username: process.env.USERNAME,
+      username: process.env.SFTP_USERNAME,
       password: process.env.PASSWORD,
     };
   });
