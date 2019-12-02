@@ -44,7 +44,7 @@ describe('SFTP integration test - polling', function () {
   });
 
   it('Uploads and poll attachment', async () => {
-    nock('http://api-service.platform.svc.cluster.local:9000/', { encodedQueryParams: true })
+    nock('http://api-service.platform.svc.cluster.local.:9000/', { encodedQueryParams: true })
       .post('/v2/resources/storage/signed-url')
       .reply(200, { put_url: 'http://api.io/some', get_url: 'http://api.io/some' });
     nock('http://api.io/', { encodedQueryParams: true })
