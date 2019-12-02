@@ -79,7 +79,7 @@ describe('SFTP integration test - polling', function () {
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
 
-    await poll.process.call(sender, cfg, {});
+    await poll.process.call(sender, {}, cfg);
 
     expect(sender.data[0].body.filename).to.equal('logo.svg');
     expect(sender.data[0].body.size).to.equal(4379);
