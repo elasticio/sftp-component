@@ -137,6 +137,24 @@
           "label": "Directory Name",
           "required": true,
           "placeholder": "/foo/bar"
+        },
+        "allowEmptyResult": {
+          "viewClass": "SelectView",
+          "label": "Allow Empty Result",
+          "model": {
+            "Yes": "Yes",
+            "No": "No"
+          },
+          "prompt": "Allow empty result if object not found? Default: No."
+        },
+        "allowCriteriaToBeOmitted": {
+          "viewClass": "SelectView",
+          "label": "Allow File name to be Omitted",
+          "model": {
+            "Yes": "Yes",
+            "No": "No"
+          },
+          "prompt": "Allow File name to be omitted? Default: No."
         }
       },
       "metadata": {
@@ -145,8 +163,7 @@
           "properties": {
             "filename": {
               "title": "File Name",
-              "type": "string",
-              "required": true
+              "type": "string"
             }
           }
         },

@@ -1,6 +1,8 @@
 const { expect } = require('chai');
+const sinon = require('sinon');
 const EventEmitter = require('events');
 const bunyan = require('bunyan');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const lookupObjectAction = require('../lib/actions/lookupObject');
 require('dotenv').config();
 
@@ -31,13 +33,15 @@ describe('SFTP integration test - lookup', function () {
   before(() => {
     if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
     host = process.env.SFTP_HOSTNAME;
-    username = process.env.SFTP_USERNAME;
+    username = process.env.USERNAME;
     password = process.env.PASSWORD;
     port = process.env.PORT;
     directory = '/www/olhav/';
   });
 
   it('Uploads, reads, and filters files by pattern match', async () => {
+    const attachmentProcessorStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
+    const callAttachmentProcessor = attachmentProcessorStub.returns({ config: { url: 'https://url' } });
     const cfg = {
       host,
       username,
@@ -50,7 +54,8 @@ describe('SFTP integration test - lookup', function () {
         filename: '1.txt',
       },
     };
-    const res = await lookupObjectAction.process.call(new TestEmitter(), msg, cfg);
-    expect(res).to.equal('1.txt');
+    const result = await lookupObjectAction.process.call(new TestEmitter(), msg, cfg);
+    expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
+    expect(result.body.filename).to.equal('1.txt');
   });
 });
