@@ -158,6 +158,16 @@
               "title": "Attachment URL",
               "type": "string",
               "required": true
+            },
+            "encoding": {
+              "title": "Encoding (defaults to null)",
+              "type": "string",
+              "required": false
+            },
+            "fileMod": {
+              "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx)",
+              "type": "string",
+              "required": false
             }
           }
         },
