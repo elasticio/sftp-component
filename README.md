@@ -12,6 +12,7 @@
    * [Read](#read)
 * [Actions](#actions)
    * [Upload](#upload)
+   * [Lookup file by name](#Lookup-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -77,6 +78,73 @@ The following configuration fields are available:
 Input metadata:
 
 - **Filename**: Custom name for uploaded file.
+
+### Lookup file by name
+Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
+After the upload, the READ-URL of the file will be used to generate a message with content like below:
+
+```json
+{
+  "id": "b94d787a-eaab-4cf9-b80c-dcf6aa6d7db1",
+  "body": {
+    "size": 6,
+    "filename": "1.txt"
+  },
+  "attachments": {
+    "1.txt": {
+      "size": 6,
+      "url": "http://steward-service.platform.svc.cluster:8200/files/b94d787a-eaab-4cf9-b80c-dcf6aa6d7db1"
+    }
+  },
+  "headers": {},
+  "metadata": {}
+}
+```
+
+The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. 
+
+#### List of Expected Config fields
+##### Directory
+The directory of the files to lookup and read from.
+##### Allow Empty Result
+Default `No`. In case `No` is selected - an error will be thrown when no objects were found,
+If `Yes` is selected -  an empty object will be returned instead of throwing an error.
+
+##### Allow ID to be Omitted
+Default `No`. In case `No` is selected - an error will be thrown when object id is missing in metadata, if `Yes` is selected - an empty object will be returned instead of throwing an error.
+
+#### Expected input metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "filename": {
+      "title": "File Name",
+      "type": "string"
+    }
+  }
+}
+```
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "filename": {
+      "title": "File Name",
+      "type": "string",
+      "required": true
+    },
+    "size": {
+      "title": "File Size",
+      "type": "number",
+      "required": true
+    }
+  }
+}
+
+```
 
 ## Known limitations
 
