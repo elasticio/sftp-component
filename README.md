@@ -12,6 +12,7 @@
    * [Read](#read)
 * [Actions](#actions)
    * [Upload](#upload)
+   * [Upsert File By Name](#upsert-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -77,6 +78,24 @@ The following configuration fields are available:
 Input metadata:
 
 - **Filename**: Custom name for uploaded file.
+
+### Upsert File By Name
+Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the file.  The component returns a summary of the written file.
+
+The following configuration fields are available:
+
+- **Behavior When File Already Exists**: The expected behavior of the component when trying to write to a file that already exists
+
+  - **Throw an Error**: Does not write data to the file and the component produces an error
+  - **Overwrite the File**: Replace the existing file contents with the contents of the attachment stored in the platform.
+  - **Append the File Contents**: Adds the contents of the attachment stored in the platform to the end of the file. No intermediate characters (e.g. newlines or spaces) will be added.
+
+* Note: If the filename provided contains directories that do not exist, those directories will be created.
+
+Input metadata:
+
+- **File Name and Path**: Full filename and path to the file to write.  Both absolute (e.g. `/home/myuser/somefolder/some.file`) and relative (e.g. `./somefolder/some.file`) paths are supported.  Tilde (`~`) expansion is not supported.
+- **Attachment URL**: URL of the stored attachment to store in the file.
 
 ## Known limitations
 
