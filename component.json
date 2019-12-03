@@ -33,8 +33,9 @@
   "actions": {
     "upload": {
       "main": "./lib/actions/upload.js",
-      "title": "Upload files from attachments.",
-      "description": "Upload incoming files (attachments) to SFTP directory. Manipulation of the file names is not possible.",
+      "title": "Upload files from the attachment headers.",
+      "description": "Upload incoming files that are provided from the \"attachments\" header to the SFTP directory.",
+      "deprecated": true,
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -165,7 +166,7 @@
               "required": false
             },
             "fileMod": {
-              "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx)",
+              "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx))",
               "type": "string",
               "required": false
             }

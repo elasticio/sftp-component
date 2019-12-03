@@ -11,9 +11,9 @@
 * [Triggers](#triggers)
    * [Read](#read)
 * [Actions](#actions)
-   * [Upload](#upload)
+   * [Upload files from the attachment headers](#upload-files-from-the-attachment-headers)
    * [Upsert File By Name](#upsert-file-by-name)
-   * [Lookup file by name](#Lookup-file-by-name)
+   * [Lookup file by name](#lookup-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -69,7 +69,8 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 ## Actions
 
-### Upload
+### Upload files from the attachment headers
+Upload incoming files that are provided from the "attachments" header to the SFTP directory.
 
 The following configuration fields are available:
 |* **Directory**: The directory where the file will be uploaded to.
@@ -97,6 +98,8 @@ Input metadata:
 
 - **File Name and Path**: Full filename and path to the file to write.  Both absolute (e.g. `/home/myuser/somefolder/some.file`) and relative (e.g. `./somefolder/some.file`) paths are supported.  Tilde (`~`) expansion is not supported.
 - **Attachment URL**: URL of the stored attachment to store in the file.
+- **Encoding**: The encoding (if any) that should be applied to the written file.
+- **File Mode**: The read/write/execute permissions for the file.
 
 ### Lookup file by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
@@ -120,7 +123,7 @@ After the upload, the READ-URL of the file will be used to generate a message wi
 }
 ```
 
-The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. 
+The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data.
 
 #### List of Expected Config fields
 ##### Directory
@@ -167,7 +170,7 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 
 ## Known limitations
 
-* The maximum file size accepted by the SFTP component is limited to 100 MiB (Mebibytes)
+* The maximum file size accepted by the SFTP component is limited to 10 MB
 * The attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
 
 ## SSH2 SFTP Client API and Documentation links
