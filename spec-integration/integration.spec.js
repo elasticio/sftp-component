@@ -1,6 +1,8 @@
 const { expect } = require('chai');
 const EventEmitter = require('events');
 const bunyan = require('bunyan');
+const sinon = require('sinon');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const Sftp = require('../lib/Sftp');
 const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
@@ -40,7 +42,7 @@ describe('SFTP integration test - upload then download', function () {
   before(() => {
     if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
     host = process.env.SFTP_HOSTNAME;
-    username = process.env.USERNAME;
+    username = process.env.SFTP_USERNAME;
     password = process.env.PASSWORD;
     port = process.env.PORT;
     directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
@@ -252,6 +254,8 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   it('Uploads and lookup', async () => {
+    const attachmentProcessorStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
+    const callAttachmentProcessor = attachmentProcessorStub.returns({ config: { url: 'https://url' } });
     const cfg = {
       host,
       username,
@@ -263,7 +267,9 @@ describe('SFTP integration test - upload then download', function () {
     await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
-      body: {},
+      body: {
+        filename: 'logo.svg',
+      },
       attachments: {
         'logo.svg': {
           url: 'https://app.elastic.io/img/logo.svg',
@@ -283,8 +289,10 @@ describe('SFTP integration test - upload then download', function () {
     };
     const result = await lookupObject.process.call(receiver, msg, cfg);
     expect(result.body.filename).to.equal('logo.svg');
+    expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
     await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
+    attachmentProcessorStub.restore();
   });
 
   afterEach(async () => {
