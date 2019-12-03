@@ -5,6 +5,7 @@ const Sftp = require('../lib/Sftp');
 const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
+const lookupObject = require('../lib/actions/lookupObject');
 require('dotenv').config();
 
 const PROCESSED_FOLDER_NAME = '.elasticio_processed';
@@ -247,6 +248,40 @@ describe('SFTP integration test - upload then download', function () {
     const patternFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
     await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${patternFilename}`);
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await sftp.rmdir(cfg.directory, false);
+  });
+
+  it('Uploads and lookup', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: {},
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const list = await sftp.list(cfg.directory);
+    expect(list.length).to.equal(1);
+    expect(list[0].name).to.equal('logo.svg');
+
+    const receiver = new TestEmitter();
+    const msg = {
+      filename: 'logo.svg',
+    };
+    const result = await lookupObject.process.call(receiver, msg, cfg);
+    expect(result.body.filename).to.equal('logo.svg');
+    await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
   });
 
