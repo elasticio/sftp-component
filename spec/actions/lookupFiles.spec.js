@@ -46,9 +46,9 @@ describe('Lookup Files', () => {
       body: {
         [DIR]: '/www/nick/test',
         searchTerm0: {
-          fieldName: 'fileName',
-          condition: 'eq',
-          fieldValue: '123.json',
+          fieldName: 'name',
+          condition: 'like',
+          fieldValue: '123*',
         },
       },
     };
@@ -76,7 +76,7 @@ describe('Lookup Files', () => {
   });
 
   afterEach(() => {
-    // context.emit.resetHistory();
+    context.emit.resetHistory();
     // listStub.resetHistory();
   });
 
