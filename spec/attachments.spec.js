@@ -7,7 +7,6 @@ const attachments = require('../lib/attachments');
 // stub things
 const result = { config: { url: '/hello/world' } };
 const self = { emit: sinon.spy() };
-let uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
 
 // parameters
 const msg = { attachments: {} };
@@ -17,24 +16,26 @@ const contentLength = 10;
 
 describe('Attachment tests', () => {
   afterEach(() => {
-    uploadAttachment.restore();
     self.emit.resetHistory();
   });
 
   it('Adds an attachment correctly and returns the correct message', async () => {
+    const uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
     await attachments.addAttachment.call(self, msg, name, stream, contentLength);
     expect(uploadAttachment.calledOnceWithExactly(stream, 'stream')).to.be.equal(true);
     expect(msg).to.be.deep.equal({ attachments: { file: { url: '/hello/world', size: 10 } } });
+    uploadAttachment.restore();
   });
 
   it('Emits an error upon failure', async () => {
-    uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').throws(new Error('This input should be rejected'));
+    const uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').throws(new Error('This input should be rejected'));
 
     await attachments.addAttachment.call(self, msg, name, 'not a stream', contentLength)
       .catch((e) => {
         expect(e.message).to.be.equal('This input should be rejected');
         expect(uploadAttachment.getCall(0).args[0]).to.be.equal('not a stream');
         expect(uploadAttachment.getCall(0).args[1]).to.be.equal('stream');
+        uploadAttachment.restore();
       });
   });
 });
