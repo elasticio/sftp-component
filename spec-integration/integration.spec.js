@@ -277,7 +277,9 @@ describe('SFTP integration test - upload then download', function () {
 
     const receiver = new TestEmitter();
     const msg = {
-      filename: 'logo.svg',
+      body: {
+        filename: 'logo.svg',
+      },
     };
     const result = await lookupObject.process.call(receiver, msg, cfg);
     expect(result.body.filename).to.equal('logo.svg');
