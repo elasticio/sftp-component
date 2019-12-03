@@ -1,4 +1,5 @@
 const chai = require('chai');
+
 const { expect } = chai;
 const EventEmitter = require('events');
 const bunyan = require('bunyan');
@@ -253,7 +254,7 @@ describe('SFTP integration test', function () {
     await sftp.rmdir(cfg.directory, false);
   });
 
-  describe('Upsert File Tests', function() {
+  describe('Upsert File Tests', () => {
     const attachmentUrl1 = 'https://gist.githubusercontent.com/jhorbulyk/1bc92d62a7a530ce19c83a4f5b7a9f88/raw/62ab4e2e3028315c3472d622a279f13eb44c4f44/Hello%2520World%2520Gist';
     const attachmentUrl1ContentSize = 11;
     const attachmentUrl2 = 'https://gist.githubusercontent.com/jhorbulyk/e6ff536dac6e0caa1b2d2d0177e72855/raw/77b39d3cd443128becae7f1c1ed88950cd29e576/Hello%2520World%2520Gist%25202';
@@ -263,13 +264,13 @@ describe('SFTP integration test', function () {
       filename = `${directory}test.file`;
     });
 
-    it('Relative Path Test Test', async () => {
+    it('Relative Path Test', async () => {
       const cfg = {
         host,
         username,
         password,
         port,
-        updateBehavior: 'error'
+        updateBehavior: 'error',
       };
 
       sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
@@ -298,7 +299,7 @@ describe('SFTP integration test', function () {
         username,
         password,
         port,
-        updateBehavior: 'error'
+        updateBehavior: 'error',
       };
 
       sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
@@ -328,7 +329,7 @@ describe('SFTP integration test', function () {
         username,
         password,
         port,
-        updateBehavior: 'overwrite'
+        updateBehavior: 'overwrite',
       };
 
       sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
@@ -370,7 +371,7 @@ describe('SFTP integration test', function () {
         username,
         password,
         port,
-        updateBehavior: 'append'
+        updateBehavior: 'append',
       };
 
       sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
@@ -406,14 +407,14 @@ describe('SFTP integration test', function () {
       expect(list[0].size).to.equal(attachmentUrl1ContentSize + attachmentUrl2ContentSize);
     });
 
-    afterEach(async() => {
+    afterEach(async () => {
       await sftp.delete(filename);
       await sftp.rmdir(directory, false);
     });
 
-    after(async() => {
+    after(async () => {
       await upsertFile.shutdown();
-    })
+    });
   });
 
   afterEach(async () => {
