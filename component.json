@@ -165,6 +165,62 @@
           }
         }
       }
+    },
+    "pollingTrigger": {
+      "main": "./lib/triggers/polling.js",
+      "title": "Get new and updated files",
+      "type": "polling",
+      "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
+      "fields": {
+        "directory": {
+          "viewClass": "TextFieldView",
+          "label": "Directory Name",
+          "required": true,
+          "placeholder": "Directory"
+        },
+        "emitBehaviour": {
+          "label": "Emit Behaviour",
+          "viewClass": "SelectView",
+          "required": false,
+          "prompt": "Default Emit Individually",
+          "model": {
+            "emitIndividually": "Emit Individually",
+            "fetchAll": "Fetch All"
+          }
+        }
+      },
+      "metadata": {
+        "out": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "title": "File Name",
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            },
+            "type": {
+              "title": "File Type",
+              "type": "string",
+              "required": true
+            },
+            "modifyTime": {
+              "title": "Last Modification Time",
+              "type": "number",
+              "required": true
+            },
+            "accessTime": {
+              "title": "Last Access Time",
+              "type": "number",
+              "required": true
+            }
+          }
+        }
+      }
     }
   }
 }
