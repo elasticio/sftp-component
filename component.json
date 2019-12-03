@@ -173,7 +173,33 @@
         },
         "out": {
           "type": "object",
-          "required": true
+          "properties": {
+            "filename": {
+              "title": "File Name",
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            },
+            "type": {
+              "title": "File Type",
+              "type": "string",
+              "required": true
+            },
+            "modifyTime": {
+              "title": "Last Modification Time",
+              "type": "number",
+              "required": true
+            },
+            "accessTime": {
+              "title": "Last Access Time",
+              "type": "number",
+              "required": true
+            }
+          }
         }
       }
     },
