@@ -62,22 +62,22 @@ describe('Lookup Files', () => {
       emitBehaviour: 'emitIndividually',
     };
 
-    connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
-    endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
-    listStub = await sinon.stub(Sftp.prototype, 'list');
+    // connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
+    // endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
+    // listStub = await sinon.stub(Sftp.prototype, 'list');
     await lookupFiles.init(cfg);
   });
 
   after(async () => {
     await lookupFiles.shutdown(cfg);
-    connectStub.restore();
-    endStub.restore();
-    listStub.restore();
+    // connectStub.restore();
+    // endStub.restore();
+    // listStub.restore();
   });
 
   afterEach(() => {
-    context.emit.resetHistory();
-    listStub.resetHistory();
+    // context.emit.resetHistory();
+    // listStub.resetHistory();
   });
 
   it('fetchAll', async () => {
