@@ -7,7 +7,6 @@ const attachments = require('../lib/attachments');
 // stub things
 const result = { config: { url: '/hello/world' } };
 const self = { emit: sinon.spy() };
-let uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
 
 // parameters
 const msg = { attachments: {} };
@@ -16,9 +15,16 @@ const stream = new Stream();
 const contentLength = 10;
 
 describe('Attachment tests', () => {
+  let uploadAttachment;
+  before(() => {
+    uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
+  });
   afterEach(() => {
     uploadAttachment.restore();
     self.emit.resetHistory();
+  });
+  after(() => {
+    uploadAttachment.restore();
   });
 
   it('Adds an attachment correctly and returns the correct message', async () => {

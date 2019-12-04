@@ -2,6 +2,7 @@ require('dotenv').config();
 const logger = require('@elastic.io/component-logger')();
 const sinon = require('sinon');
 const { expect } = require('chai');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const lookupFiles = require('../../lib/actions/lookupFiles');
 const { DIR } = require('../../lib/constants');
 const Sftp = require('../../lib/Sftp');
@@ -18,6 +19,9 @@ describe('Lookup Files', () => {
   let connectStub;
   let endStub;
   let listStub;
+  let getStub;
+  let uploadAttachmentStub;
+  let resp;
   const responseBody = [
     {
       type: '-',
@@ -62,9 +66,28 @@ describe('Lookup Files', () => {
       emitBehaviour: 'emitIndividually',
     };
 
+    resp = {
+      request: {
+        res: {
+          connection: {
+            _host: 'localhost:',
+          },
+          req: {
+            agent: {
+              protocol: 'http:',
+            },
+          },
+        },
+        path: '/id',
+      },
+
+    };
+
     connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
     endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
     listStub = await sinon.stub(Sftp.prototype, 'list');
+    getStub = await sinon.stub(Sftp.prototype, 'get');
+    uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
     await lookupFiles.init(cfg);
   });
 
@@ -73,15 +96,22 @@ describe('Lookup Files', () => {
     connectStub.restore();
     endStub.restore();
     listStub.restore();
+    getStub.restore();
+    uploadAttachmentStub.restore();
   });
 
   afterEach(() => {
     context.emit.resetHistory();
     listStub.resetHistory();
+    getStub.resetHistory();
+    uploadAttachmentStub.resetHistory();
   });
 
   it('fetchAll', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'fetchAll';
     await lookupFiles.process.call(context, msg, cfg, {});
@@ -91,6 +121,9 @@ describe('Lookup Files', () => {
 
   it('emitIndividually', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';
     await lookupFiles.process.call(context, msg, cfg, {});
