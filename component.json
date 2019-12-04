@@ -96,20 +96,12 @@
       "main": "./lib/actions/delete.js",
       "title": "Delete file",
       "description": "Delete file by name in provided path",
-      "fields": {
-        "directory": {
-          "viewClass": "TextFieldView",
-          "label": "Directory Name",
-          "required": true,
-          "placeholder": "/foo/bar"
-        }
-      },
       "metadata": {
         "in": {
           "type": "object",
           "properties": {
-            "filename": {
-              "title": "File Name",
+            "path": {
+              "title": "Full Path",
               "type": "string",
               "required": true
             }
@@ -118,8 +110,8 @@
         "out": {
           "type": "object",
           "properties": {
-            "id": {
-              "title": "File Name",
+            "path": {
+              "title": "Full Path",
               "type": "string",
               "required": true
             }
@@ -244,6 +236,20 @@
             "emitIndividually": "Emit Individually",
             "fetchAll": "Fetch All"
           }
+        },
+        "startTime": {
+          "label": "Start Time",
+          "viewClass": "TextFieldView",
+          "required": false,
+          "note": "Default: minimum time",
+          "placeholder": "Format ISO 8601: 2019-11-21T04:08:01Z"
+        },
+        "endTime": {
+          "label": "End Time",
+          "viewClass": "TextFieldView",
+          "required": false,
+          "note": "Default: maximum time",
+          "placeholder": "Format ISO 8601: 2019-11-21T04:08:01Z"
         }
       },
       "metadata": {
@@ -273,6 +279,16 @@
             "accessTime": {
               "title": "Last Access Time",
               "type": "number",
+              "required": true
+            },
+            "directory": {
+              "title": "Directory",
+              "type": "string",
+              "required": true
+            },
+            "path": {
+              "title": "Full Path",
+              "type": "string",
               "required": true
             }
           }

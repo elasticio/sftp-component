@@ -10,8 +10,10 @@
      * [Port](#port)
 * [Triggers](#triggers)
    * [Read](#read)
+   * [Get new and updated files](#get-new-and-updated-files)
 * [Actions](#actions)
    * [Upload](#upload)
+   * [Delete file](#delete-file)
    * [Lookup file by name](#Lookup-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
@@ -66,7 +68,94 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 * Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
+### Get new and updated files
+Triggers to get all new and updated files since last polling.
+
+The following configuration fields are available:
+* **Directory**: The directory of the files to read from.
+* **Emit Behaviour**: Options are: default is `Emit Individually` emits each object in separate message, `Fetch All` emits all objects in one message
+* **Start Time**: Start datetime of polling. Default min date:`-271821-04-20T00:00:00.000Z`
+* **End Time**: End datetime of polling. Default max date: `+275760-09-13T00:00:00.000Z`
+
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "filename": {
+      "title": "File Name",
+      "type": "string",
+      "required": true
+    },
+    "size": {
+      "title": "File Size",
+      "type": "number",
+      "required": true
+    },
+    "type": {
+      "title": "File Type",
+      "type": "string",
+      "required": true
+    },
+    "modifyTime": {
+      "title": "Last Modification Time",
+      "type": "number",
+      "required": true
+    },
+    "accessTime": {
+      "title": "Last Access Time",
+      "type": "number",
+      "required": true
+    },
+    "directory": {
+      "title": "Directory",
+      "type": "string",
+      "required": true
+    },
+    "path": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+
+```
+
 ## Actions
+
+### Delete file
+Action to delete file by provided full file path.
+
+#### Expected input metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "path": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+```
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "path": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+
+```
 
 ### Upload
 
