@@ -34,7 +34,7 @@
     "upload": {
       "main": "./lib/actions/upload.js",
       "title": "Upload files",
-      "description": "Upload files (attachments) to SFTP directory",
+      "description": "Upload files in a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -96,20 +96,12 @@
       "main": "./lib/actions/delete.js",
       "title": "Delete file",
       "description": "Delete file by name in provided path",
-      "fields": {
-        "directory": {
-          "viewClass": "TextFieldView",
-          "label": "Directory Name",
-          "required": true,
-          "placeholder": "/foo/bar"
-        }
-      },
       "metadata": {
         "in": {
           "type": "object",
           "properties": {
-            "filename": {
-              "title": "File Name",
+            "path": {
+              "title": "Full Path",
               "type": "string",
               "required": true
             }
@@ -119,8 +111,89 @@
           "type": "object",
           "properties": {
             "id": {
+              "title": "Full Path",
+              "type": "string",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "lookupObject": {
+      "main": "./lib/actions/lookupObject.js",
+      "title": "Lookup file by name",
+      "description": "Lookup file by name in a defined SFTP directory",
+      "fields": {
+        "allowEmptyResult": {
+          "viewClass": "SelectView",
+          "label": "Allow Empty Result",
+          "model": {
+            "Yes": "Yes",
+            "No": "No"
+          },
+          "prompt": "Allow empty result if object not found? Default: No."
+        },
+        "allowCriteriaToBeOmitted": {
+          "viewClass": "SelectView",
+          "label": "Allow File name to be Omitted",
+          "model": {
+            "Yes": "Yes",
+            "No": "No"
+          },
+          "prompt": "Allow File name to be omitted? Default: No."
+        }
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "title": "Path and File Name",
+              "type": "string"
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "title": "Type",
+              "type": "string",
+              "required": true
+            },
+            "name": {
               "title": "File Name",
               "type": "string",
+              "required": true
+            },
+            "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            },
+            "modifyTime": {
+              "title": "modifyTime",
+              "type": "string",
+              "required": true
+            },
+            "accessTime": {
+              "title": "accessTime",
+              "type": "string",
+              "required": true
+            },
+            "directory": {
+              "title": "directory",
+              "type": "string",
+              "required": true
+            },
+            "path": {
+              "title": "path",
+              "type": "string",
+              "required": true
+            },
+            "attachment_url": {
+              "title": "File Size",
+              "type": "number",
               "required": true
             }
           }
@@ -182,6 +255,61 @@
         "out": {
           "type": "objectTrigger",
           "properties": {
+            "path": {
+              "title": "Full Path",
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "pollingTrigger": {
+      "main": "./lib/triggers/polling.js",
+      "title": "Get new and updated files",
+      "type": "polling",
+      "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
+      "fields": {
+        "directory": {
+          "viewClass": "TextFieldView",
+          "label": "Directory Name",
+          "required": true,
+          "placeholder": "Directory"
+        },
+        "emitBehaviour": {
+          "label": "Emit Behaviour",
+          "viewClass": "SelectView",
+          "required": false,
+          "prompt": "Default Emit Individually",
+          "model": {
+            "emitIndividually": "Emit Individually",
+            "fetchAll": "Fetch All"
+          }
+        },
+        "startTime": {
+          "label": "Start Time",
+          "viewClass": "TextFieldView",
+          "required": false,
+          "note": "Default: minimum time",
+          "placeholder": "Format ISO 8601: 2019-11-21T04:08:01Z"
+        },
+        "endTime": {
+          "label": "End Time",
+          "viewClass": "TextFieldView",
+          "required": false,
+          "note": "Default: maximum time",
+          "placeholder": "Format ISO 8601: 2019-11-21T04:08:01Z"
+        }
+      },
+      "metadata": {
+        "out": {
+          "type": "object",
+          "properties": {
             "filename": {
               "title": "File Name",
               "type": "string",
@@ -190,6 +318,31 @@
             "size": {
               "title": "File Size",
               "type": "number",
+              "required": true
+            },
+            "type": {
+              "title": "File Type",
+              "type": "string",
+              "required": true
+            },
+            "modifyTime": {
+              "title": "Last Modification Time",
+              "type": "number",
+              "required": true
+            },
+            "accessTime": {
+              "title": "Last Access Time",
+              "type": "number",
+              "required": true
+            },
+            "directory": {
+              "title": "Directory",
+              "type": "string",
+              "required": true
+            },
+            "path": {
+              "title": "Full Path",
+              "type": "string",
               "required": true
             }
           }
