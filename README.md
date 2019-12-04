@@ -176,8 +176,13 @@ After the upload, the READ-URL of the file will be used to generate a message wi
 {
   "id": "b94d787a-eaab-4cf9-b80c-dcf6aa6d7db1",
   "body": {
-    "size": 6,
-    "filename": "1.txt"
+    "results": [
+      {
+        "attachment": "CustomFileName.csv",
+        "uploadedOn": "2019-12-04T11:20:03.713Z",
+        "path": "/www/some_dir/1.txt"
+      }
+    ]
   },
   "attachments": {
     "1.txt": {

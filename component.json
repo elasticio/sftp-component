@@ -201,8 +201,8 @@
         "out": {
           "type": "object",
           "properties": {
-            "filename": {
-              "title": "File Name",
+            "path": {
+              "title": "Full Path",
               "type": "string",
               "required": true
             },
