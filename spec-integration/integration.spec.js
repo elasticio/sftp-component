@@ -200,8 +200,8 @@ describe('SFTP integration test - upload then download', function () {
     const deleteResult2 = await deleteAction.process.call(receiver,
       { body: { path: `${dir}/${logo2Filename}` } }, cfg);
 
-    expect(deleteResult.body.id).to.equal(logoFilename);
-    expect(deleteResult2.body.id).to.equal(logo2Filename);
+    expect(deleteResult.body.id).to.equal(`${dir}/${logoFilename}`);
+    expect(deleteResult2.body.id).to.equal(`${dir}/${logo2Filename}`);
 
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);

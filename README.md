@@ -147,7 +147,7 @@ Action to delete file by provided full file path.
 {
   "type": "object",
   "properties": {
-    "path": {
+    "id": {
       "title": "Full Path",
       "type": "string",
       "required": true

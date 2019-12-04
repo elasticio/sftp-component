@@ -110,7 +110,7 @@
         "out": {
           "type": "object",
           "properties": {
-            "path": {
+            "id": {
               "title": "Full Path",
               "type": "string",
               "required": true
