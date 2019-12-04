@@ -81,7 +81,7 @@ describe('SFTP integration test - polling', function () {
 
     await poll.process.call(sender, {}, cfg);
 
-    expect(sender.data[0].body.filename).to.equal('logo.svg');
+    expect(sender.data[0].body.path).to.equal(`${cfg.directory}logo.svg`);
     expect(sender.data[0].body.size).to.equal(4379);
 
     await sftp.delete(`${cfg.directory}logo.svg`);
