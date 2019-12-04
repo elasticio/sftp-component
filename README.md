@@ -168,6 +168,11 @@ Input metadata:
 
 - **Filename**: Custom name for uploaded file.
 
+Notes:
+* If filename doesn't provided uploaded file name will be same to filename in sftp.
+* If message contains multiple attachments `Filename` will be added at the start of attachment name without extension.
+* If file with provided name exists it will be overwrited by new file from attachment
+
 ### Lookup file by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
