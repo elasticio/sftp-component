@@ -34,7 +34,7 @@
     "upload": {
       "main": "./lib/actions/upload.js",
       "title": "Upload files",
-      "description": "Upload files (attachments) to SFTP directory",
+      "description": "Upload files in a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -122,7 +122,7 @@
     "lookupObject": {
       "main": "./lib/actions/lookupObject.js",
       "title": "Lookup file by name",
-      "description": "Lookup file by name in provided path",
+      "description": "Lookup file by name in a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
