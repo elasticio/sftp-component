@@ -96,7 +96,7 @@
     "delete": {
       "main": "./lib/actions/delete.js",
       "title": "Delete file",
-      "description": "Delete file by name in provided path",
+      "description": "Delete file by name in a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -207,7 +207,7 @@
     "lookupObject": {
       "main": "./lib/actions/lookupObject.js",
       "title": "Lookup file by name",
-      "description": "Lookup file by name in provided path",
+      "description": "Lookup file by name in a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",

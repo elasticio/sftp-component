@@ -455,7 +455,7 @@ describe('SFTP integration test', function () {
       },
     };
     const result = await lookupObject.process.call(receiver, msg, cfg);
-    expect(result.body.filename).to.equal('logo.svg');
+    expect(result.body.name).to.equal('logo.svg');
     expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
     await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
