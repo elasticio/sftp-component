@@ -414,10 +414,6 @@ describe('SFTP integration test', function () {
       await sftp.delete(filename);
       await sftp.rmdir(directory, false);
     });
-
-    after(async () => {
-      await upsertFile.shutdown();
-    });
   });
 
   it('Uploads and lookup', async () => {
