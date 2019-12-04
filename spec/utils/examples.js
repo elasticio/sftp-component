@@ -168,13 +168,13 @@ const DATES = {
   searchTerm0: {
     fieldName: 'modifyTime',
     condition: 'gte',
-    fieldValue: '2019-12-03T09:26:51+0000',
+    fieldValue: '2019-12-05T15:18:38.000Z',
   },
   criteriaLink0: 'or',
   searchTerm1: {
     fieldName: 'accessTime',
-    condition: 'lte',
-    fieldValue: '2019-12-03T09:26:51+0000',
+    condition: 'gte',
+    fieldValue: '2019-12-05T15:18:38.000Z',
   },
 };
 
