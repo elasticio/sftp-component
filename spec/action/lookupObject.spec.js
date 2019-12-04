@@ -44,7 +44,8 @@ describe('SFTP test - lookup file by file name', () => {
       },
     };
     const expectedBody = {
-      filename: '1.txt',
+      type: '-',
+      name: '1.txt',
       size: 7,
     };
 
