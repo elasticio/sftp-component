@@ -132,12 +132,6 @@
       "title": "Lookup Objects",
       "description": "Load list of files to attachments",
       "fields": {
-        "directory": {
-          "viewClass": "TextFieldView",
-          "label": "Directory Name",
-          "required": true,
-          "placeholder": "/foo/bar"
-        },
         "emitBehaviour": {
           "viewClass": "SelectView",
           "label": "Behavior",

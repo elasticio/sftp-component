@@ -67,10 +67,13 @@ describe('Lookup Files', () => {
     };
 
     resp = {
+      config: {
+        url: 'http://localhost/id',
+      },
       request: {
         res: {
           connection: {
-            _host: 'localhost:',
+            _host: 'localhost',
           },
           req: {
             agent: {
