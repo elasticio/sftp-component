@@ -31,6 +31,8 @@ describe('SFTP test - lookup file by file name', () => {
         type: '-',
         name: '1.txt',
         size: 7,
+        accessTime: '1575379317000',
+        modifyTime: '1575291942000',
       },
     ];
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
@@ -47,6 +49,9 @@ describe('SFTP test - lookup file by file name', () => {
       type: '-',
       name: '1.txt',
       size: 7,
+      attachment_url: 'https://url',
+      accessTime: '2019-12-03T13:21:57.000Z',
+      modifyTime: '2019-12-02T13:05:42.000Z',
     };
 
 

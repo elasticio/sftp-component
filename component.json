@@ -132,12 +132,6 @@
       "title": "Lookup file by name",
       "description": "Lookup file by name in a defined SFTP directory",
       "fields": {
-        "directory": {
-          "viewClass": "TextFieldView",
-          "label": "Directory Name",
-          "required": true,
-          "placeholder": "/foo/bar"
-        },
         "allowEmptyResult": {
           "viewClass": "SelectView",
           "label": "Allow Empty Result",
@@ -162,7 +156,7 @@
           "type": "object",
           "properties": {
             "filename": {
-              "title": "File Name",
+              "title": "Path and File Name",
               "type": "string"
             }
           }
