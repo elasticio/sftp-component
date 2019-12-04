@@ -147,7 +147,7 @@
         "in": {
           "type": "object",
           "properties": {
-            "filename": {
+            "path": {
               "title": "Path and File Name",
               "type": "string"
             }
@@ -156,12 +156,42 @@
         "out": {
           "type": "object",
           "properties": {
-            "filename": {
+            "type": {
+              "title": "Type",
+              "type": "string",
+              "required": true
+            },
+            "name": {
               "title": "File Name",
               "type": "string",
               "required": true
             },
             "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            },
+            "modifyTime": {
+              "title": "modifyTime",
+              "type": "string",
+              "required": true
+            },
+            "accessTime": {
+              "title": "accessTime",
+              "type": "string",
+              "required": true
+            },
+            "directory": {
+              "title": "directory",
+              "type": "string",
+              "required": true
+            },
+            "path": {
+              "title": "path",
+              "type": "string",
+              "required": true
+            },
+            "attachment_url": {
               "title": "File Size",
               "type": "number",
               "required": true
