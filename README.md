@@ -324,18 +324,21 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 #### List of Expected Config fields
 ##### Behavior
 `Fetch All` - fetch all objects in one message in form of array, `Emit Individually` - emit each fetched object as separate message.
-##### Max Size
-Maximum number of objects to fetch. Default `250`, maximum value is `250`. 
+
 
 #### Expected input metadata
  - **Number of search terms** - not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 100. If this field is empty, action emits all entities with selected type.
  
 ### Input metadata
 **Directory Path** - required field, Path of lookup directory.
+**Max Size** - Maximum number of objects to fetch. Default `250`, maximum value is `250`. 
 
 Metadata is depending on the input field `Number of search terms`. 
+
 If `Number of search terms` is empty, metadata does not exist.
+
 If `Number of search terms` = 1, metadata has only one search term.
+
 If `Number of search terms` > 1, metadata has a number of search term equal `Number of search terms` and a number of criteria link equal '`Number of search terms` - 1'.
 
 Each search term has 3 fields:
