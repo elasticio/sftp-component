@@ -215,12 +215,6 @@
           },
           "prompt": "Choose a Behavior type"
         },
-        "maxResultSize": {
-          "viewClass": "TextFieldView",
-          "label": "Max Result Size",
-          "required": false,
-          "placeholder": "Default: 250, maximum allowed number: 250. Works only with Fetch All behaviour."
-        },
         "numSearchTerms": {
           "viewClass": "TextFieldView",
           "label": "Number of search terms",
