@@ -202,7 +202,7 @@
     },
     "lookupObjects": {
       "main": "./lib/actions/lookupFiles.js",
-      "title": "Lookup Objects",
+      "title": "Lookup Files",
       "description": "Load list of files to attachments",
       "fields": {
         "emitBehaviour": {
