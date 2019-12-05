@@ -9,10 +9,12 @@
      * [Host](#host)
      * [Port](#port)
 * [Triggers](#triggers)
-   * [Read](#read)
+   * [Read files](#read-files)
+   * [Get new and updated files](#get-new-and-updated-files)
 * [Actions](#actions)
    * [Upload files from the attachment headers](#upload-files-from-the-attachment-headers)
    * [Upsert File By Name](#upsert-file-by-name)
+   * [Delete file](#delete-file)
    * [Lookup file by name](#lookup-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
@@ -37,7 +39,7 @@ Optional, port of SFTP server. Defaults to 22 if not set.
 
 ## Triggers
 
-### Read
+### Read files
 
 The following configuration fields are available:
 * **Directory**: The directory of the files to read from.
@@ -67,13 +69,68 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 * Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
+### Get new and updated files
+Triggers to get all new and updated files since last polling.
+
+The following configuration fields are available:
+* **Directory**: The directory of the files to read from.
+* **Emit Behaviour**: Options are: default is `Emit Individually` emits each object in separate message, `Fetch All` emits all objects in one message
+* **Start Time**: Start datetime of polling. Default min date:`-271821-04-20T00:00:00.000Z`
+* **End Time**: End datetime of polling. Default max date: `+275760-09-13T00:00:00.000Z`
+
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "filename": {
+      "title": "File Name",
+      "type": "string",
+      "required": true
+    },
+    "size": {
+      "title": "File Size",
+      "type": "number",
+      "required": true
+    },
+    "type": {
+      "title": "File Type",
+      "type": "string",
+      "required": true
+    },
+    "modifyTime": {
+      "title": "Last Modification Time",
+      "type": "number",
+      "required": true
+    },
+    "accessTime": {
+      "title": "Last Access Time",
+      "type": "number",
+      "required": true
+    },
+    "directory": {
+      "title": "Directory",
+      "type": "string",
+      "required": true
+    },
+    "path": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+
+```
+
 ## Actions
 
 ### Upload files from the attachment headers
 Upload incoming files that are provided from the "attachments" header to the SFTP directory.
 
 The following configuration fields are available:
-|* **Directory**: The directory where the file will be uploaded to.
+- **Directory**: The directory where the file will be uploaded to.
 
 * Note: if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
 
@@ -81,6 +138,12 @@ Input metadata:
 
 - **Filename**: Custom name for uploaded file.
 
+Notes:
+* Uploaded file name will get filename of income file if new `Filename` doesn't provided 
+* `Filename` will be added at the beggining of attachment name if income message contains multiple attachments: `[SpecifiedFilename]_[NameOfExistedFile]`
+* File will be overwrited in case when file with specified name already exists in directory
+
+<<<<<<< HEAD
 ### Upsert File By Name
 Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the file.  The component returns a summary of the written file.
 
@@ -101,6 +164,38 @@ Input metadata:
 - **Encoding**: The encoding (if any) that should be applied to the written file.
 - **File Mode**: The read/write/execute permissions for the file.
 
+### Delete file
+Action to delete file by provided full file path.
+
+#### Expected input metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "path": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+```
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+
+```
+
 ### Lookup file by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
@@ -109,8 +204,13 @@ After the upload, the READ-URL of the file will be used to generate a message wi
 {
   "id": "b94d787a-eaab-4cf9-b80c-dcf6aa6d7db1",
   "body": {
-    "size": 6,
-    "filename": "1.txt"
+    "results": [
+      {
+        "attachment": "CustomFileName.csv",
+        "uploadedOn": "2019-12-04T11:20:03.713Z",
+        "path": "/www/some_dir/1.txt"
+      }
+    ]
   },
   "attachments": {
     "1.txt": {

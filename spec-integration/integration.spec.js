@@ -198,15 +198,14 @@ describe('SFTP integration test', function () {
     const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
     const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
 
-    const upgradedCfg = JSON.parse(JSON.stringify(cfg));
-    upgradedCfg.directory = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
+    const dir = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
     const deleteResult = await deleteAction.process.call(receiver,
-      { body: { filename: logoFilename } }, upgradedCfg);
+      { body: { path: `${dir}/${logoFilename}` } }, cfg);
     const deleteResult2 = await deleteAction.process.call(receiver,
-      { body: { filename: logo2Filename } }, upgradedCfg);
+      { body: { path: `${dir}/${logo2Filename}` } }, cfg);
 
-    expect(deleteResult.body.id).to.equal(logoFilename);
-    expect(deleteResult2.body.id).to.equal(logo2Filename);
+    expect(deleteResult.body.id).to.equal(`${dir}/${logoFilename}`);
+    expect(deleteResult2.body.id).to.equal(`${dir}/${logo2Filename}`);
 
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);
@@ -447,7 +446,7 @@ describe('SFTP integration test', function () {
     const receiver = new TestEmitter();
     const msg = {
       body: {
-        filename: 'logo.svg',
+        path: `${directory}/logo.svg`,
       },
     };
     const result = await lookupObject.process.call(receiver, msg, cfg);
