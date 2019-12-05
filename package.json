@@ -1,6 +1,6 @@
 {
   "name": "sftp-component",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "elastic.io SFTP component",
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
@@ -15,9 +15,11 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@elastic.io/component-commons-library": "0.0.6",
+    "@elastic.io/oih-standard-library": "1.0.0",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.5.1",
+    "moment": "2.24.0",
     "ssh2-sftp-client": "4.1.0"
   },
   "engines": {
@@ -31,6 +33,7 @@
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
     "mocha": "6.0.2",
+    "nock": "9.6.1",
     "sinon": "7.4.2"
   }
 }

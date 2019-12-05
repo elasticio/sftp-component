@@ -1,9 +1,13 @@
 const { expect } = require('chai');
 const EventEmitter = require('events');
 const bunyan = require('bunyan');
+const sinon = require('sinon');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const Sftp = require('../lib/Sftp');
+const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
+const lookupObject = require('../lib/actions/lookupObject');
 require('dotenv').config();
 
 const PROCESSED_FOLDER_NAME = '.elasticio_processed';
@@ -36,9 +40,9 @@ describe('SFTP integration test - upload then download', function () {
   const testNumber = Math.floor(Math.random() * 10000);
 
   before(() => {
-    if (!process.env.HOSTNAME) { throw new Error('Please set HOSTNAME env variable to proceed'); }
-    host = process.env.HOSTNAME;
-    username = process.env.USER;
+    if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
+    host = process.env.SFTP_HOSTNAME;
+    username = process.env.USERNAME;
     password = process.env.PASSWORD;
     port = process.env.PORT;
     directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
@@ -65,7 +69,7 @@ describe('SFTP integration test - upload then download', function () {
       },
     };
     const result = await upload.process.call(sender, msg, cfg);
-    
+
     expect(result.body.results).to.be.an('array');
     expect(result.body.results.length).to.equal(1);
     expect(result.body.results[0].attachment).to.equal('logo.svg');
@@ -116,6 +120,93 @@ describe('SFTP integration test - upload then download', function () {
     await sftp.rmdir(cfg.directory, false);
   });
 
+  it('Uploads and reads attachments with custom name', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: { filename: 'custom.svg' },
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+        'logo2.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const receiver = new TestEmitter();
+    const msg = {};
+    await read.process.call(receiver, msg, cfg);
+    expect(receiver.data.length).to.equal(2);
+    expect(receiver.data[0].body.filename).to.equal('custom_logo.svg');
+    expect(receiver.data[0].body.size).to.equal(4379);
+    expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
+    expect(receiver.data[1].body.size).to.equal(4379);
+    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
+    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
+    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
+    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await sftp.rmdir(cfg.directory, false);
+  });
+
+  it('Uploads, read and deletes attachments with custom name', async () => {
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: { filename: 'custom.svg' },
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+        'logo2.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const receiver = new TestEmitter();
+    const msg = {};
+    await read.process.call(receiver, msg, cfg);
+    expect(receiver.data.length).to.equal(2);
+    expect(receiver.data[0].body.filename).to.equal('custom_logo.svg');
+    expect(receiver.data[0].body.size).to.equal(4379);
+    expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
+    expect(receiver.data[1].body.size).to.equal(4379);
+
+    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
+
+    const dir = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
+    const deleteResult = await deleteAction.process.call(receiver,
+      { body: { path: `${dir}/${logoFilename}` } }, cfg);
+    const deleteResult2 = await deleteAction.process.call(receiver,
+      { body: { path: `${dir}/${logo2Filename}` } }, cfg);
+
+    expect(deleteResult.body.id).to.equal(`${dir}/${logoFilename}`);
+    expect(deleteResult2.body.id).to.equal(`${dir}/${logo2Filename}`);
+
+    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await sftp.rmdir(cfg.directory, false);
+  });
+
   it('Uploads, reads, and filters files by pattern match', async () => {
     const cfg = {
       host,
@@ -159,6 +250,48 @@ describe('SFTP integration test - upload then download', function () {
     await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${patternFilename}`);
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);
+  });
+
+  it('Uploads and lookup', async () => {
+    const attachmentProcessorStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
+    const callAttachmentProcessor = attachmentProcessorStub.returns({ config: { url: 'https://url' } });
+    const cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await sftp.connect();
+
+    await upload.process.call(new TestEmitter(), {
+      body: {
+        filename: 'logo.svg',
+      },
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const list = await sftp.list(cfg.directory);
+    expect(list.length).to.equal(1);
+    expect(list[0].name).to.equal('logo.svg');
+
+    const receiver = new TestEmitter();
+    const msg = {
+      body: {
+        path: `${directory}/logo.svg`,
+      },
+    };
+    const result = await lookupObject.process.call(receiver, msg, cfg);
+    expect(result.body.name).to.equal('logo.svg');
+    expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
+    await sftp.delete(`${cfg.directory}logo.svg`);
+    await sftp.rmdir(cfg.directory, false);
+    attachmentProcessorStub.restore();
   });
 
   afterEach(async () => {
