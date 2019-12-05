@@ -245,6 +245,180 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 
 ```
 
+### Lookup files
+Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
+After the upload, the READ-URL of the file will be used to generate a message with content like below:
+
+```json
+{
+    "id": "dd331bb4-4281-431c-af1c-6f4eb139b7b5",
+    "attachments": {
+        "1.txt": {
+            "url": "http://steward-service.platform.svc.cluster.local:8200/files/b46d8e5b-1cab-4bf0-9248-ee9b8ecb06c4",
+            "size": 7
+        }
+    },
+    "body": {
+        "type": "-",
+        "name": "1.txt",
+        "size": 7,
+        "modifyTime": "2019-12-02T13:05:42.000Z",
+        "accessTime": "2019-12-04T14:14:54.000Z",
+        "rights": {
+            "user": "rw",
+            "group": "r",
+            "other": "r"
+        },
+        "owner": 1002,
+        "group": 1002,
+        "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/b46d8e5b-1cab-4bf0-9248-ee9b8ecb06c4"
+    },
+    "headers": {},
+    "metadata": {}
+}
+```
+
+The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. 
+
+#### List of Expected Config fields
+##### Behavior
+`Fetch All` - fetch all objects in one message in form of array, `Emit Individually` - emit each fetched object as separate message.
+##### Max Size
+Maximum number of objects to fetch. Default `250`, maximum value is `250`. 
+
+#### Expected input metadata
+ - **Number of search terms** - not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 100. If this field is empty, action emits all entities with selected type.
+ 
+### Input metadata
+**Directory Path** - required field, Path of lookup directory.
+
+Metadata is depending on the input field `Number of search terms`. 
+If `Number of search terms` is empty, metadata does not exist.
+If `Number of search terms` = 1, metadata has only one search term.
+If `Number of search terms` > 1, metadata has a number of search term equal `Number of search terms` and a number of criteria link equal '`Number of search terms` - 1'.
+
+Each search term has 3 fields:
+![image](https://user-images.githubusercontent.com/16806832/49370809-06bd5e80-f6fe-11e8-8c77-34cae66dcbae.png)
+ - **Field Name** - chosen entity's field name. You need to select the one field from `Value` section:
+ ![image](https://user-images.githubusercontent.com/13310949/70224021-31992300-1755-11ea-83e0-6023a2d67503.png)
+ - **Condition** - You need to select the one condition from `Value` section:
+ ![image](https://user-images.githubusercontent.com/13310949/70224020-31992300-1755-11ea-8f5d-375a77acf1c6.png)
+ - **Field Value** - the value that the field must match with the specified condition.
+ 
+Between search terms, there is **Criteria Link**. You need to select the one criteria from `Value` section:
+![image](https://user-images.githubusercontent.com/13310949/70224278-ae2c0180-1755-11ea-9445-441a0e2c8f87.png)
+
+For example, if you want to find all files where field `name` starts from `123` or field `size` grater than `10000`:
+![image](https://user-images.githubusercontent.com/13310949/70224450-f6e3ba80-1755-11ea-9a9c-de573f74d370.png)
+
+### Output metadata
+
+Schema of output metadata depends on Behaviour configuration: 
+##### Fetch All
+```json
+{
+   "type": "object",
+   "properties": {
+      "results": {
+         "type": "array",
+         "properties": {
+            "type": "object",
+            "properties": {
+               "type": {
+                  "type": "string"
+               },
+               "name": {
+                  "type": "string"
+               },
+               "size": {
+                  "type": "number"
+               },
+               "modifyTime": {
+                  "type": "number"
+               },
+               "accessTime": {
+                  "type": "number"
+               },
+               "rights": {
+                  "type": "object",
+                  "properties": {
+                     "user": {
+                        "type": "string"
+                     },
+                     "group": {
+                        "type": "string"
+                     },
+                     "other": {
+                        "type": "string"
+                     }
+                  }
+               },
+               "owner": {
+                  "type": "number"
+               },
+               "group": {
+                  "type": "number"
+               },
+               "attachment_url": {
+                  "type": "string"
+               }
+            }
+         }
+      }
+   }
+}
+```
+
+##### Emit Individually
+```json
+{
+   "type": "object",
+   "properties": {
+      "type": {
+         "type": "string"
+      },
+      "name": {
+         "type": "string"
+      },
+      "size": {
+         "type": "number"
+      },
+      "modifyTime": {
+         "type": "number"
+      },
+      "accessTime": {
+         "type": "number"
+      },
+      "rights": {
+         "type": "object",
+         "properties": {
+            "user": {
+               "type": "string"
+            },
+            "group": {
+               "type": "string"
+            },
+            "other": {
+               "type": "string"
+            }
+         }
+      },
+      "owner": {
+         "type": "number"
+      },
+      "group": {
+         "type": "number"
+      },
+      "attachment_url": {
+         "type": "string"
+      }
+   }
+}
+```
+
+### Known limitations
+Action does not support `Fetch Page` mode (according to OIH standards)
+
 ## Known limitations
 
 * The maximum file size accepted by the SFTP component is limited to 100 MiB (Mebibytes)

@@ -20,6 +20,7 @@ describe('Lookup Files', () => {
   let endStub;
   let listStub;
   let getStub;
+  let existsStub;
   let uploadAttachmentStub;
   let resp;
   const responseBody = [
@@ -90,6 +91,7 @@ describe('Lookup Files', () => {
     endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
     listStub = await sinon.stub(Sftp.prototype, 'list');
     getStub = await sinon.stub(Sftp.prototype, 'get');
+    existsStub = await sinon.stub(Sftp.prototype, 'exists');
     uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
     await lookupFiles.init(cfg);
   });
@@ -100,6 +102,7 @@ describe('Lookup Files', () => {
     endStub.restore();
     listStub.restore();
     getStub.restore();
+    existsStub.restore();
     uploadAttachmentStub.restore();
   });
 
@@ -107,11 +110,13 @@ describe('Lookup Files', () => {
     context.emit.resetHistory();
     listStub.resetHistory();
     getStub.resetHistory();
+    existsStub.resetHistory();
     uploadAttachmentStub.resetHistory();
   });
 
   it('fetchAll', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
     if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
     if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
@@ -124,6 +129,7 @@ describe('Lookup Files', () => {
 
   it('emitIndividually', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
     if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
     if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
