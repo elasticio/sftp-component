@@ -249,8 +249,8 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 
 * The maximum file size accepted by the SFTP component is limited to 100 MiB (Mebibytes)
 * The attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
-* Get new and updated files trigger mechanism is based on sftp file `modifyTime` metadata field. For correct operation trigger requires accurate time configuration on sftp server.
-* Get new and updated files trigger does not support empty files processing.
+* 'Get new and updated files' trigger mechanism is based on SFTP file `modifyTime` metadata field. For correct processing the trigger requires correct time configuration on the SFTP server.
+* 'Get new and updated files' trigger does not support empty files processing.
 
 ## SSH2 SFTP Client API and Documentation links
 
