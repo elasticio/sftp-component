@@ -9,12 +9,12 @@
      * [Host](#host)
      * [Port](#port)
 * [Triggers](#triggers)
-   * [Read](#read)
+   * [Read files](#read-files)
    * [Get new and updated files](#get-new-and-updated-files)
 * [Actions](#actions)
-   * [Upload](#upload)
+   * [Upload files](#upload-files)
    * [Delete file](#delete-file)
-   * [Lookup file by name](#Lookup-file-by-name)
+   * [Lookup file by name](#lookup-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -38,7 +38,7 @@ Optional, port of SFTP server. Defaults to 22 if not set.
 
 ## Triggers
 
-### Read
+### Read files
 
 The following configuration fields are available:
 * **Directory**: The directory of the files to read from.
@@ -125,6 +125,22 @@ The following configuration fields are available:
 
 ## Actions
 
+### Upload files
+
+The following configuration fields are available:
+- **Directory**: The directory where the file will be uploaded to.
+
+* Note: if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
+
+Input metadata:
+
+- **Filename**: Custom name for uploaded file.
+
+Notes:
+* Uploaded file name will get filename of income file if new `Filename` doesn't provided 
+* `Filename` will be added at the beggining of attachment name if income message contains multiple attachments: `[SpecifiedFilename]_[NameOfExistedFile]`
+* File will be overwrited in case when file with specified name already exists in directory
+
 ### Delete file
 Action to delete file by provided full file path.
 
@@ -156,22 +172,6 @@ Action to delete file by provided full file path.
 }
 
 ```
-
-### Upload
-
-The following configuration fields are available:
-|* **Directory**: The directory where the file will be uploaded to.
-
-* Note: if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
-
-Input metadata:
-
-- **Filename**: Custom name for uploaded file.
-
-Notes:
-* If filename doesn't provided uploaded file name will be same to filename in sftp.
-* If message contains multiple attachments `Filename` will be added at the start of attachment name without extension.
-* If file with provided name exists it will be overwrited by new file from attachment
 
 ### Lookup file by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
