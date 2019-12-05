@@ -13,6 +13,7 @@
    * [Get new and updated files](#get-new-and-updated-files)
 * [Actions](#actions)
    * [Upload files](#upload-files)
+   * [Lookup files](#lookup-files)
    * [Delete file](#delete-file)
    * [Lookup file by name](#lookup-file-by-name)
 * [Known limitations](#known-limitations)
@@ -179,32 +180,36 @@ After the upload, the READ-URL of the file will be used to generate a message wi
 
 ```json
 {
-  "id": "b94d787a-eaab-4cf9-b80c-dcf6aa6d7db1",
-  "body": {
-    "results": [
-      {
-        "attachment": "CustomFileName.csv",
-        "uploadedOn": "2019-12-04T11:20:03.713Z",
-        "path": "/www/some_dir/1.txt"
-      }
-    ]
-  },
+  "id": "0c196dca-4187-4b49-bf90-5cfe9030955b",
   "attachments": {
     "1.txt": {
-      "size": 6,
-      "url": "http://steward-service.platform.svc.cluster:8200/files/b94d787a-eaab-4cf9-b80c-dcf6aa6d7db1"
+      "url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
+      "size": 7
     }
   },
-  "headers": {},
-  "metadata": {}
+  "body": {
+    "type": "-",
+    "name": "1.txt",
+    "size": 7,
+    "modifyTime": "2019-12-02T13:05:42.000Z",
+    "accessTime": "2019-12-04T14:14:54.000Z",
+    "rights": {
+      "user": "rw",
+      "group": "r",
+      "other": "r"
+    },
+    "owner": 1002,
+    "group": 1002,
+    "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
+    "directory": "/www/olhav",
+    "path": "/www/olhav/1.txt"
+  }
 }
 ```
 
 The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. 
 
 #### List of Expected Config fields
-##### Directory
-The directory of the files to lookup and read from.
 ##### Allow Empty Result
 Default `No`. In case `No` is selected - an error will be thrown when no objects were found,
 If `Yes` is selected -  an empty object will be returned instead of throwing an error.
@@ -217,8 +222,8 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 {
   "type": "object",
   "properties": {
-    "filename": {
-      "title": "File Name",
+    "path": {
+      "title": "Path and File Name",
       "type": "string"
     }
   }
@@ -226,11 +231,21 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 ```
 
 #### Expected output metadata
+
+<details> 
+<summary>Output metadata</summary>
+
 ```json
+
 {
   "type": "object",
   "properties": {
-    "filename": {
+    "type": {
+      "title": "Type",
+      "type": "string",
+      "required": true
+    },
+    "name": {
       "title": "File Name",
       "type": "string",
       "required": true
@@ -239,11 +254,37 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
       "title": "File Size",
       "type": "number",
       "required": true
+    },
+    "modifyTime": {
+      "title": "modifyTime",
+      "type": "string",
+      "required": true
+    },
+    "accessTime": {
+      "title": "accessTime",
+      "type": "string",
+      "required": true
+    },
+    "directory": {
+      "title": "directory",
+      "type": "string",
+      "required": true
+    },
+    "path": {
+      "title": "path",
+      "type": "string",
+      "required": true
+    },
+    "attachment_url": {
+      "title": "File Size",
+      "type": "number",
+      "required": true
     }
   }
 }
 
 ```
+</details>
 
 ### Lookup files
 Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
@@ -419,10 +460,14 @@ Schema of output metadata depends on Behaviour configuration:
 ### Known limitations
 Action does not support `Fetch Page` mode (according to OIH standards)
 
+
 ## Known limitations
 
-* The maximum file size accepted by the SFTP component is limited to 100 MiB (Mebibytes)
+* The maximum file size accepted by the SFTP component is limited to 100 MB.
 * The attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
+* `Get new and updated files` trigger mechanism is based on SFTP file `modifyTime` metadata field. For correct processing the trigger requires correct time configuration on the SFTP server.
+* `Get new and updated files` trigger does not support empty files processing.
+* `Get new and updated files` trigger does not support `fetch page` Emit Behaviour
 
 ## SSH2 SFTP Client API and Documentation links
 

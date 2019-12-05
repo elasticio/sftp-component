@@ -304,6 +304,61 @@
         "out": {
           "type": "object",
           "properties": {
+            "path": {
+              "title": "Full Path",
+              "type": "string",
+              "required": true
+            },
+            "size": {
+              "title": "File Size",
+              "type": "number",
+              "required": true
+            }
+          }
+        }
+      }
+    },
+    "pollingTrigger": {
+      "main": "./lib/triggers/polling.js",
+      "title": "Get new and updated files",
+      "type": "polling",
+      "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
+      "fields": {
+        "directory": {
+          "viewClass": "TextFieldView",
+          "label": "Directory Name",
+          "required": true,
+          "placeholder": "Directory"
+        },
+        "emitBehaviour": {
+          "label": "Emit Behaviour",
+          "viewClass": "SelectView",
+          "required": false,
+          "prompt": "Default Emit Individually",
+          "model": {
+            "emitIndividually": "Emit Individually",
+            "fetchAll": "Fetch All"
+          }
+        },
+        "startTime": {
+          "label": "Start Time",
+          "viewClass": "TextFieldView",
+          "required": false,
+          "note": "Default: minimum time",
+          "placeholder": "Format ISO 8601: 2019-11-21T04:08:01Z"
+        },
+        "endTime": {
+          "label": "End Time",
+          "viewClass": "TextFieldView",
+          "required": false,
+          "note": "Default: maximum time",
+          "placeholder": "Format ISO 8601: 2019-11-21T04:08:01Z"
+        }
+      },
+      "metadata": {
+        "out": {
+          "type": "object",
+          "properties": {
             "filename": {
               "title": "File Name",
               "type": "string",

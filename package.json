@@ -15,7 +15,6 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@elastic.io/component-commons-library": "0.0.6",
-    "@elastic.io/component-logger": "0.0.1",
     "@elastic.io/oih-standard-library": "1.0.1",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
