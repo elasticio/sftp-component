@@ -328,6 +328,7 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 #### Expected input metadata
  - **Number of search terms** - not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 100. If this field is empty, action emits all entities with selected type.
+ - **Upload files to attachment** - not required field. If `Yes` - all files will be downloaded to the attachments and action will return files metadata as JSON object. If `No` - No files will be downloaded to the attachments and action returns files metadata in json
  
 ### Input metadata
 **Directory Path** - required field, Path of lookup directory.
@@ -351,9 +352,18 @@ Each search term has 3 fields:
  
 Between search terms, there is **Criteria Link**. You need to select the one criteria from `Value` section:
 ![image](https://user-images.githubusercontent.com/13310949/70224278-ae2c0180-1755-11ea-9445-441a0e2c8f87.png)
+`And` Criteria Link has precedence over `Or`. If you configure 3 search Terms:
+```iso92-sql
+ searchTerm1 and SearchTerm2 or SearchTerm3
+```
+, it will be executed as
+ ```iso92-sql
+(searchTerm1 and SearchTerm2) or SearchTerm3                       
+```
 
 For example, if you want to find all files where field `name` starts from `123` or field `size` grater than `10000`:
 ![image](https://user-images.githubusercontent.com/13310949/70224450-f6e3ba80-1755-11ea-9a9c-de573f74d370.png)
+
 
 ### Output metadata
 

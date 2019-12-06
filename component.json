@@ -228,7 +228,7 @@
             "Yes": "Yes",
             "No": "No"
           },
-          "prompt": "Promote attachments to the output message? Default: Yes."
+          "prompt": "Include attachments to the output message? Default: Yes."
         }
       },
       "dynamicMetadata": true
