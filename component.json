@@ -256,7 +256,7 @@
       },
       "metadata": {
         "out": {
-          "type": "objectTrigger",
+          "type": "object",
           "properties": {
             "path": {
               "title": "Full Path",
