@@ -3,7 +3,7 @@ const logger = require('@elastic.io/component-logger')();
 const sinon = require('sinon');
 const { expect } = require('chai');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
-const lookupFiles = require('../../lib/actions/lookupFiles');
+const lookupFiles = require('../../lib/actions/lookupObjects');
 const { DIR } = require('../../lib/constants');
 const Sftp = require('../../lib/Sftp');
 
@@ -139,6 +139,22 @@ describe('Lookup Files', () => {
     expect(context.emit.getCalls().length).to.be.eql(2);
     expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody[0]);
     expect(context.emit.getCall(1).args[1].body).to.deep.eql(responseBody[1]);
+  });
+
+
+  it('emitIndividually Only metadata', async () => {
+    if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'emitIndividually';
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {});
+    expect(context.emit.getCalls().length).to.be.eql(2);
+    expect(context.emit.getCall(0).args[1].body.attachment_url).to.be.undefined;
+    expect(context.emit.getCall(1).args[1].body.attachment_url).to.be.undefined;
   });
 
   it('getMetaModel', async () => {

@@ -201,7 +201,7 @@
       }
     },
     "lookupObjects": {
-      "main": "./lib/actions/lookupFiles.js",
+      "main": "./lib/actions/lookupObjects.js",
       "title": "Lookup Files",
       "description": "Load list of files to attachments",
       "fields": {
