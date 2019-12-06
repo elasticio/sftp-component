@@ -1,7 +1,7 @@
 require('dotenv').config();
-const logger = require('@elastic.io/component-logger')();
+const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const sinon = require('sinon');
-const { expect, assert } = require('chai');
+const { expect } = require('chai');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const lookupFiles = require('../../lib/actions/lookupObjects');
 const { DIR } = require('../../lib/constants');
