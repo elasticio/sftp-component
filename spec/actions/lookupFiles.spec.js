@@ -66,20 +66,6 @@ describe('Lookup Files', () => {
       config: {
         url: 'http://localhost/id',
       },
-      request: {
-        res: {
-          connection: {
-            _host: 'localhost',
-          },
-          req: {
-            agent: {
-              protocol: 'http:',
-            },
-          },
-        },
-        path: '/id',
-      },
-
     };
     responseBody = [
       {
