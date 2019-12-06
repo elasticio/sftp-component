@@ -292,30 +292,30 @@ After the upload, the READ-URL of the file will be used to generate a message wi
 
 ```json
 {
-    "id": "dd331bb4-4281-431c-af1c-6f4eb139b7b5",
-    "attachments": {
-        "1.txt": {
-            "url": "http://steward-service.platform.svc.cluster.local:8200/files/b46d8e5b-1cab-4bf0-9248-ee9b8ecb06c4",
-            "size": 7
-        }
+  "id": "0c196dca-4187-4b49-bf90-5cfe9030955b",
+  "attachments": {
+    "1.txt": {
+      "url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
+      "size": 7
+    }
+  },
+  "body": {
+    "type": "-",
+    "name": "1.txt",
+    "size": 7,
+    "modifyTime": "2019-12-02T13:05:42.000Z",
+    "accessTime": "2019-12-04T14:14:54.000Z",
+    "rights": {
+      "user": "rw",
+      "group": "r",
+      "other": "r"
     },
-    "body": {
-        "type": "-",
-        "name": "1.txt",
-        "size": 7,
-        "modifyTime": "2019-12-02T13:05:42.000Z",
-        "accessTime": "2019-12-04T14:14:54.000Z",
-        "rights": {
-            "user": "rw",
-            "group": "r",
-            "other": "r"
-        },
-        "owner": 1002,
-        "group": 1002,
-        "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/b46d8e5b-1cab-4bf0-9248-ee9b8ecb06c4"
-    },
-    "headers": {},
-    "metadata": {}
+    "owner": 1002,
+    "group": 1002,
+    "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
+    "directory": "/www/test",
+    "path": "/www/test/1.txt"
+  }
 }
 ```
 
@@ -417,6 +417,12 @@ Schema of output metadata depends on Behaviour configuration:
                },
                "attachment_url": {
                   "type": "string"
+               },
+               "directory": {
+                  "type": "string"
+               },               
+               "path": {
+                  "type": "string"
                }
             }
          }
@@ -467,6 +473,12 @@ Schema of output metadata depends on Behaviour configuration:
       },
       "attachment_url": {
          "type": "string"
+      },
+      "directory": {
+          "type": "string"
+      },               
+      "path": {
+          "type": "string"
       }
    }
 }
