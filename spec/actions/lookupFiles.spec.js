@@ -23,30 +23,19 @@ describe('Lookup Files', () => {
   let existsStub;
   let uploadAttachmentStub;
   let resp;
-  const responseBody = [
-    {
-      type: '-',
-      name: '123.json_1558428893007',
-      size: 2984,
-      modifyTime: 1574930817000,
-      accessTime: 1574930817000,
-      rights: { user: 'rw', group: 'r', other: '' },
-      owner: 1002,
-      group: 1002,
-    },
-    {
-      type: '-',
-      name: '123.json_1558460387824',
-      size: 2984,
-      modifyTime: 1558427618000,
-      accessTime: 1558459105000,
-      rights: { user: 'rw', group: 'rw', other: 'rw' },
-      owner: 1002,
-      group: 1002,
-    },
-  ];
+  let responseBody;
 
   before(async () => {
+    connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
+    endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
+    listStub = await sinon.stub(Sftp.prototype, 'list');
+    getStub = await sinon.stub(Sftp.prototype, 'get');
+    existsStub = await sinon.stub(Sftp.prototype, 'exists');
+    uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
+    await lookupFiles.init(cfg);
+  });
+
+  beforeEach(() => {
     msg = {
       body: {
         [DIR]: '/www/nick/test',
@@ -57,7 +46,6 @@ describe('Lookup Files', () => {
         },
       },
     };
-
     cfg = {
       host: process.env.SFTP_HOSTNAME || 'hostname',
       port: Number(process.env.PORT),
@@ -66,7 +54,6 @@ describe('Lookup Files', () => {
       numSearchTerms: 1,
       emitBehaviour: 'emitIndividually',
     };
-
     resp = {
       config: {
         url: 'http://localhost/id',
@@ -86,14 +73,28 @@ describe('Lookup Files', () => {
       },
 
     };
-
-    connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
-    endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
-    listStub = await sinon.stub(Sftp.prototype, 'list');
-    getStub = await sinon.stub(Sftp.prototype, 'get');
-    existsStub = await sinon.stub(Sftp.prototype, 'exists');
-    uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
-    await lookupFiles.init(cfg);
+    responseBody = [
+      {
+        type: '-',
+        name: '123.json_1558428893007',
+        size: 2984,
+        modifyTime: 1574930817000,
+        accessTime: 1574930817000,
+        rights: { user: 'rw', group: 'r', other: '' },
+        owner: 1002,
+        group: 1002,
+      },
+      {
+        type: '-',
+        name: '123.json_1558460387824',
+        size: 2984,
+        modifyTime: 1558427618000,
+        accessTime: 1558459105000,
+        rights: { user: 'rw', group: 'rw', other: 'rw' },
+        owner: 1002,
+        group: 1002,
+      },
+    ];
   });
 
   after(async () => {
@@ -135,6 +136,7 @@ describe('Lookup Files', () => {
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';
+    cfg.uploadFilesToAttachments = 'Yes';
     await lookupFiles.process.call(context, msg, cfg, {});
     expect(context.emit.getCalls().length).to.be.eql(2);
     expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody[0]);
@@ -145,13 +147,11 @@ describe('Lookup Files', () => {
   it('emitIndividually Only metadata', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
-    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
-    cfg.numSearchTerms = 1;
-    cfg.emitBehaviour = 'emitIndividually';
-    cfg.uploadFilesToAttachments = 'No';
-    await lookupFiles.process.call(context, msg, cfg, {});
+    const conf = JSON.parse(JSON.stringify(cfg));
+    conf.numSearchTerms = 1;
+    conf.emitBehaviour = 'emitIndividually';
+    conf.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, conf, {});
     expect(context.emit.getCalls().length).to.be.eql(2);
     expect(context.emit.getCall(0).args[1].body.attachment_url).to.be.undefined;
     expect(context.emit.getCall(1).args[1].body.attachment_url).to.be.undefined;
