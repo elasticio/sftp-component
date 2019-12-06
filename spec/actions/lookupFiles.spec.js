@@ -1,7 +1,7 @@
 require('dotenv').config();
 const logger = require('@elastic.io/component-logger')();
 const sinon = require('sinon');
-const { expect } = require('chai');
+const { expect, assert } = require('chai');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const lookupFiles = require('../../lib/actions/lookupObjects');
 const { DIR } = require('../../lib/constants');
@@ -26,6 +26,14 @@ describe('Lookup Files', () => {
   let responseBody;
 
   before(async () => {
+    cfg = {
+      host: process.env.SFTP_HOSTNAME || 'hostname',
+      port: Number(process.env.PORT),
+      username: process.env.SFTP_USER || 'user',
+      password: process.env.SFTP_PASSWORD || 'psw',
+      numSearchTerms: 1,
+      emitBehaviour: 'emitIndividually',
+    };
     connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
     endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
     listStub = await sinon.stub(Sftp.prototype, 'list');
@@ -147,14 +155,25 @@ describe('Lookup Files', () => {
   it('emitIndividually Only metadata', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    const conf = JSON.parse(JSON.stringify(cfg));
-    conf.numSearchTerms = 1;
-    conf.emitBehaviour = 'emitIndividually';
-    conf.uploadFilesToAttachments = 'No';
-    await lookupFiles.process.call(context, msg, conf, {});
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'emitIndividually';
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {});
     expect(context.emit.getCalls().length).to.be.eql(2);
     expect(context.emit.getCall(0).args[1].body.attachment_url).to.be.undefined;
     expect(context.emit.getCall(1).args[1].body.attachment_url).to.be.undefined;
+  });
+
+  it('dir nor found error', async () => {
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(false);
+    msg.body[DIR] = '/unknown_dir/test';
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'emitIndividually';
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {}).catch((e) => {
+      expect(e.message).to.be.eql('Directory /unknown_dir/test is not exist');
+    });
+    expect(context.emit.getCalls().length).to.be.eql(0);
   });
 
   it('getMetaModel', async () => {
