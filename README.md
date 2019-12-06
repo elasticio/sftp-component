@@ -324,13 +324,13 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 #### List of Expected Config fields
 ##### Behavior
 `Fetch All` - fetch all objects in one message in form of array, `Emit Individually` - emit each fetched object as separate message.
+##### Number of search terms
+Not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 100. If this field is empty, action emits all entities with selected type.
+##### Upload files to attachment
+ Not required field. If `Yes` - all files will be downloaded to the attachments and action will return files metadata as JSON object. If `No` - No files will be downloaded to the attachments and action returns files metadata in JSON object
 
 
 #### Expected input metadata
- - **Number of search terms** - not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 100. If this field is empty, action emits all entities with selected type.
- - **Upload files to attachment** - not required field. If `Yes` - all files will be downloaded to the attachments and action will return files metadata as JSON object. If `No` - No files will be downloaded to the attachments and action returns files metadata in json
- 
-### Input metadata
 **Directory Path** - required field, Path of lookup directory.
 **Max Size** - Maximum number of objects to fetch. Default `250`, maximum value is `250`. 
 
@@ -343,13 +343,15 @@ If `Number of search terms` = 1, metadata has only one search term.
 If `Number of search terms` > 1, metadata has a number of search term equal `Number of search terms` and a number of criteria link equal '`Number of search terms` - 1'.
 
 Each search term has 3 fields:
-![image](https://user-images.githubusercontent.com/16806832/49370809-06bd5e80-f6fe-11e8-8c77-34cae66dcbae.png)
+ ![image](https://user-images.githubusercontent.com/13310949/70321165-54980580-182f-11ea-9442-e6234163deb6.png)
  - **Field Name** - chosen entity's field name. You need to select the one field from `Value` section:
  ![image](https://user-images.githubusercontent.com/13310949/70224021-31992300-1755-11ea-83e0-6023a2d67503.png)
  - **Condition** - You need to select the one condition from `Value` section:
  ![image](https://user-images.githubusercontent.com/13310949/70224020-31992300-1755-11ea-8f5d-375a77acf1c6.png)
  - **Field Value** - the value that the field must match with the specified condition.
- 
+  
+  You can use wildcard in the condition value for the `like` operator. See [micromatch documentation.](https://www.npmjs.com/package/micromatch)
+
 Between search terms, there is **Criteria Link**. You need to select the one criteria from `Value` section:
 ![image](https://user-images.githubusercontent.com/13310949/70224278-ae2c0180-1755-11ea-9445-441a0e2c8f87.png)
 `And` Criteria Link has precedence over `Or`. If you configure 3 search Terms:
