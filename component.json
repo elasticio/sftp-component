@@ -33,9 +33,8 @@
   "actions": {
     "upload": {
       "main": "./lib/actions/upload.js",
-      "title": "Upload files from the attachment headers.",
-      "description": "Upload incoming files that are provided from the \"attachments\" header to the SFTP directory.",
-      "deprecated": true,
+      "title": "Upload files",
+      "description": "Upload files in a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
