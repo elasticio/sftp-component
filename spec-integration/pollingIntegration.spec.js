@@ -1,11 +1,12 @@
+require('dotenv').config();
+
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const bunyan = require('bunyan');
+const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const nock = require('nock');
 const Sftp = require('../lib/Sftp');
 const upload = require('../lib/actions/upload');
 const poll = require('../lib/triggers/polling');
-require('dotenv').config();
 
 class TestEmitter extends EventEmitter {
   constructor() {
@@ -13,7 +14,7 @@ class TestEmitter extends EventEmitter {
     this.data = [];
     this.end = 0;
     this.error = [];
-    this.logger = bunyan.createLogger({ name: 'dummy' });
+    this.logger = logger;
 
     this.on('data', (value) => this.data.push(value));
     this.on('error', (value) => this.error.push(value));
@@ -57,7 +58,7 @@ describe('SFTP integration test - polling', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    sftp = new Sftp(logger, cfg);
     await sftp.connect();
 
     const sender = new TestEmitter();
@@ -78,10 +79,6 @@ describe('SFTP integration test - polling', function () {
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
-
-    nock.recorder.rec({
-      output_objects: true,
-    });
     await poll.process.call(sender, {}, cfg);
 
     expect(sender.data[0].body.path).to.equal(`${cfg.directory}logo.svg`);
