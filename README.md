@@ -80,6 +80,10 @@ The following configuration fields are available:
 
 
 #### Expected output metadata
+<details> 
+<summary>Output metadata</summary>
+
+
 ```json
 {
   "type": "object",
@@ -121,8 +125,10 @@ The following configuration fields are available:
     }
   }
 }
-
 ```
+</details>
+
+`type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
 ## Actions
 
@@ -286,6 +292,8 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 ```
 </details>
 
+`type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
+
 ### Lookup files
 Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
@@ -367,10 +375,13 @@ For example, if you want to find all files where field `name` starts from `123` 
 ![image](https://user-images.githubusercontent.com/13310949/70224450-f6e3ba80-1755-11ea-9a9c-de573f74d370.png)
 
 
-### Output metadata
+#### Output metadata
 
 Schema of output metadata depends on Behaviour configuration: 
 ##### Fetch All
+<details> 
+<summary>Output metadata</summary>
+
 ```json
 {
    "type": "object",
@@ -430,8 +441,12 @@ Schema of output metadata depends on Behaviour configuration:
    }
 }
 ```
+</details>
 
 ##### Emit Individually
+<details>
+<summary>Output metadata</summary>
+
 ```json
 {
    "type": "object",
@@ -483,8 +498,11 @@ Schema of output metadata depends on Behaviour configuration:
    }
 }
 ```
+</details>
 
-### Known limitations
+`type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
+
+#### Known limitations
 Action does not support `Fetch Page` mode (according to OIH standards)
 
 
@@ -499,3 +517,5 @@ Action does not support `Fetch Page` mode (according to OIH standards)
 ## SSH2 SFTP Client API and Documentation links
 
 The SFTP component uses [ssh2-sftp-client](https://www.npmjs.com/package/ssh2-sftp-client).
+
+Explanation of [Unix file types](https://en.wikipedia.org/wiki/Unix_file_types)
