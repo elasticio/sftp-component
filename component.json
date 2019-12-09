@@ -219,7 +219,8 @@
           "viewClass": "TextFieldView",
           "label": "Number of search terms",
           "required": false,
-          "placeholder": "0"
+          "placeholder": "0",
+          "prompt": "Enter an integer number from interval: [0-99]"
         },
         "uploadFilesToAttachments": {
           "viewClass": "SelectView",

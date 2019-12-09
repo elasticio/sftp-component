@@ -333,7 +333,7 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 ##### Behavior
 `Fetch All` - fetch all objects in one message in form of array, `Emit Individually` - emit each fetched object as separate message.
 ##### Number of search terms
-Not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 100. If this field is empty, action emits all entities with selected type.
+Not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 99. If this field is empty, action emits all entities with selected type.
 ##### Upload files to attachment
  Not required field. If `Yes` - all files will be downloaded to the attachments and action will return files metadata as JSON object. If `No` - No files will be downloaded to the attachments and action returns files metadata in JSON object
 
