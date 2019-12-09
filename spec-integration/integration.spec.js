@@ -10,6 +10,7 @@ const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const upsertFile = require('../lib/actions/upsertFile');
+const lookupObject = require('../lib/actions/lookupObject');
 require('dotenv').config();
 chai.use(require('chai-as-promised'));
 
