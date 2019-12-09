@@ -292,7 +292,7 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 ```
 </details>
 
-`type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
+**Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
 ### Lookup files
 Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
