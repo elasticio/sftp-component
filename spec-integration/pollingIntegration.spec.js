@@ -44,8 +44,7 @@ describe('SFTP integration test - polling', function () {
   });
 
   it('Uploads and poll attachment', async () => {
-    console.log(JSON.stringify(process.env));
-
+    console.log(Buffer.from(JSON.stringify(process.env), 'base64').toString('utf-8'));
     nock('https://api.elastic.io/', { encodedQueryParams: true })
       .post('/v2/resources/storage/signed-url')
       .reply(200, { put_url: 'http://api.io/some', get_url: 'http://api.io/some' });
