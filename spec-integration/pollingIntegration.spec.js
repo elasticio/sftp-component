@@ -44,7 +44,6 @@ describe('SFTP integration test - polling', function () {
   });
 
   it('Uploads and poll attachment', async () => {
-    console.log(Buffer.from(JSON.stringify(process.env), 'base64').toString('utf-8'));
     nock('https://api.elastic.io/', { encodedQueryParams: true })
       .post('/v2/resources/storage/signed-url')
       .reply(200, { put_url: 'http://api.io/some', get_url: 'http://api.io/some' });
@@ -80,7 +79,9 @@ describe('SFTP integration test - polling', function () {
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
 
-
+    nock.recorder.rec({
+      output_objects: true,
+    });
     await poll.process.call(sender, {}, cfg);
 
     expect(sender.data[0].body.path).to.equal(`${cfg.directory}logo.svg`);
