@@ -42,8 +42,8 @@ describe('SFTP integration test - upload then download', function () {
   before(() => {
     if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
     host = process.env.SFTP_HOSTNAME;
-    username = process.env.USERNAME;
-    password = process.env.PASSWORD;
+    username = process.env.SFTP_USER;
+    password = process.env.SFTP_PASSWORD;
     port = process.env.PORT;
     directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
   });

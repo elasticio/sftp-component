@@ -37,13 +37,15 @@ describe('SFTP integration test - polling', function () {
   before(() => {
     if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
     host = process.env.SFTP_HOSTNAME;
-    username = process.env.USERNAME;
-    password = process.env.PASSWORD;
+    username = process.env.SFTP_USER;
+    password = process.env.SFTP_PASSWORD;
     port = process.env.PORT;
     directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
   });
 
   it('Uploads and poll attachment', async () => {
+    console.log(JSON.stringify(process.env));
+
     nock('https://api.elastic.io/', { encodedQueryParams: true })
       .post('/v2/resources/storage/signed-url')
       .reply(200, { put_url: 'http://api.io/some', get_url: 'http://api.io/some' });
@@ -78,6 +80,7 @@ describe('SFTP integration test - polling', function () {
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
+
 
     await poll.process.call(sender, {}, cfg);
 
