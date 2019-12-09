@@ -35,7 +35,7 @@ class TestEmitter extends EventEmitter {
 // eslint-disable-next-line func-names
 describe('SFTP integration test', function () {
   this.timeout(20000000);
-  let sftp;
+  let metaSftp;
   let host;
   let username;
   let password;
@@ -43,13 +43,20 @@ describe('SFTP integration test', function () {
   let directory;
   const testNumber = Math.floor(Math.random() * 10000);
 
-  before(() => {
+  before(async () => {
     if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
     host = process.env.SFTP_HOSTNAME;
     username = process.env.SFTP_USERNAME;
     password = process.env.PASSWORD;
     port = process.env.PORT;
     directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
+    metaSftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), {
+      host,
+      username,
+      password,
+      port,
+    });
+    await metaSftp.connect();
   });
 
   it('Uploads attachment', async () => {
@@ -60,8 +67,6 @@ describe('SFTP integration test', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     const sender = new TestEmitter();
     const msg = {
@@ -77,12 +82,12 @@ describe('SFTP integration test', function () {
     expect(result.body.results).to.be.an('array');
     expect(result.body.results.length).to.equal(1);
     expect(result.body.results[0].attachment).to.equal('logo.svg');
-    const list = await sftp.list(cfg.directory);
+    const list = await metaSftp.list(cfg.directory);
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
-    await sftp.delete(`${cfg.directory}logo.svg`);
-    await sftp.rmdir(cfg.directory, false);
+    await metaSftp.delete(`${cfg.directory}logo.svg`);
+    await metaSftp.rmdir(cfg.directory, false);
   });
 
   it('Uploads and reads attachments', async () => {
@@ -93,8 +98,8 @@ describe('SFTP integration test', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
+    metaSftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    await metaSftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: {},
@@ -116,12 +121,12 @@ describe('SFTP integration test', function () {
     expect(receiver.data[0].body.size).to.equal(4379);
     expect(receiver.data[1].body.filename).to.equal('logo2.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
-    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
-    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
-    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
-    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
-    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
-    await sftp.rmdir(cfg.directory, false);
+    const logoFilename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
+    await metaSftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
+    await metaSftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
+    await metaSftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await metaSftp.rmdir(cfg.directory, false);
   });
 
   it('Uploads and reads attachments with custom name', async () => {
@@ -132,8 +137,6 @@ describe('SFTP integration test', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: { filename: 'custom.svg' },
@@ -155,12 +158,12 @@ describe('SFTP integration test', function () {
     expect(receiver.data[0].body.size).to.equal(4379);
     expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
-    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
-    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
-    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
-    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
-    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
-    await sftp.rmdir(cfg.directory, false);
+    const logoFilename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
+    await metaSftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logoFilename}`);
+    await metaSftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${logo2Filename}`);
+    await metaSftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await metaSftp.rmdir(cfg.directory, false);
   });
 
   it('Uploads, read and deletes attachments with custom name', async () => {
@@ -171,8 +174,6 @@ describe('SFTP integration test', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: { filename: 'custom.svg' },
@@ -195,8 +196,8 @@ describe('SFTP integration test', function () {
     expect(receiver.data[1].body.filename).to.equal('custom_logo2.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
 
-    const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
-    const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
+    const logoFilename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    const logo2Filename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
 
     const dir = `${cfg.directory}${PROCESSED_FOLDER_NAME}`;
     const deleteResult = await deleteAction.process.call(receiver,
@@ -207,8 +208,8 @@ describe('SFTP integration test', function () {
     expect(deleteResult.body.id).to.equal(`${dir}/${logoFilename}`);
     expect(deleteResult2.body.id).to.equal(`${dir}/${logo2Filename}`);
 
-    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
-    await sftp.rmdir(cfg.directory, false);
+    await metaSftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await metaSftp.rmdir(cfg.directory, false);
   });
 
   it('Uploads, reads, and filters files by pattern match', async () => {
@@ -220,8 +221,6 @@ describe('SFTP integration test', function () {
       directory,
       pattern: 'pattern',
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: {},
@@ -235,7 +234,7 @@ describe('SFTP integration test', function () {
       },
     }, cfg);
 
-    const list = await sftp.list(cfg.directory);
+    const list = await metaSftp.list(cfg.directory);
     expect(list.length).to.equal(2);
     expect(list[0].name).to.equal('logo.svg');
     expect(list[0].size).to.equal(4379);
@@ -249,11 +248,11 @@ describe('SFTP integration test', function () {
     expect(receiver.data.length).to.equal(1);
     expect(receiver.data[0].body.filename).to.equal('pattern.svg');
     expect(receiver.data[0].body.size).to.equal(4379);
-    await sftp.delete(`${cfg.directory}logo.svg`);
-    const patternFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
-    await sftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${patternFilename}`);
-    await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
-    await sftp.rmdir(cfg.directory, false);
+    await metaSftp.delete(`${cfg.directory}logo.svg`);
+    const patternFilename = (await metaSftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
+    await metaSftp.delete(`${cfg.directory}${PROCESSED_FOLDER_NAME}/${patternFilename}`);
+    await metaSftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
+    await metaSftp.rmdir(cfg.directory, false);
   });
 
   describe('Upsert File Tests', () => {
@@ -275,9 +274,6 @@ describe('SFTP integration test', function () {
         updateBehavior: 'error',
       };
 
-      sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-      await sftp.connect();
-
       const sender = new TestEmitter();
       const msg = {
         body: {
@@ -288,7 +284,7 @@ describe('SFTP integration test', function () {
       const result = await upsertFile.process.call(sender, msg, cfg);
 
       expect(result.body.size).to.equal(attachmentUrl1ContentSize);
-      const list = await sftp.list(directory);
+      const list = await metaSftp.list(directory);
       expect(list.length).to.equal(1);
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
@@ -304,9 +300,6 @@ describe('SFTP integration test', function () {
         updateBehavior: 'error',
       };
 
-      sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-      await sftp.connect();
-
       const sender = new TestEmitter();
       const msg = {
         body: {
@@ -317,7 +310,7 @@ describe('SFTP integration test', function () {
       const result = await upsertFile.process.call(sender, msg, cfg);
 
       expect(result.body.size).to.equal(attachmentUrl1ContentSize);
-      const list = await sftp.list(directory);
+      const list = await metaSftp.list(directory);
       expect(list.length).to.equal(1);
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
@@ -334,9 +327,6 @@ describe('SFTP integration test', function () {
         updateBehavior: 'overwrite',
       };
 
-      sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-      await sftp.connect();
-
       const sender = new TestEmitter();
       const msg1 = {
         body: {
@@ -347,7 +337,7 @@ describe('SFTP integration test', function () {
       const result1 = await upsertFile.process.call(sender, msg1, cfg);
 
       expect(result1.body.size).to.equal(attachmentUrl1ContentSize);
-      let list = await sftp.list(directory);
+      let list = await metaSftp.list(directory);
       expect(list.length).to.equal(1);
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
@@ -361,7 +351,7 @@ describe('SFTP integration test', function () {
       const result2 = await upsertFile.process.call(sender, msg2, cfg);
 
       expect(result2.body.size).to.equal(attachmentUrl2ContentSize);
-      list = await sftp.list(directory);
+      list = await metaSftp.list(directory);
       expect(list.length).to.equal(1);
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl2ContentSize);
@@ -376,9 +366,6 @@ describe('SFTP integration test', function () {
         updateBehavior: 'append',
       };
 
-      sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-      await sftp.connect();
-
       const sender = new TestEmitter();
       const msg1 = {
         body: {
@@ -389,7 +376,7 @@ describe('SFTP integration test', function () {
       const result1 = await upsertFile.process.call(sender, msg1, cfg);
 
       expect(result1.body.size).to.equal(attachmentUrl1ContentSize);
-      let list = await sftp.list(directory);
+      let list = await metaSftp.list(directory);
       expect(list.length).to.equal(1);
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
@@ -403,15 +390,15 @@ describe('SFTP integration test', function () {
       const result2 = await upsertFile.process.call(sender, msg2, cfg);
 
       expect(result2.body.size).to.equal(attachmentUrl1ContentSize + attachmentUrl2ContentSize);
-      list = await sftp.list(directory);
+      list = await metaSftp.list(directory);
       expect(list.length).to.equal(1);
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize + attachmentUrl2ContentSize);
     });
 
     afterEach(async () => {
-      await sftp.delete(filename);
-      await sftp.rmdir(directory, false);
+      await metaSftp.delete(filename);
+      await metaSftp.rmdir(directory, false);
     });
   });
 
@@ -425,8 +412,6 @@ describe('SFTP integration test', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: {
@@ -439,7 +424,7 @@ describe('SFTP integration test', function () {
       },
     }, cfg);
 
-    const list = await sftp.list(cfg.directory);
+    const list = await metaSftp.list(cfg.directory);
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
 
@@ -452,8 +437,8 @@ describe('SFTP integration test', function () {
     const result = await lookupObject.process.call(receiver, msg, cfg);
     expect(result.body.name).to.equal('logo.svg');
     expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
-    await sftp.delete(`${cfg.directory}logo.svg`);
-    await sftp.rmdir(cfg.directory, false);
+    await metaSftp.delete(`${cfg.directory}logo.svg`);
+    await metaSftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
   });
 
@@ -467,8 +452,6 @@ describe('SFTP integration test', function () {
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: {
@@ -481,7 +464,7 @@ describe('SFTP integration test', function () {
       },
     }, cfg);
 
-    const list = await sftp.list(cfg.directory);
+    const list = await metaSftp.list(cfg.directory);
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
 
@@ -494,12 +477,12 @@ describe('SFTP integration test', function () {
     const result = await lookupObject.process.call(receiver, msg, cfg);
     expect(result.body.name).to.equal('logo.svg');
     expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
-    await sftp.delete(`${cfg.directory}logo.svg`);
-    await sftp.rmdir(cfg.directory, false);
+    await metaSftp.delete(`${cfg.directory}logo.svg`);
+    await metaSftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
   });
 
-  afterEach(async () => {
-    await sftp.end();
+  after(async () => {
+    await metaSftp.end();
   });
 });
