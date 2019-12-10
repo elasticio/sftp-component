@@ -220,7 +220,7 @@
           "label": "Number of search terms",
           "required": false,
           "placeholder": "0",
-          "note": "Enter an integer number from interval: [0-99]"
+          "note": "Enter an integer number from interval: [0-99] or leave empty. Defaults to [0]"
         },
         "uploadFilesToAttachments": {
           "viewClass": "SelectView",
