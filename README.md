@@ -10,12 +10,12 @@
      * [Port](#port)
 * [Triggers](#triggers)
    * [Read files](#read-files)
-   * [Get new and updated files](#get-new-and-updated-files)
+   * [Poll files](#poll-files)
 * [Actions](#actions)
    * [Upload files](#upload-files)
-   * [Lookup files](#lookup-files)
+   * [Download files](#download-files)
    * [Delete file](#delete-file)
-   * [Lookup file by name](#lookup-file-by-name)
+   * [Download file by name](#download-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -69,7 +69,7 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 * Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
-### Get new and updated files
+### Poll files
 Triggers to get all new and updated files since last polling.
 
 The following configuration fields are available:
@@ -180,7 +180,7 @@ Action to delete file by provided full file path.
 
 ```
 
-### Lookup file by name
+### Download file by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
 
@@ -294,7 +294,7 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 
 **Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
-### Lookup files
+### Download files
 Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
 
