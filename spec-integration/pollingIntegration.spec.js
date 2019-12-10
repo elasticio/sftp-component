@@ -25,23 +25,36 @@ class TestEmitter extends EventEmitter {
 }
 
 // eslint-disable-next-line func-names
-describe('SFTP integration test - polling', function () {
-  this.timeout(2000000);
+describe('SFTP integration test - polling', () => {
   let sftp;
+  let cfg;
   let host;
   let username;
   let password;
   let port;
   let directory;
+  let sender;
   const testNumber = Math.floor(Math.random() * 10000);
 
-  before(() => {
-    if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
+  before(async () => {
+    if (!process.env.SFTP_HOSTNAME) {
+      throw new Error('Please set SFTP_HOSTNAME env variable to proceed');
+    }
     host = process.env.SFTP_HOSTNAME;
     username = process.env.SFTP_USER;
     password = process.env.SFTP_PASSWORD;
     port = process.env.PORT;
-    directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
+    directory = `/www/integration-test/test-${testNumber}/`;
+    cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sftp = new Sftp(logger, cfg);
+    await sftp.connect();
+    sender = new TestEmitter();
   });
 
   it('Uploads and poll attachment', async () => {
@@ -51,26 +64,16 @@ describe('SFTP integration test - polling', function () {
     nock('http://api.io/', { encodedQueryParams: true })
       .put('/some').reply(200, { signedUrl: { put_url: 'http://api.io/some' } });
 
-    const cfg = {
-      host,
-      username,
-      password,
-      port,
-      directory,
-    };
-    sftp = new Sftp(logger, cfg);
-    await sftp.connect();
 
-    const sender = new TestEmitter();
     const msg = {
-      body: {},
+      body: { filename: 'logo.svg' },
       attachments: {
         'logo.svg': {
           url: 'https://app.elastic.io/img/logo.svg',
         },
       },
     };
-    const result = await upload.process.call(sender, msg, cfg);
+    const result = await upload.process.call(new TestEmitter(), msg, cfg);
 
     expect(result.body.results).to.be.an('array');
     expect(result.body.results.length).to.equal(1);
@@ -88,7 +91,7 @@ describe('SFTP integration test - polling', function () {
     await sftp.rmdir(cfg.directory, false);
   });
 
-  afterEach(async () => {
+  after(async () => {
     await sftp.end();
   });
 });

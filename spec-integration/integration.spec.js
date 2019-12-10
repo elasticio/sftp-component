@@ -1,6 +1,7 @@
+require('dotenv').config();
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const bunyan = require('bunyan');
+const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const sinon = require('sinon');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const Sftp = require('../lib/Sftp');
@@ -8,7 +9,6 @@ const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
-require('dotenv').config();
 
 const PROCESSED_FOLDER_NAME = '.elasticio_processed';
 
@@ -18,7 +18,7 @@ class TestEmitter extends EventEmitter {
     this.data = [];
     this.end = 0;
     this.error = [];
-    this.logger = bunyan.createLogger({ name: 'dummy' });
+    this.logger = logger;
 
     this.on('data', (value) => this.data.push(value));
     this.on('error', (value) => this.error.push(value));
@@ -29,37 +29,55 @@ class TestEmitter extends EventEmitter {
 }
 
 // eslint-disable-next-line func-names
-describe('SFTP integration test - upload then download', function () {
-  this.timeout(20000000);
+describe('SFTP integration test - upload then download', () => {
   let sftp;
   let host;
   let username;
   let password;
   let port;
   let directory;
+  let cfg;
+  let sender;
+  let receiver;
   const testNumber = Math.floor(Math.random() * 10000);
 
-  before(() => {
-    if (!process.env.SFTP_HOSTNAME) { throw new Error('Please set SFTP_HOSTNAME env variable to proceed'); }
+  before(async () => {
+    if (!process.env.SFTP_HOSTNAME) {
+      throw new Error('Please set SFTP_HOSTNAME env variable to proceed');
+    }
     host = process.env.SFTP_HOSTNAME;
     username = process.env.SFTP_USER;
     password = process.env.SFTP_PASSWORD;
     port = process.env.PORT;
-    directory = `/home/eiotesti/www/integration-test/test-${testNumber}/`;
-  });
-
-  it('Uploads attachment', async () => {
-    const cfg = {
+    directory = `/www/integration-test/test-${testNumber}/`;
+    cfg = {
       host,
       username,
       password,
       port,
       directory,
     };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
+    sftp = new Sftp(logger, cfg);
     await sftp.connect();
+  });
 
-    const sender = new TestEmitter();
+  beforeEach(async () => {
+    cfg = {
+      host,
+      username,
+      password,
+      port,
+      directory,
+    };
+    sender = new TestEmitter();
+    receiver = new TestEmitter();
+  });
+
+  after(async () => {
+    await sftp.end();
+  });
+
+  it('Uploads attachment', async () => {
     const msg = {
       body: {},
       attachments: {
@@ -82,16 +100,6 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   it('Uploads and reads attachments', async () => {
-    const cfg = {
-      host,
-      username,
-      password,
-      port,
-      directory,
-    };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
-
     await upload.process.call(new TestEmitter(), {
       body: {},
       attachments: {
@@ -104,13 +112,12 @@ describe('SFTP integration test - upload then download', function () {
       },
     }, cfg);
 
-    const receiver = new TestEmitter();
     const msg = {};
     await read.process.call(receiver, msg, cfg);
     expect(receiver.data.length).to.equal(2);
-    expect(receiver.data[0].body.filename).to.equal('logo.svg');
+    expect(receiver.data[0].body.filename).to.equal('logo2.svg');
     expect(receiver.data[0].body.size).to.equal(4379);
-    expect(receiver.data[1].body.filename).to.equal('logo2.svg');
+    expect(receiver.data[1].body.filename).to.equal('logo.svg');
     expect(receiver.data[1].body.size).to.equal(4379);
     const logoFilename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[0].name;
     const logo2Filename = (await sftp.list(`${cfg.directory}${PROCESSED_FOLDER_NAME}`))[1].name;
@@ -121,16 +128,6 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   it('Uploads and reads attachments with custom name', async () => {
-    const cfg = {
-      host,
-      username,
-      password,
-      port,
-      directory,
-    };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
-
     await upload.process.call(new TestEmitter(), {
       body: { filename: 'custom.svg' },
       attachments: {
@@ -143,7 +140,6 @@ describe('SFTP integration test - upload then download', function () {
       },
     }, cfg);
 
-    const receiver = new TestEmitter();
     const msg = {};
     await read.process.call(receiver, msg, cfg);
     expect(receiver.data.length).to.equal(2);
@@ -160,16 +156,6 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   it('Uploads, read and deletes attachments with custom name', async () => {
-    const cfg = {
-      host,
-      username,
-      password,
-      port,
-      directory,
-    };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
-
     await upload.process.call(new TestEmitter(), {
       body: { filename: 'custom.svg' },
       attachments: {
@@ -182,7 +168,6 @@ describe('SFTP integration test - upload then download', function () {
       },
     }, cfg);
 
-    const receiver = new TestEmitter();
     const msg = {};
     await read.process.call(receiver, msg, cfg);
     expect(receiver.data.length).to.equal(2);
@@ -208,17 +193,6 @@ describe('SFTP integration test - upload then download', function () {
   });
 
   it('Uploads, reads, and filters files by pattern match', async () => {
-    const cfg = {
-      host,
-      username,
-      password,
-      port,
-      directory,
-      pattern: 'pattern',
-    };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
-
     await upload.process.call(new TestEmitter(), {
       body: {},
       attachments: {
@@ -233,15 +207,14 @@ describe('SFTP integration test - upload then download', function () {
 
     const list = await sftp.list(cfg.directory);
     expect(list.length).to.equal(2);
-    expect(list[0].name).to.equal('logo.svg');
+    expect(list[0].name).to.equal('pattern.svg');
     expect(list[0].size).to.equal(4379);
-    expect(list[1].name).to.equal('pattern.svg');
+    expect(list[1].name).to.equal('logo.svg');
     expect(list[1].size).to.equal(4379);
 
-    const receiver = new TestEmitter();
     const msg = {};
+    cfg.pattern = 'pattern*';
     await read.process.call(receiver, msg, cfg);
-
     expect(receiver.data.length).to.equal(1);
     expect(receiver.data[0].body.filename).to.equal('pattern.svg');
     expect(receiver.data[0].body.size).to.equal(4379);
@@ -255,15 +228,6 @@ describe('SFTP integration test - upload then download', function () {
   it('Uploads and lookup', async () => {
     const attachmentProcessorStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
     const callAttachmentProcessor = attachmentProcessorStub.returns({ config: { url: 'https://url' } });
-    const cfg = {
-      host,
-      username,
-      password,
-      port,
-      directory,
-    };
-    sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), cfg);
-    await sftp.connect();
 
     await upload.process.call(new TestEmitter(), {
       body: {
@@ -280,7 +244,6 @@ describe('SFTP integration test - upload then download', function () {
     expect(list.length).to.equal(1);
     expect(list[0].name).to.equal('logo.svg');
 
-    const receiver = new TestEmitter();
     const msg = {
       body: {
         path: `${directory}/logo.svg`,
@@ -292,9 +255,5 @@ describe('SFTP integration test - upload then download', function () {
     await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
-  });
-
-  afterEach(async () => {
-    await sftp.end();
   });
 });

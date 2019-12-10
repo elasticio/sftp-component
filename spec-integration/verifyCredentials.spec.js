@@ -1,13 +1,11 @@
 /* eslint-disable no-unused-expressions */
-const bunyan = require('bunyan');
+const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const { expect } = require('chai');
 const sinon = require('sinon');
 const verifyCredentials = require('../verifyCredentials');
 require('dotenv').config();
 
-describe('verifyCredentials', function () {
-  this.timeout(100000);
-
+describe('verifyCredentials', () => {
   const spy = sinon.spy();
   let credentials;
 
@@ -28,7 +26,7 @@ describe('verifyCredentials', function () {
     const cbObj = await verifyCredentials.call(
       {
         emit: spy,
-        logger: bunyan.createLogger({ name: 'dummy' }),
+        logger,
       },
       credentials,
       (_, verifiedObj) => verifiedObj,
@@ -42,7 +40,7 @@ describe('verifyCredentials', function () {
     const cbObj = await verifyCredentials.call(
       {
         emit: spy,
-        logger: bunyan.createLogger({ name: 'dummy' }),
+        logger,
       },
       incorrectPasswordCredentials,
       (_, verifiedObj) => verifiedObj,
@@ -56,7 +54,7 @@ describe('verifyCredentials', function () {
     const cbObj = await verifyCredentials.call(
       {
         emit: spy,
-        logger: bunyan.createLogger({ name: 'dummy' }),
+        logger,
       },
       incorrectPortCredentials,
       (_, verifiedObj) => verifiedObj,

@@ -5,7 +5,7 @@
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
     "test": "mocha spec --recursive --timeout 50000",
-    "integration-test": "mocha spec-integration --timeout 50000"
+    "integration-test": "LOG_LEVEL=trace;LOG_OUTPUT_MODE=short mocha spec-integration/* --timeout 50000"
   },
   "repository": {
     "type": "git",
