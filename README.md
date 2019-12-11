@@ -174,25 +174,26 @@ The following configuration fields are available:
   "type": "object",
   "required": true,
   "properties": {
-  "filename": {
-    "title": "File Name and Path",
-    "type": "string",
-    "required": true
-  },
-  "attachmentUrl": {
-    "title": "Attachment URL",
-    "type": "string",
-    "required": true
-  },
-  "encoding": {
-    "title": "Encoding (defaults to null)",
-    "type": "string",
-    "required": false
-  },
-  "fileMod": {
-    "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx))",
-    "type": "string",
-    "required": false
+    "filename": {
+      "title": "File Name and Path",
+      "type": "string",
+      "required": true
+    },
+    "attachmentUrl": {
+      "title": "Attachment URL",
+      "type": "string",
+      "required": true
+    },
+    "encoding": {
+      "title": "Encoding (defaults to null)",
+      "type": "string",
+      "required": false
+    },
+    "fileMod": {
+      "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx))",
+      "type": "string",
+      "required": false
+    }
   }
 }
 ```
