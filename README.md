@@ -12,7 +12,8 @@
    * [Read files](#read-files)
    * [Get new and updated files](#get-new-and-updated-files)
 * [Actions](#actions)
-   * [Upload files](#upload-files)
+   * [Upload files from attachments](#upload-files-from-attachments)
+   * [Upload files by URL](#upload-files-by-url)
    * [Delete file](#delete-file)
    * [Lookup file by name](#lookup-file-by-name)
 * [Known limitations](#known-limitations)
@@ -125,7 +126,7 @@ The following configuration fields are available:
 
 ## Actions
 
-### Upload files
+### Upload files From Attachment
 
 The following configuration fields are available:
 - **Directory**: The directory where the file will be uploaded to.
@@ -137,9 +138,60 @@ Input metadata:
 - **Filename**: Custom name for uploaded file.
 
 Notes:
-* Uploaded file name will get filename of income file if new `Filename` doesn't provided 
+* Uploaded file name will get filename of income file if new `Filename` doesn't provided
 * `Filename` will be added at the beggining of attachment name if income message contains multiple attachments: `[SpecifiedFilename]_[NameOfExistedFile]`
-* File will be overwrited in case when file with specified name already exists in directory
+* File will be overwritten in case when file with specified name already exists in directory
+
+### Upsert File By URL
+Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server.  The component returns a summary of the written file.
+
+The following configuration fields are available:
+
+- **Behavior When File Already Exists**: The expected behavior of the component when trying to write to a file that already exists
+
+  - **Throw an Error**: Does not write data to the file and the component produces an error
+  - **Overwrite the File**: Replace the existing file contents with the contents of the attachment stored in the platform.
+  - **Append the File Contents**: Adds the contents of the attachment stored in the platform to the end of the file. No intermediate characters (e.g. newlines or spaces) will be added.
+
+* Note: If the filename provided contains directories that do not exist, those directories will be created.
+
+#### Expected input metadata
+
+- **File Name and Path**: Full filename and path to the file to write.  Both absolute (e.g. `/home/myuser/somefolder/some.file`) and relative (e.g. `./somefolder/some.file`) paths are supported.  Tilde (`~`) expansion is not supported.
+- **Attachment URL**: URL of the stored attachment to store in the file.
+- **Encoding**: The encoding (if any) that should be applied to the written file.
+- **File Mode**: The read/write/execute permissions for the file.
+
+```json
+{
+  "type": "object",
+  "required": true,
+  "properties": {
+  "filename": {
+    "title": "File Name and Path",
+    "type": "string",
+    "required": true
+  },
+  "attachmentUrl": {
+    "title": "Attachment URL",
+    "type": "string",
+    "required": true
+  },
+  "encoding": {
+    "title": "Encoding (defaults to null)",
+    "type": "string",
+    "required": false
+  },
+  "fileMod": {
+    "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx))",
+    "type": "string",
+    "required": false
+  }
+}
+```
+
+#### Expected output metadata
+
 
 ### Delete file
 Action to delete file by provided full file path.
@@ -206,7 +258,7 @@ After the upload, the READ-URL of the file will be used to generate a message wi
 }
 ```
 
-The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. 
+The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data.
 
 #### List of Expected Config fields
 ##### Allow Empty Result
@@ -231,7 +283,7 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 
 #### Expected output metadata
 
-<details> 
+<details>
 <summary>Output metadata</summary>
 
 ```json
