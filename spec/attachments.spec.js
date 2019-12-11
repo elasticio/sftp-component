@@ -15,12 +15,18 @@ const stream = new Stream();
 const contentLength = 10;
 
 describe('Attachment tests', () => {
+  let uploadAttachment;
+  before(() => {
+  });
   afterEach(() => {
     self.emit.resetHistory();
   });
+  after(() => {
+    uploadAttachment.restore();
+  });
 
   it('Adds an attachment correctly and returns the correct message', async () => {
-    const uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
+    uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
     await attachments.addAttachment.call(self, msg, name, stream, contentLength);
     expect(uploadAttachment.calledOnceWithExactly(stream, 'stream')).to.be.equal(true);
     expect(msg).to.be.deep.equal({ attachments: { file: { url: '/hello/world', size: 10 } } });
@@ -28,7 +34,7 @@ describe('Attachment tests', () => {
   });
 
   it('Emits an error upon failure', async () => {
-    const uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').throws(new Error('This input should be rejected'));
+    uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').throws(new Error('This input should be rejected'));
 
     await attachments.addAttachment.call(self, msg, name, 'not a stream', contentLength)
       .catch((e) => {
