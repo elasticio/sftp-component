@@ -1,3 +1,16 @@
+# 1.1.2 (December 6 2019)
+
+## General Changes
+    * Migrate integration tests to another SFTP Server
+    * Fix integration tests error during local running
+    * Migrate SFTP-->Attachment upload logic to streams
+    
+    
+# 1.1.1 (December 6 2019)
+
+## General Changes
+    * Add Lookup files action
+
 # 1.1.0 (December 5, 2019)
 
 ## General Changes

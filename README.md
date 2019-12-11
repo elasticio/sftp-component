@@ -10,11 +10,12 @@
      * [Port](#port)
 * [Triggers](#triggers)
    * [Read files](#read-files)
-   * [Get new and updated files](#get-new-and-updated-files)
+   * [Poll files](#poll-files)
 * [Actions](#actions)
    * [Upload files](#upload-files)
+   * [Download files](#download-files)
    * [Delete file](#delete-file)
-   * [Lookup file by name](#lookup-file-by-name)
+   * [Download file by name](#download-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -68,7 +69,7 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 * Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
-### Get new and updated files
+### Poll files
 Triggers to get all new and updated files since last polling.
 
 The following configuration fields are available:
@@ -79,6 +80,10 @@ The following configuration fields are available:
 
 
 #### Expected output metadata
+<details> 
+<summary>Output metadata</summary>
+
+
 ```json
 {
   "type": "object",
@@ -120,8 +125,10 @@ The following configuration fields are available:
     }
   }
 }
-
 ```
+</details>
+
+**Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
 ## Actions
 
@@ -173,7 +180,7 @@ Action to delete file by provided full file path.
 
 ```
 
-### Lookup file by name
+### Download file by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
 
@@ -285,6 +292,220 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 ```
 </details>
 
+**Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
+
+### Download files
+Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
+After the upload, the READ-URL of the file will be used to generate a message with content like below:
+
+```json
+{
+  "id": "0c196dca-4187-4b49-bf90-5cfe9030955b",
+  "attachments": {
+    "1.txt": {
+      "url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
+      "size": 7
+    }
+  },
+  "body": {
+    "type": "-",
+    "name": "1.txt",
+    "size": 7,
+    "modifyTime": "2019-12-02T13:05:42.000Z",
+    "accessTime": "2019-12-04T14:14:54.000Z",
+    "rights": {
+      "user": "rw",
+      "group": "r",
+      "other": "r"
+    },
+    "owner": 1002,
+    "group": 1002,
+    "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
+    "directory": "/www/test",
+    "path": "/www/test/1.txt"
+  }
+}
+```
+
+The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. 
+
+#### List of Expected Config fields
+##### Behavior
+`Fetch All` - fetch all objects in one message in form of array, `Emit Individually` - emit each fetched object as separate message.
+##### Number of search terms
+Not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 99. If this field is empty, action emits all entities with selected type.
+##### Upload files to attachment
+ Not required field. If `Yes` - all files will be downloaded to the attachments and action will return files metadata as JSON object. If `No` - No files will be downloaded to the attachments and action returns files metadata in JSON object
+
+
+#### Expected input metadata
+**Directory Path** - required field, Path of lookup directory.
+**Max Size** - Maximum number of objects to fetch. Default `250`, maximum value is `250`. 
+
+Metadata is depending on the input field `Number of search terms`. 
+
+If `Number of search terms` is empty, metadata does not exist.
+
+If `Number of search terms` = 1, metadata has only one search term.
+
+If `Number of search terms` > 1, metadata has a number of search term equal `Number of search terms` and a number of criteria link equal '`Number of search terms` - 1'.
+
+Each search term has 3 fields:
+ ![image](https://user-images.githubusercontent.com/13310949/70321165-54980580-182f-11ea-9442-e6234163deb6.png)
+ - **Field Name** - chosen entity's field name. You need to select the one field from `Value` section:
+ ![image](https://user-images.githubusercontent.com/13310949/70224021-31992300-1755-11ea-83e0-6023a2d67503.png)
+ - **Condition** - You need to select the one condition from `Value` section:
+ ![image](https://user-images.githubusercontent.com/13310949/70224020-31992300-1755-11ea-8f5d-375a77acf1c6.png)
+ - **Field Value** - the value that the field must match with the specified condition.
+  
+  You can use wildcard in the condition value for the `like` operator. See [micromatch documentation.](https://www.npmjs.com/package/micromatch)
+
+Between search terms, there is **Criteria Link**. You need to select the one criteria from `Value` section:
+![image](https://user-images.githubusercontent.com/13310949/70224278-ae2c0180-1755-11ea-9445-441a0e2c8f87.png)
+`And` Criteria Link has precedence over `Or`. If you configure 3 search Terms:
+```iso92-sql
+ searchTerm1 and SearchTerm2 or SearchTerm3
+```
+, it will be executed as
+ ```iso92-sql
+(searchTerm1 and SearchTerm2) or SearchTerm3                       
+```
+
+For example, if you want to find all files where field `name` starts from `123` or field `size` grater than `10000`:
+![image](https://user-images.githubusercontent.com/13310949/70224450-f6e3ba80-1755-11ea-9a9c-de573f74d370.png)
+
+
+#### Output metadata
+
+Schema of output metadata depends on Behaviour configuration: 
+##### Fetch All
+<details> 
+<summary>Output metadata</summary>
+
+```json
+{
+   "type": "object",
+   "properties": {
+      "results": {
+         "type": "array",
+         "properties": {
+            "type": "object",
+            "properties": {
+               "type": {
+                  "type": "string"
+               },
+               "name": {
+                  "type": "string"
+               },
+               "size": {
+                  "type": "number"
+               },
+               "modifyTime": {
+                  "type": "number"
+               },
+               "accessTime": {
+                  "type": "number"
+               },
+               "rights": {
+                  "type": "object",
+                  "properties": {
+                     "user": {
+                        "type": "string"
+                     },
+                     "group": {
+                        "type": "string"
+                     },
+                     "other": {
+                        "type": "string"
+                     }
+                  }
+               },
+               "owner": {
+                  "type": "number"
+               },
+               "group": {
+                  "type": "number"
+               },
+               "attachment_url": {
+                  "type": "string"
+               },
+               "directory": {
+                  "type": "string"
+               },               
+               "path": {
+                  "type": "string"
+               }
+            }
+         }
+      }
+   }
+}
+```
+</details>
+
+##### Emit Individually
+<details>
+<summary>Output metadata</summary>
+
+```json
+{
+   "type": "object",
+   "properties": {
+      "type": {
+         "type": "string"
+      },
+      "name": {
+         "type": "string"
+      },
+      "size": {
+         "type": "number"
+      },
+      "modifyTime": {
+         "type": "number"
+      },
+      "accessTime": {
+         "type": "number"
+      },
+      "rights": {
+         "type": "object",
+         "properties": {
+            "user": {
+               "type": "string"
+            },
+            "group": {
+               "type": "string"
+            },
+            "other": {
+               "type": "string"
+            }
+         }
+      },
+      "owner": {
+         "type": "number"
+      },
+      "group": {
+         "type": "number"
+      },
+      "attachment_url": {
+         "type": "string"
+      },
+      "directory": {
+          "type": "string"
+      },               
+      "path": {
+          "type": "string"
+      }
+   }
+}
+```
+</details>
+
+`type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
+
+#### Known limitations
+Action does not support `Fetch Page` mode (according to OIH standards)
+
+
 ## Known limitations
 
 * The maximum file size accepted by the SFTP component is limited to 100 MB.
@@ -296,3 +517,5 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 ## SSH2 SFTP Client API and Documentation links
 
 The SFTP component uses [ssh2-sftp-client](https://www.npmjs.com/package/ssh2-sftp-client).
+
+Explanation of [Unix file types](https://en.wikipedia.org/wiki/Unix_file_types)

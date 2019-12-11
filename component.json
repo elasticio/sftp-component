@@ -121,7 +121,7 @@
     },
     "lookupObject": {
       "main": "./lib/actions/lookupObject.js",
-      "title": "Lookup file by name",
+      "title": "Download file by name",
       "description": "Lookup file by name in a defined SFTP directory",
       "fields": {
         "allowEmptyResult": {
@@ -199,6 +199,40 @@
           }
         }
       }
+    },
+    "lookupObjects": {
+      "main": "./lib/actions/lookupObjects.js",
+      "title": "Download files",
+      "description": "Load list of files to attachments",
+      "fields": {
+        "emitBehaviour": {
+          "viewClass": "SelectView",
+          "label": "Behavior",
+          "required": true,
+          "model": {
+            "emitIndividually": "Emit Individually",
+            "fetchAll": "Fetch All"
+          },
+          "prompt": "Choose a Behavior type"
+        },
+        "numSearchTerms": {
+          "viewClass": "TextFieldView",
+          "label": "Number of search terms",
+          "required": false,
+          "placeholder": "0",
+          "note": "Enter an integer number from interval: [0-99] or leave empty. Defaults to [0]"
+        },
+        "uploadFilesToAttachments": {
+          "viewClass": "SelectView",
+          "label": "Upload files to attachment",
+          "model": {
+            "Yes": "Yes",
+            "No": "No"
+          },
+          "prompt": "Include attachments to the output message? Default: Yes."
+        }
+      },
+      "dynamicMetadata": true
     }
   },
   "triggers": {
@@ -241,7 +275,7 @@
     },
     "pollingTrigger": {
       "main": "./lib/triggers/polling.js",
-      "title": "Get new and updated files",
+      "title": "Poll files",
       "type": "polling",
       "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
       "fields": {
