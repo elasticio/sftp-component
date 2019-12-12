@@ -37,12 +37,12 @@ describe('Attachment tests', () => {
     const file = {
       type: '-',
       name: '1.txt',
-      size: 70000000,
+      size: 70000000000,
       accessTime: '1575379317000',
       modifyTime: '1575291942000',
     };
     await attachments.addAttachment.call(self, msg, file.name, stream, file.size);
-    expect(self.emit.getCall(0).args[1].message).to.be.equal('File is 70000000 bytes, and is too large to upload as an attachment. Max attachment size is 3500000 bytes');
+    expect(self.emit.getCall(0).args[1].message).to.be.equal('File is 70000000000 bytes, and is too large to upload as an attachment. Max attachment size is 104857600 bytes');
   });
 
   it('Emits an error upon failure', async () => {
