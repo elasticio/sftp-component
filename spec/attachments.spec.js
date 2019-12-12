@@ -33,6 +33,18 @@ describe('Attachment tests', () => {
     uploadAttachment.restore();
   });
 
+  it('Throws an error if attachment file is too large', async () => {
+    const file = {
+      type: '-',
+      name: '1.txt',
+      size: 70000000,
+      accessTime: '1575379317000',
+      modifyTime: '1575291942000',
+    };
+    await attachments.addAttachment.call(self, msg, file.name, stream, file.size);
+    expect(self.emit.getCall(0).args[1].message).to.be.equal('File is 70000000 bytes, and is too large to upload as an attachment. Max attachment size is 3500000 bytes');
+  });
+
   it('Emits an error upon failure', async () => {
     uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').throws(new Error('This input should be rejected'));
 

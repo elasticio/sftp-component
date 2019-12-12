@@ -124,7 +124,7 @@ describe('SFTP test - lookup file by file name', () => {
     try {
       await lookupObjectAction.process(msg, cfg, {});
     } catch (e) {
-      expect(e.message).to.be.equal(`File is ${list[1].size} bytes, and is too large to upload as an attachment`);
+      expect(e.message).to.be.equal(`File is ${list[1].size} bytes, and is too large to upload as an attachment. Max attachment size is 3500000 bytes`);
     }
     sftpClientListStub.restore();
   });
