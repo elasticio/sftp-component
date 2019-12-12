@@ -1,3 +1,6 @@
+# 1.1.3 (December 12, 2019)
+    * Add max to file size and environment variable to configure
+
 # 1.1.2 (December 6 2019)
 
 ## General Changes
