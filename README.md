@@ -25,7 +25,7 @@
 
 This component creates a connection to an SFTP server to read and upload files.
 
-The optional environment variable `MAX_FILE_SIZE` should be set in settings to provide the maximum file size that can be uploaded in **megabytes (mb)**. The default value for `MAX_FILE_SIZE` is 100MB.
+The optional environment variable `MAX_FILE_SIZE` should be set in settings to provide the maximum file size that can be uploaded in **megabytes (mb)**. The default value for `MAX_FILE_SIZE` is 10MB.
 
 ## Credentials
 ### User Name
