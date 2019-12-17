@@ -40,10 +40,9 @@ Password for SFTP server.
 
 **Note**: field `Private Key` should stay empty in case you fill a password.
 ### Private Key
-Your Private Key
-For accessing to secure SFTP servers configures with key-based authentication you should store your `Public key` to server (contact your server administrator) and fill this field by your `Private key`.
+To access a secure SFTP servers that is configured with a key-based authentication you must at first upload your `Public key` to the SFTP server (please contact your server administrator to do this) and fill in this field with your `Private key`.
 
-**Note**: field `Password` should stay empty in this case.
+Also please pay attention that the field `Password` should be empty in this case.
 
 ![image](https://user-images.githubusercontent.com/16806832/71006042-5db98a00-20ed-11ea-8e75-5a58b4207330.png)
 
