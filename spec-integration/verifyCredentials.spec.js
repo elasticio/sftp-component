@@ -34,6 +34,24 @@ describe('verifyCredentials', () => {
     expect(cbObj.verified).to.be.true;
   });
 
+  it('verifies authentic credentials with private key successfully', async () => {
+    const credentialsWithKey = {
+      host: process.env.SFTP_HOSTNAME,
+      port: Number(process.env.PORT),
+      username: process.env.SFTP_USER,
+      privateKey: process.env.SFTP_KEY.replace(/\\n/g, '\n'),
+    };
+    const cbObj = await verifyCredentials.call(
+      {
+        emit: spy,
+        logger,
+      },
+      credentialsWithKey,
+      (_, verifiedObj) => verifiedObj,
+    );
+    expect(cbObj.verified).to.be.true;
+  });
+
   it('fails to verify credentials with an incorrect password', async () => {
     const incorrectPasswordCredentials = JSON.parse(JSON.stringify(credentials));
     incorrectPasswordCredentials.password = 'IncorrectPassword';

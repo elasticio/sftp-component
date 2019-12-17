@@ -25,8 +25,16 @@
       "password": {
         "viewClass": "PasswordFieldView",
         "label": "Password",
-        "required": true,
-        "placeholder": "Paste your SFTP password"
+        "required": false,
+        "placeholder": "Paste your SFTP password",
+        "note": "For using username and password based authentication, leave Private Key empty"
+      },
+      "privateKey": {
+        "viewClass": "TextAreaView",
+        "label": "Private Key",
+        "required": false,
+        "placeholder": "Paste your SFTP Private Key",
+        "note": "For using Private Key-based authentication, leave username and password fields empty"
       }
     }
   },
