@@ -1,4 +1,4 @@
-# 1.1.3 (December 12, 2019)
+# 1.2.0 (December 18, 2019)
 ## General Changes
     * Add max to file size and environment variable to configure
     * Add key-based authentication
