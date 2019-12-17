@@ -21,7 +21,7 @@
     "elasticio-sailor-nodejs": "2.5.1",
     "micromatch": "4.0.2",
     "moment": "2.24.0",
-    "ssh2-sftp-client": "4.1.0"
+    "ssh2-sftp-client": "4.3.0"
   },
   "engines": {
     "node": ">=10"
