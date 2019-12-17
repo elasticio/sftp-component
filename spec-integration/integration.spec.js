@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { expect } = require('chai');
+const chai = require('chai');
 const EventEmitter = require('events');
 const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const sinon = require('sinon');
@@ -9,6 +9,10 @@ const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
+const upsertFile = require('../lib/actions/upsertFile');
+
+const { expect } = chai;
+chai.use(require('chai-as-promised'));
 
 const PROCESSED_FOLDER_NAME = '.elasticio_processed';
 
@@ -255,5 +259,154 @@ describe('SFTP integration test - upload then download', () => {
     await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
+  });
+
+  describe('Upsert File Tests', () => {
+    // eslint-disable-next-line max-len
+    const attachmentUrl1 = 'https://gist.githubusercontent.com/jhorbulyk/1bc92d62a7a530ce19c83a4f5b7a9f88/raw/62ab4e2e3028315c3472d622a279f13eb44c4f44/Hello%2520World%2520Gist';
+    const attachmentUrl1ContentSize = 11;
+    // eslint-disable-next-line max-len
+    const attachmentUrl2 = 'https://gist.githubusercontent.com/jhorbulyk/e6ff536dac6e0caa1b2d2d0177e72855/raw/77b39d3cd443128becae7f1c1ed88950cd29e576/Hello%2520World%2520Gist%25202';
+    const attachmentUrl2ContentSize = 15;
+    let filename;
+    beforeEach(() => {
+      filename = `${directory}test.file`;
+    });
+
+    it('Relative Path Test', async () => {
+      cfg = {
+        host,
+        username,
+        password,
+        port,
+        updateBehavior: 'error',
+      };
+
+      sender = new TestEmitter();
+      const msg = {
+        body: {
+          filename: filename.replace('/home/eiotesti/', './'),
+          attachmentUrl: attachmentUrl1,
+        },
+      };
+      const result = await upsertFile.process.call(sender, msg, cfg);
+
+      expect(result.body.size).to.equal(attachmentUrl1ContentSize);
+      const list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl1ContentSize);
+    });
+
+
+    it('Error Mode', async () => {
+      cfg = {
+        host,
+        username,
+        password,
+        port,
+        updateBehavior: 'error',
+      };
+
+      sender = new TestEmitter();
+      const msg = {
+        body: {
+          filename,
+          attachmentUrl: attachmentUrl1,
+        },
+      };
+      const result = await upsertFile.process.call(sender, msg, cfg);
+
+      expect(result.body.size).to.equal(attachmentUrl1ContentSize);
+      const list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl1ContentSize);
+
+      await expect(upsertFile.process.call(sender, msg, cfg)).to.be.rejectedWith(`File ${filename} exists. File updates are not permissible as per the current configuration.`);
+    });
+
+    it('Overwrite Mode', async () => {
+      cfg = {
+        host,
+        username,
+        password,
+        port,
+        updateBehavior: 'overwrite',
+      };
+
+      sender = new TestEmitter();
+      const msg1 = {
+        body: {
+          filename,
+          attachmentUrl: attachmentUrl1,
+        },
+      };
+      const result1 = await upsertFile.process.call(sender, msg1, cfg);
+
+      expect(result1.body.size).to.equal(attachmentUrl1ContentSize);
+      let list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl1ContentSize);
+
+      const msg2 = {
+        body: {
+          filename,
+          attachmentUrl: attachmentUrl2,
+        },
+      };
+      const result2 = await upsertFile.process.call(sender, msg2, cfg);
+
+      expect(result2.body.size).to.equal(attachmentUrl2ContentSize);
+      list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl2ContentSize);
+    });
+
+    it('Append Mode', async () => {
+      cfg = {
+        host,
+        username,
+        password,
+        port,
+        updateBehavior: 'append',
+      };
+
+      sender = new TestEmitter();
+      const msg1 = {
+        body: {
+          filename,
+          attachmentUrl: attachmentUrl1,
+        },
+      };
+      const result1 = await upsertFile.process.call(sender, msg1, cfg);
+
+      expect(result1.body.size).to.equal(attachmentUrl1ContentSize);
+      let list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl1ContentSize);
+
+      const msg2 = {
+        body: {
+          filename,
+          attachmentUrl: attachmentUrl2,
+        },
+      };
+      const result2 = await upsertFile.process.call(sender, msg2, cfg);
+
+      expect(result2.body.size).to.equal(attachmentUrl1ContentSize + attachmentUrl2ContentSize);
+      list = await sftp.list(directory);
+      expect(list.length).to.equal(1);
+      expect(list[0].name).to.equal('test.file');
+      expect(list[0].size).to.equal(attachmentUrl1ContentSize + attachmentUrl2ContentSize);
+    });
+
+    afterEach(async () => {
+      await sftp.delete(filename);
+      await sftp.rmdir(directory, false);
+    });
   });
 });
