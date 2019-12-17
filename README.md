@@ -29,16 +29,23 @@ This component creates a connection to an SFTP server to read and upload files.
 The optional environment variable `MAX_FILE_SIZE` should be set in settings to provide the maximum file size that can be uploaded in **megabytes (mb)**. The default value for `MAX_FILE_SIZE` is 10MB.
 
 ## Credentials
-### User Name
-Username for SFTP server
-### Password
-Password for SFTP server
 ### Host
 Host name of SFTP server
 ### Port
 Optional, port of SFTP server. Defaults to 22 if not set.
+### User Name
+Username for SFTP server
+### Password
+Password for SFTP server.
 
-![image](https://user-images.githubusercontent.com/35310862/65412296-3a818600-ddef-11e9-9064-8b9db7a650d5.png)
+**Note**: field `Private Key` should stay empty in case you fill a password.
+### Private Key
+Your Private Key
+For accessing to secure SFTP servers configures with key-based authentication you should store your `Public key` to server (contact your server administrator) and fill this field by your `Private key`.
+
+**Note**: field `Password` should stay empty in this case.
+
+![image](https://user-images.githubusercontent.com/16806832/71006042-5db98a00-20ed-11ea-8e75-5a58b4207330.png)
 
 ## Triggers
 
