@@ -150,6 +150,7 @@ describe('Tests for SFTP functions', () => {
     const spy = sinon.stub(Sftp.prototype, 'move');
     await sftp.move(dir, remotePath);
     expect(spy.calledOnce).to.be.equal(true);
+    spy.restore();
   });
 
   it('Puts file to remote directors', async () => {

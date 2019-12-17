@@ -30,6 +30,12 @@
       }
     }
   },
+  "envVars": {
+    "MAX_FILE_SIZE": {
+      "required": false,
+      "description": "Max file size to upload from SFTP"
+     }
+  },
   "actions": {
     "upload": {
       "main": "./lib/actions/upload.js",
