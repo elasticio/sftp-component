@@ -39,8 +39,8 @@
   "actions": {
     "upload": {
       "main": "./lib/actions/upload.js",
-      "title": "Upload files",
-      "description": "Upload files in a defined SFTP directory",
+      "title": "Upload files From Attachments Header",
+      "description": "Upload all files from the attachments header to a defined SFTP directory",
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -92,6 +92,95 @@
                     }
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "upsertFile": {
+      "main": "./lib/actions/upsertFile.js",
+      "title": "Upload File From URL",
+      "description": "Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server.  The component returns a summary of the written file.",
+      "fields": {
+        "updateBehavior": {
+          "label": "Behavior When File Already Exists",
+          "viewClass": "SelectView",
+          "required": true,
+          "prompt": "Select a Behavior",
+          "model": {
+            "error": "Throw an Error",
+            "overwrite": "Overwrite the File",
+            "append": "Append the File Contents"
+          }
+        }
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "required": true,
+          "properties": {
+            "filename": {
+              "title": "File Name and Path",
+              "type": "string",
+              "required": true
+            },
+            "attachmentUrl": {
+              "title": "Attachment URL",
+              "type": "string",
+              "required": true
+            },
+            "encoding": {
+              "title": "Encoding (defaults to null)",
+              "type": "string",
+              "required": false
+            },
+            "fileMod": {
+              "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx))",
+              "type": "string",
+              "required": false
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "properties": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "Type",
+                "type": "string",
+                "required": true
+              },
+              "name": {
+                "title": "File Name",
+                "type": "string",
+                "required": true
+              },
+              "size": {
+                "title": "File Size",
+                "type": "number",
+                "required": true
+              },
+              "modifyTime": {
+                "title": "modifyTime",
+                "type": "string",
+                "required": true
+              },
+              "accessTime": {
+                "title": "accessTime",
+                "type": "string",
+                "required": true
+              },
+              "directory": {
+                "title": "directory",
+                "type": "string",
+                "required": true
+              },
+              "path": {
+                "title": "path",
+                "type": "string",
+                "required": true
               }
             }
           }
