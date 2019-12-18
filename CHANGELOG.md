@@ -2,6 +2,12 @@
 ## General Changes
     * Add max to file size and environment variable to configure
     * Add key-based authentication
+    * Add Download files action
+    * Add Upload File From URL action    
+    * The following actions are renamed:
+      - Upload files -> Upload files From Attachments Header
+      - Lookup file by name -> Download file by name
+      - Get new and updated files -> Poll files
 
 # 1.1.2 (December 6 2019)
 
