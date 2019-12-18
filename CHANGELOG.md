@@ -1,3 +1,34 @@
+# 1.2.0 (December 18, 2019)
+## General Changes
+    * Add max to file size and environment variable to configure
+    * Add key-based authentication
+    * Add Download files action
+    * Add Upload File From URL action    
+    * The following actions are renamed:
+      - Upload files -> Upload files From Attachments Header
+      - Lookup file by name -> Download file by name
+      - Get new and updated files -> Poll files
+
+# 1.1.2 (December 6 2019)
+
+## General Changes
+    * New Action: Download files
+    * Migrate integration tests to another SFTP Server
+    * Fix integration tests error during local running
+    * Migrate SFTP-->Attachment upload logic to streams
+    
+## Actions
+### Poll files
+    * Fix 0kb file download bug  
+### Action: Download file by name
+    * Fix 0kb file download bug  
+
+    
+# 1.1.1 (December 6 2019)
+
+## General Changes
+    * Add Lookup files action
+
 # 1.1.0 (December 5, 2019)
 
 ## General Changes

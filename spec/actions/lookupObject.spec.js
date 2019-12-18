@@ -97,4 +97,35 @@ describe('SFTP test - lookup file by file name', () => {
     expect(result2).to.equal(null);
     sftpClientListStub.restore();
   });
+
+  it('Rejects a file that is too large', async () => {
+    const msg = {
+      body: {
+        path: 'www/olhav/1.txt',
+      },
+    };
+    const list = [
+      {
+        type: 'd',
+        name: '.elasticio_processed',
+        size: 4096,
+      },
+      {
+        type: '-',
+        name: '1.txt',
+        size: 70000000000,
+        accessTime: '1575379317000',
+        modifyTime: '1575291942000',
+      },
+    ];
+
+    const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
+
+    try {
+      await lookupObjectAction.process(msg, cfg, {});
+    } catch (e) {
+      expect(e.message).to.be.equal(`File is ${list[1].size} bytes, and is too large to upload as an attachment. Max attachment size is 10485760 bytes`);
+    }
+    sftpClientListStub.restore();
+  });
 });

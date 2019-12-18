@@ -1,13 +1,11 @@
 /* eslint-disable no-unused-expressions */
-const bunyan = require('bunyan');
+const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const { expect } = require('chai');
 const sinon = require('sinon');
 const verifyCredentials = require('../verifyCredentials');
 require('dotenv').config();
 
-describe('verifyCredentials', function () {
-  this.timeout(100000);
-
+describe('verifyCredentials', () => {
   const spy = sinon.spy();
   let credentials;
 
@@ -15,8 +13,8 @@ describe('verifyCredentials', function () {
     credentials = {
       host: process.env.SFTP_HOSTNAME,
       port: Number(process.env.PORT),
-      username: process.env.USERNAME,
-      password: process.env.PASSWORD,
+      username: process.env.SFTP_USER,
+      password: process.env.SFTP_PASSWORD,
     };
   });
 
@@ -28,9 +26,27 @@ describe('verifyCredentials', function () {
     const cbObj = await verifyCredentials.call(
       {
         emit: spy,
-        logger: bunyan.createLogger({ name: 'dummy' }),
+        logger,
       },
       credentials,
+      (_, verifiedObj) => verifiedObj,
+    );
+    expect(cbObj.verified).to.be.true;
+  });
+
+  it('verifies authentic credentials with private key successfully', async () => {
+    const credentialsWithKey = {
+      host: process.env.SFTP_HOSTNAME,
+      port: Number(process.env.PORT),
+      username: process.env.SFTP_USER,
+      privateKey: process.env.SFTP_KEY.replace(/\\n/g, '\n'),
+    };
+    const cbObj = await verifyCredentials.call(
+      {
+        emit: spy,
+        logger,
+      },
+      credentialsWithKey,
       (_, verifiedObj) => verifiedObj,
     );
     expect(cbObj.verified).to.be.true;
@@ -42,7 +58,7 @@ describe('verifyCredentials', function () {
     const cbObj = await verifyCredentials.call(
       {
         emit: spy,
-        logger: bunyan.createLogger({ name: 'dummy' }),
+        logger,
       },
       incorrectPasswordCredentials,
       (_, verifiedObj) => verifiedObj,
@@ -56,7 +72,7 @@ describe('verifyCredentials', function () {
     const cbObj = await verifyCredentials.call(
       {
         emit: spy,
-        logger: bunyan.createLogger({ name: 'dummy' }),
+        logger,
       },
       incorrectPortCredentials,
       (_, verifiedObj) => verifiedObj,
