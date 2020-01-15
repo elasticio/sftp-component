@@ -1,3 +1,7 @@
+## 1.2.1 (December 30, 2019)
+
+* Update component to new sailor version 2.5.4
+
 # 1.2.0 (December 18, 2019)
 ## General Changes
     * Add max to file size and environment variable to configure
