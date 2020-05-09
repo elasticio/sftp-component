@@ -50,7 +50,7 @@
       "title": "Upload files From Attachments Header",
       "help": {
         "description": "Upload all files from the attachments header to a defined SFTP directory",
-        "link": "#upload-files-from-attachments-header"
+        "link": "/components/sftp/actions#upload-files-from-attachments-header"
       },
       "fields": {
         "directory": {
@@ -114,7 +114,7 @@
       "title": "Upload File From URL",
       "help": {
         "description": "Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server. The component returns a summary of the written file",
-        "link": "#upload-file-from-url"
+        "link": "/components/sftp/actions#upload-file-from-url"
       },
       "fields": {
         "updateBehavior": {
@@ -207,7 +207,7 @@
       "description": "Delete file by name in provided path",
       "help": {
         "description": "Delete file by name in provided path",
-        "link": "#delete-file"
+        "link": "/components/sftp/actions#delete-file"
       },
       "metadata": {
         "in": {
@@ -237,7 +237,7 @@
       "title": "Download file by name",
       "help": {
         "description": "Lookup file by name in a defined SFTP directory",
-        "link": "#download-file-by-name"
+        "link": "/components/sftp/actions#download-file-by-name"
       },
       "fields": {
         "allowEmptyResult": {
@@ -321,7 +321,7 @@
       "title": "Download files",
       "help": {
         "description": "Load list of files to attachments",
-        "link": "#download-files"
+        "link": "/components/sftp/actions#download-files"
       },
       "fields": {
         "emitBehaviour": {
@@ -361,7 +361,7 @@
       "type": "polling",
       "help": {
         "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component",
-        "link": "#read-files"
+        "link": "/components/sftp/triggers#read-files"
       },
       "fields": {
         "directory": {
@@ -401,7 +401,7 @@
       "type": "polling",
       "help": {
         "description": "Triggers to get all new and updated files since last polling",
-        "link": "#poll-files"
+        "link": "/components/sftp/triggers#poll-files"
       },
       "fields": {
         "directory": {
