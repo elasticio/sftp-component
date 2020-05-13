@@ -12,7 +12,7 @@
     "url": "git@github.com:elasticio/sftp-component.git"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=12.13.0"
   },
   "author": "elastic.io GmbH",
   "license": "BSD-2-Clause",
