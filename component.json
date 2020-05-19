@@ -48,7 +48,10 @@
     "upload": {
       "main": "./lib/actions/upload.js",
       "title": "Upload files From Attachments Header",
-      "description": "Upload all files from the attachments header to a defined SFTP directory",
+      "help": {
+        "description": "Upload all files from the attachments header to a defined SFTP directory",
+        "link": "/components/sftp/actions#upload-files-from-attachments-header"
+      },
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -109,7 +112,10 @@
     "upsertFile": {
       "main": "./lib/actions/upsertFile.js",
       "title": "Upload File From URL",
-      "description": "Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server.  The component returns a summary of the written file.",
+      "help": {
+        "description": "Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server. The component returns a summary of the written file",
+        "link": "/components/sftp/actions#upload-file-from-url"
+      },
       "fields": {
         "updateBehavior": {
           "label": "Behavior When File Already Exists",
@@ -199,6 +205,10 @@
       "main": "./lib/actions/delete.js",
       "title": "Delete file",
       "description": "Delete file by name in provided path",
+      "help": {
+        "description": "Delete file by name in provided path",
+        "link": "/components/sftp/actions#delete-file"
+      },
       "metadata": {
         "in": {
           "type": "object",
@@ -225,7 +235,10 @@
     "lookupObject": {
       "main": "./lib/actions/lookupObject.js",
       "title": "Download file by name",
-      "description": "Lookup file by name in a defined SFTP directory",
+      "help": {
+        "description": "Lookup file by name in a defined SFTP directory",
+        "link": "/components/sftp/actions#download-file-by-name"
+      },
       "fields": {
         "allowEmptyResult": {
           "viewClass": "SelectView",
@@ -306,7 +319,10 @@
     "lookupObjects": {
       "main": "./lib/actions/lookupObjects.js",
       "title": "Download files",
-      "description": "Load list of files to attachments",
+      "help": {
+        "description": "Load list of files to attachments",
+        "link": "/components/sftp/actions#download-files"
+      },
       "fields": {
         "emitBehaviour": {
           "viewClass": "SelectView",
@@ -343,7 +359,10 @@
       "main": "./lib/triggers/read.js",
       "title": "Read files",
       "type": "polling",
-      "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
+      "help": {
+        "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component",
+        "link": "/components/sftp/triggers#read-files"
+      },
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
@@ -380,7 +399,10 @@
       "main": "./lib/triggers/polling.js",
       "title": "Poll files",
       "type": "polling",
-      "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component.",
+      "help": {
+        "description": "Triggers to get all new and updated files since last polling",
+        "link": "/components/sftp/triggers#poll-files"
+      },
       "fields": {
         "directory": {
           "viewClass": "TextFieldView",
