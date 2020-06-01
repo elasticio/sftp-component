@@ -1,6 +1,6 @@
 {
   "name": "sftp-component",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "elastic.io SFTP component",
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@elastic.io/component-commons-library": "0.0.6",
     "@elastic.io/oih-standard-library": "1.0.1",
+    "async": "3.2.0",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.3",
     "elasticio-sailor-nodejs": "2.6.7",
