@@ -15,6 +15,7 @@
    * [Upload files From Attachments Header](#upload-files-from-attachments-header)
    * [Upload File From URL](#upload-file-from-url)
    * [Download files](#download-files)
+   * [Move file](#move-file)
    * [Delete file](#delete-file)
    * [Download file by name](#download-file-by-name)
 * [Known limitations](#known-limitations)
@@ -256,6 +257,44 @@ The following configuration fields are available:
     }
   }
 }
+```
+
+### Move file
+Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
+
+#### Expected input metadata
+```json
+{
+  "type": "object",
+  "required": true,
+  "properties": {
+    "filename": {
+      "title": "Current file Name and Path",
+      "type": "string",
+      "required": true
+    },
+    "newFilename": {
+      "title": "New file Name and Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+```
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "Full Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+
 ```
 
 

@@ -201,6 +201,76 @@
         }
       }
     },
+    "moveFile": {
+      "main": "./lib/actions/moveFile.js",
+      "title": "Move File",
+      "help": {
+        "description": "Moves file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server",
+        "link": "/components/sftp/actions#move-file"
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "required": true,
+          "properties": {
+            "filename": {
+              "title": "Current file Name and Path",
+              "type": "string",
+              "required": true
+            },
+            "newFilename": {
+              "title": "New file Name and Path",
+              "type": "string",
+              "required": true
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "properties": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "title": "Type",
+                "type": "string",
+                "required": true
+              },
+              "name": {
+                "title": "File Name",
+                "type": "string",
+                "required": true
+              },
+              "size": {
+                "title": "File Size",
+                "type": "number",
+                "required": true
+              },
+              "modifyTime": {
+                "title": "modifyTime",
+                "type": "string",
+                "required": true
+              },
+              "accessTime": {
+                "title": "accessTime",
+                "type": "string",
+                "required": true
+              },
+              "directory": {
+                "title": "directory",
+                "type": "string",
+                "required": true
+              },
+              "path": {
+                "title": "path",
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    },
+
     "delete": {
       "main": "./lib/actions/delete.js",
       "title": "Delete file",
