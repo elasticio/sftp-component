@@ -261,8 +261,29 @@ The following configuration fields are available:
 
 ### Move file
 Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
+Target location MUST exist.
 
 #### Expected input metadata
+```json
+{
+  "type": "object",
+  "required": true,
+  "properties": {
+    "filename": {
+      "title": "Current file Name and Path",
+      "type": "string",
+      "required": true
+    },
+    "newFilename": {
+      "title": "New file Name and Path (location must exist)",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+```
+
+#### Expected output metadata
 ```json
 {
   "type": "object",
@@ -280,21 +301,6 @@ Action to move file on SFTP already exists in one location on an sftp server to 
     }
   }
 }
-```
-
-#### Expected output metadata
-```json
-{
-  "type": "object",
-  "properties": {
-    "id": {
-      "title": "Full Path",
-      "type": "string",
-      "required": true
-    }
-  }
-}
-
 ```
 
 
