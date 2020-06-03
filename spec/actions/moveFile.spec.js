@@ -17,7 +17,6 @@ describe('Lookup Files', () => {
   let connectStub;
   let endStub;
   let moveStub;
-  let resp;
   let responseBody;
 
   before(async () => {
@@ -39,17 +38,14 @@ describe('Lookup Files', () => {
         newFilename: '/some/new/file.txt',
       },
     };
+
     cfg = {
       host: process.env.SFTP_HOSTNAME || 'hostname',
       port: Number(process.env.PORT),
       username: process.env.SFTP_USER || 'user',
       password: process.env.SFTP_PASSWORD || 'psw',
     };
-    resp = {
-      config: {
-        url: 'http://localhost/id',
-      },
-    };
+
     responseBody = {
       type: '-',
       name: '/some/new/file.txt',
