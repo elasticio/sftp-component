@@ -73,6 +73,6 @@ describe('Lookup Files', () => {
     if (renameStub) renameStub.withArgs(msg.body.filename, msg.body.newFilename).returns(responseBody);
     await moveFile.process.call(context, msg, cfg);
     expect(context.emit.getCalls().length).to.be.eql(1);
-    expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody);
+    expect(context.emit.getCall(0).args[1].body).to.deep.eql(msg.body);
   });
 });
