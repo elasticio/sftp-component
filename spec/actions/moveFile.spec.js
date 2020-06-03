@@ -16,7 +16,7 @@ let msg;
 describe('Lookup Files', () => {
   let connectStub;
   let endStub;
-  let moveStub;
+  let renameStub;
   let responseBody;
 
   before(async () => {
@@ -28,7 +28,7 @@ describe('Lookup Files', () => {
     };
     connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
     endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
-    moveStub = await sinon.stub(Sftp.prototype, 'move');
+    renameStub = await sinon.stub(Sftp.prototype, 'rename');
   });
 
   beforeEach(() => {
@@ -61,16 +61,16 @@ describe('Lookup Files', () => {
   after(async () => {
     connectStub.restore();
     endStub.restore();
-    moveStub.restore();
+    renameStub.restore();
   });
 
   afterEach(() => {
     context.emit.resetHistory();
-    moveStub.resetHistory();
+    renameStub.resetHistory();
   });
 
   it('emitIndividually', async () => {
-    if (moveStub) moveStub.withArgs(msg.body.filename, msg.body.newFilename).returns(responseBody);
+    if (renameStub) renameStub.withArgs(msg.body.filename, msg.body.newFilename).returns(responseBody);
     await moveFile.process.call(context, msg, cfg);
     expect(context.emit.getCalls().length).to.be.eql(1);
     expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody);
