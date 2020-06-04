@@ -47,7 +47,7 @@
   "actions": {
     "upload": {
       "main": "./lib/actions/upload.js",
-      "title": "Upload files From Attachments Header",
+      "title": "Upload Files From Attachments Header",
       "help": {
         "description": "Upload all files from the attachments header to a defined SFTP directory",
         "link": "/components/sftp/actions#upload-files-from-attachments-header"
@@ -245,7 +245,7 @@
     },
     "delete": {
       "main": "./lib/actions/delete.js",
-      "title": "Delete file",
+      "title": "Delete File",
       "description": "Delete file by name in provided path",
       "help": {
         "description": "Delete file by name in provided path",
@@ -276,7 +276,7 @@
     },
     "lookupObject": {
       "main": "./lib/actions/lookupObject.js",
-      "title": "Download file by name",
+      "title": "Download File by name",
       "help": {
         "description": "Lookup file by name in a defined SFTP directory",
         "link": "/components/sftp/actions#download-file-by-name"
@@ -360,7 +360,7 @@
     },
     "lookupObjects": {
       "main": "./lib/actions/lookupObjects.js",
-      "title": "Download files",
+      "title": "Download Files",
       "help": {
         "description": "Load list of files to attachments",
         "link": "/components/sftp/actions#download-files"
@@ -399,7 +399,7 @@
   "triggers": {
     "read": {
       "main": "./lib/triggers/read.js",
-      "title": "Read files",
+      "title": "Read Files",
       "type": "polling",
       "help": {
         "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component",
@@ -439,7 +439,7 @@
     },
     "pollingTrigger": {
       "main": "./lib/triggers/polling.js",
-      "title": "Poll files",
+      "title": "Poll Files",
       "type": "polling",
       "help": {
         "description": "Triggers to get all new and updated files since last polling",
