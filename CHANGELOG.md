@@ -2,6 +2,7 @@
 
     * Add new 'Move File' action
     * Fix performance problem when trying to download large number of files
+    * Remove update docs on deploy script
 
 ## 1.2.2 (May 19, 2020)
 
