@@ -9,14 +9,15 @@
      * [Host](#host)
      * [Port](#port)
 * [Triggers](#triggers)
-   * [Read files](#read-files)
-   * [Poll files](#poll-files)
+   * [Read Files](#read-files)
+   * [Poll Files](#poll-files)
 * [Actions](#actions)
-   * [Upload files From Attachments Header](#upload-files-from-attachments-header)
+   * [Upload Files From Attachments Header](#upload-files-from-attachments-header)
    * [Upload File From URL](#upload-file-from-url)
-   * [Download files](#download-files)
-   * [Delete file](#delete-file)
-   * [Download file by name](#download-file-by-name)
+   * [Download Files](#download-files)
+   * [Move File](#move-file)
+   * [Delete File](#delete-file)
+   * [Download File by name](#download-file-by-name)
 * [Known limitations](#known-limitations)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
@@ -48,7 +49,7 @@ Also please pay attention that the field `Password` should be empty in this case
 
 ## Triggers
 
-### Read files
+### Read Files
 
 The following configuration fields are available:
 * **Directory**: The directory of the files to read from.
@@ -78,7 +79,7 @@ The next component may read from `url` in `attachments` for a memory-efficient w
 
 * Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
-### Poll files
+### Poll Files
 Triggers to get all new and updated files since last polling.
 
 The following configuration fields are available:
@@ -141,7 +142,7 @@ The following configuration fields are available:
 
 ## Actions
 
-### Upload files From Attachments Header
+### Upload Files From Attachments Header
 
 The following configuration fields are available:
 - **Directory**: The directory where the file will be uploaded to.
@@ -258,8 +259,52 @@ The following configuration fields are available:
 }
 ```
 
+### Move File
+Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
+Target location MUST exist.
 
-### Delete file
+#### Expected input metadata
+```json
+{
+  "type": "object",
+  "required": true,
+  "properties": {
+    "filename": {
+      "title": "Current file Name and Path",
+      "type": "string",
+      "required": true
+    },
+    "newFilename": {
+      "title": "New file Name and Path (location must exist)",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+```
+
+#### Expected output metadata
+```json
+{
+  "type": "object",
+  "required": true,
+  "properties": {
+    "filename": {
+      "title": "Current file Name and Path",
+      "type": "string",
+      "required": true
+    },
+    "newFilename": {
+      "title": "New file Name and Path",
+      "type": "string",
+      "required": true
+    }
+  }
+}
+```
+
+
+### Delete File
 Action to delete file by provided full file path.
 
 #### Expected input metadata
@@ -291,7 +336,7 @@ Action to delete file by provided full file path.
 
 ```
 
-### Download file by name
+### Download File by name
 Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
 
@@ -405,7 +450,7 @@ Default `No`. In case `No` is selected - an error will be thrown when object id 
 
 **Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
-### Download files
+### Download Files
 Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
 After the upload, the READ-URL of the file will be used to generate a message with content like below:
 

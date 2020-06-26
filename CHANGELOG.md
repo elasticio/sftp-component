@@ -1,6 +1,15 @@
+## 1.3.0 (June 5, 2020)
+
+    * Add new 'Move File' action
+    * Fix performance problem when trying to download large number of files
+
+## 1.2.2 (May 19, 2020)
+
+    * Update component to new sailor version 2.6.7
+
 ## 1.2.1 (December 30, 2019)
 
-* Update component to new sailor version 2.5.4
+    * Update component to new sailor version 2.5.4
 
 # 1.2.0 (December 18, 2019)
 ## General Changes
