@@ -10,6 +10,7 @@ const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
 const upsertFile = require('../lib/actions/upsertFile');
+const moveFile = require('../lib/actions/moveFile');
 
 const { expect } = chai;
 chai.use(require('chai-as-promised'));
@@ -259,6 +260,15 @@ describe('SFTP integration test - upload then download', () => {
     await sftp.delete(`${cfg.directory}logo.svg`);
     await sftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
+  });
+
+  it('Move File', async () => {
+    await moveFile.process.call(new TestEmitter(), {
+      body: {
+        filename: '/www/jacob/foo.txt',
+        newFilename: '/www/jacob/bar.txt',
+      },
+    }, cfg);
   });
 
   describe('Upsert File Tests', () => {
