@@ -1,3 +1,7 @@
+## 1.3.1 (June 28, 2020)
+
+    * Update component to new sailor version 2.6.10
+
 ## 1.3.0 (June 5, 2020)
 
     * Add new 'Move File' action
