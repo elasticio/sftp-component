@@ -10,7 +10,6 @@ const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
 const upsertFile = require('../lib/actions/upsertFile');
-const moveFile = require('../lib/actions/moveFile');
 
 const { expect } = chai;
 chai.use(require('chai-as-promised'));
