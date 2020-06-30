@@ -1,3 +1,9 @@
+## 1.3.2 (July 17, 2020)
+
+    * Use POSIX rename to move files. It is now possible to replace existing files with move.
+    * Update all dependencies.
+    * Use Node v 14.
+
 ## 1.3.1 (June 28, 2020)
 
     * Update component to new sailor version 2.6.10
