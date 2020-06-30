@@ -262,15 +262,6 @@ describe('SFTP integration test - upload then download', () => {
     attachmentProcessorStub.restore();
   });
 
-  it('Move File', async () => {
-    await moveFile.process.call(new TestEmitter(), {
-      body: {
-        filename: '/www/jacob/foo.txt',
-        newFilename: '/www/jacob/bar.txt',
-      },
-    }, cfg);
-  });
-
   describe('Upsert File Tests', () => {
     // eslint-disable-next-line max-len
     const attachmentUrl1 = 'https://gist.githubusercontent.com/jhorbulyk/1bc92d62a7a530ce19c83a4f5b7a9f88/raw/62ab4e2e3028315c3472d622a279f13eb44c4f44/Hello%2520World%2520Gist';
@@ -307,7 +298,6 @@ describe('SFTP integration test - upload then download', () => {
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
     });
-
 
     it('Error Mode', async () => {
       cfg = {

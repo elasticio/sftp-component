@@ -56,7 +56,6 @@ describe('SFTP test - lookup file by file name', () => {
       path: 'www/olhav/1.txt',
     };
 
-
     const result = await lookupObjectAction.process(msg, cfg, {});
 
     expect(result.body).to.deep.equal(expectedBody);
