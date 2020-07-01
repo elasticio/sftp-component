@@ -3,6 +3,7 @@ const chai = require('chai');
 const EventEmitter = require('events');
 const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const sinon = require('sinon');
+const SftpClient = require('ssh2-sftp-client');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const Sftp = require('../lib/Sftp');
 const deleteAction = require('../lib/actions/delete');
@@ -10,6 +11,7 @@ const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
 const upsertFile = require('../lib/actions/upsertFile');
+const moveFile = require('../lib/actions/moveFile');
 
 const { expect } = chai;
 chai.use(require('chai-as-promised'));
@@ -75,6 +77,10 @@ describe('SFTP integration test - upload then download', () => {
     };
     sender = new TestEmitter();
     receiver = new TestEmitter();
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 
   after(async () => {
@@ -406,6 +412,108 @@ describe('SFTP integration test - upload then download', () => {
     afterEach(async () => {
       await sftp.delete(filename);
       await sftp.rmdir(directory, false);
+    });
+  });
+
+  describe('Move File Tests', () => {
+    let mvTestDir;
+    let fooPath;
+    let barPath;
+    let bazPath;
+
+    before(() => {
+      mvTestDir = `${directory}moveDir`;
+      fooPath = `${mvTestDir}/foo.txt`;
+      barPath = `${mvTestDir}/bar.txt`;
+      bazPath = `${mvTestDir}/baz.txt`;
+    });
+
+    beforeEach(async () => {
+      await sftp.mkdir(mvTestDir);
+      await sftp.put(Buffer.from('foo'), fooPath);
+      await sftp.put(Buffer.from('bar'), barPath);
+    });
+
+    afterEach(async () => {
+      await sftp.rmdir(mvTestDir, true);
+    });
+
+    it('Posix No Conflict Move', async () => {
+      const body = {
+        filename: fooPath,
+        newFilename: bazPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt', 'baz.txt']);
+      const fileContents = await sftp.get(bazPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
+    });
+
+    it('Non Posix No Conflict Move', async () => {
+      const stub = sinon.stub(SftpClient.prototype, 'posixRename');
+      stub.throws(new Error('Server does not support this extended request'));
+      const body = {
+        filename: fooPath,
+        newFilename: bazPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(stub.called).to.be.true;
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt', 'baz.txt']);
+      const fileContents = await sftp.get(bazPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
+    });
+
+    it('Posix Overwrite', async () => {
+      const body = {
+        filename: fooPath,
+        newFilename: barPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt']);
+      const fileContents = await sftp.get(barPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
+    });
+
+    it('Non-Posix Overwrite', async () => {
+      const stub = sinon.stub(SftpClient.prototype, 'posixRename');
+      stub.throws(new Error('Server does not support this extended request'));
+      const body = {
+        filename: fooPath,
+        newFilename: barPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(stub.called).to.be.true;
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt']);
+      const fileContents = await sftp.get(barPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
     });
   });
 });

@@ -261,7 +261,7 @@ The following configuration fields are available:
 
 ### Move File
 Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
-Target location MUST exist. This action uses the openssh POSIX rename extension introduced in OpenSSH 4.8. The advantage of this version of rename over standard SFTP rename is that it is an atomic operation and will allow renaming a resource where the destination name exists. 
+Target location MUST exist.  If the target filename already exists it will be overwritten. This action uses the openssh POSIX rename extension introduced in OpenSSH 4.8 if it is available. The advantage of this version of rename over standard SFTP rename is that it is an atomic operation and will allow renaming a resource where the destination name exists. If the openssh POSIX rename mechanism is not available, then a delete operation and then rename operation will be completed. 
 
 #### Expected input metadata
 ```json
