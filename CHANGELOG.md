@@ -4,6 +4,7 @@
     * Use POSIX rename if possible to move files. It is now possible to replace existing files with move.
     * Update all dependencies.
     * Use Node v 14.
+    * Remove update docs on deploy script
 
 ## 1.3.0 (June 5, 2020)
 
