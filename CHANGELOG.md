@@ -1,5 +1,8 @@
 ## 1.4.0 (July 6, 2020)
     * Update component to new sailor version 2.6.10
+    * If deleting a file that does not exist, emit the empty message.
+    * Update all dependencies.
+    * Use Node v 14.
 
 ## 1.3.0 (June 5, 2020)
 
