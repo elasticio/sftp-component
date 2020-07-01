@@ -89,8 +89,7 @@ describe('SFTP', () => {
       .on('error', (e) => {
         err = e;
       })
-      .on('end', () => {
-      });
+      .on('end', () => {});
 
     await component.process.call(emitter, msg, cfg);
 

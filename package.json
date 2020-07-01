@@ -1,6 +1,6 @@
 {
   "name": "sftp-component",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "elastic.io SFTP component",
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
