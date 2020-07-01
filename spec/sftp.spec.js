@@ -52,7 +52,6 @@ describe('SFTP', () => {
     });
   });
 
-
   it('create connection options with no port', async () => {
     const newCfg = { ...cfg };
     delete newCfg.port;

@@ -64,7 +64,6 @@ describe('SFTP integration test - polling', () => {
     nock('http://api.io/', { encodedQueryParams: true })
       .put('/some').reply(200, { signedUrl: { put_url: 'http://api.io/some' } });
 
-
     const msg = {
       body: { filename: 'logo.svg' },
       attachments: {
