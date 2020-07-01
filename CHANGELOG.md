@@ -1,3 +1,5 @@
+## 1.4.0 (July 6, 2020)
+
 ## 1.3.0 (June 5, 2020)
 
     * Add new 'Move File' action
