@@ -305,7 +305,7 @@ Target location MUST exist.
 
 
 ### Delete File
-Action to delete file by provided full file path.
+Action to delete file by provided full file path. If the file does not exist, the empty message (`{}`) is returned. If the file is removed, the filename of the removed file is returned in the `id` property.
 
 #### Expected input metadata
 ```json
