@@ -13,7 +13,6 @@ const AND_OR_3 = {
   },
   criteriaLink1: 'or',
 
-
   searchTerm2: {
     fieldName: 'name',
     condition: 'eq',
@@ -26,7 +25,6 @@ const AND_OR_3 = {
     fieldValue: 'string 2984',
   },
   criteriaLink3: 'or',
-
 
   searchTerm4: {
     fieldName: 'name',
@@ -314,7 +312,6 @@ const ITEMS = [
     group: 1002,
   },
 ];
-
 
 module.exports = {
   AND_OR_3,

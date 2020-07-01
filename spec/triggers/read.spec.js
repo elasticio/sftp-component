@@ -78,9 +78,6 @@ describe('SFTP', () => {
     sinon.restore();
   });
   const runAndExpect = async (msg, cfg, cb) => {
-    // eslint-disable-next-line no-unused-vars
-    let done = false;
-
     let newMsg; let newSnapshot; let err;
     const emitter = new EventEmitter();
 
@@ -92,15 +89,12 @@ describe('SFTP', () => {
       .on('error', (e) => {
         err = e;
       })
-      .on('end', () => {
-        done = true;
-      });
+      .on('end', () => {});
 
     await component.process.call(emitter, msg, cfg);
 
     cb(err, newMsg, newSnapshot);
   };
-
 
   it('Failed to connect', () => {
     const msg = {};
@@ -151,7 +145,6 @@ describe('SFTP', () => {
     });
   });
 
-
   it('Invalid file pattern causes exception', () => {
     const msg = {};
 
@@ -189,7 +182,6 @@ describe('SFTP', () => {
     });
   });
 
-
   it('No files available in given directory', () => {
     const msg = {};
     const cfg = {
@@ -208,7 +200,6 @@ describe('SFTP', () => {
       expect(endStub.callCount > 0).to.equal(true);
     });
   });
-
 
   it('File name does not match given pattern', () => {
     const msg = {};
@@ -237,7 +228,6 @@ describe('SFTP', () => {
     });
   });
 
-
   it('File is a folder', () => {
     const msg = {};
     const cfg = {};
@@ -262,7 +252,6 @@ describe('SFTP', () => {
       expect(endStub.callCount > 0).to.equal(true);
     });
   });
-
 
   it('File exceeds maximal file size', () => {
     const msg = {};
@@ -289,7 +278,6 @@ describe('SFTP', () => {
       expect(endStub.callCount > 0).to.equal(true);
     });
   });
-
 
   it('File read successfully', () => {
     const msg = {};
@@ -340,7 +328,6 @@ describe('SFTP', () => {
       expect(renameCall.args[1].includes('/.elasticio_processed/data.xml')).to.equal(true);
     });
   });
-
 
   it('File read and create processed folder', () => {
     const msg = {};
@@ -399,7 +386,6 @@ describe('SFTP', () => {
       expect(renameCall.args[1].includes('/.elasticio_processed/data.xml')).to.equal(true);
     });
   });
-
 
   it('File read and create processed folder in a configured directory', () => {
     const msg = {};
