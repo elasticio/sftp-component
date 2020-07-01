@@ -1,6 +1,7 @@
 ## 1.4.0 (July 6, 2020)
     * Update component to new sailor version 2.6.10
     * If deleting a file that does not exist, emit the empty message.
+    * Use POSIX rename if possible to move files. It is now possible to replace existing files with move.
     * Update all dependencies.
     * Use Node v 14.
 

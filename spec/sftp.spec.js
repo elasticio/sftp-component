@@ -144,25 +144,10 @@ describe('Tests for SFTP functions', () => {
     expect(spy.calledOnce).to.be.equal(true);
   });
 
-  it('Moves files between two paths', async () => {
-    const remotePath = '/remote/path/here/';
-    const spy = sinon.stub(Sftp.prototype, 'move');
-    await sftp.move(dir, remotePath);
-    expect(spy.calledOnce).to.be.equal(true);
-    spy.restore();
-  });
-
   it('Puts file to remote directors', async () => {
     const data = Buffer.from('This is my file');
     const spy = sinon.stub(sftp._client, 'put');
     await sftp.put(data, dir);
-    expect(spy.calledOnce).to.be.equal(true);
-  });
-
-  it('Renames', async () => {
-    const remotePath = '/remote/path/here/';
-    const spy = sinon.stub(sftp._client, 'rename');
-    await sftp.rename(dir, remotePath);
     expect(spy.calledOnce).to.be.equal(true);
   });
 
