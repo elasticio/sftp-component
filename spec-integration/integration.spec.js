@@ -3,6 +3,7 @@ const chai = require('chai');
 const EventEmitter = require('events');
 const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const sinon = require('sinon');
+const SftpClient = require('ssh2-sftp-client');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const Sftp = require('../lib/Sftp');
 const deleteAction = require('../lib/actions/delete');
@@ -10,6 +11,7 @@ const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
 const upsertFile = require('../lib/actions/upsertFile');
+const moveFile = require('../lib/actions/moveFile');
 
 const { expect } = chai;
 chai.use(require('chai-as-promised'));
@@ -75,6 +77,10 @@ describe('SFTP integration test - upload then download', () => {
     };
     sender = new TestEmitter();
     receiver = new TestEmitter();
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 
   after(async () => {
@@ -192,6 +198,11 @@ describe('SFTP integration test - upload then download', () => {
     expect(deleteResult.body.id).to.equal(`${dir}/${logoFilename}`);
     expect(deleteResult2.body.id).to.equal(`${dir}/${logo2Filename}`);
 
+    // Check that deleting an already deleted file produces {}
+    const deleteResult3 = await deleteAction.process.call(receiver,
+      { body: { path: `${dir}/${logoFilename}` } }, cfg);
+    expect(deleteResult3.body).to.deep.equal({});
+
     await sftp.rmdir(`${cfg.directory}${PROCESSED_FOLDER_NAME}`, false);
     await sftp.rmdir(cfg.directory, false);
   });
@@ -297,7 +308,6 @@ describe('SFTP integration test - upload then download', () => {
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
     });
-
 
     it('Error Mode', async () => {
       cfg = {
@@ -407,6 +417,108 @@ describe('SFTP integration test - upload then download', () => {
     afterEach(async () => {
       await sftp.delete(filename);
       await sftp.rmdir(directory, false);
+    });
+  });
+
+  describe('Move File Tests', () => {
+    let mvTestDir;
+    let fooPath;
+    let barPath;
+    let bazPath;
+
+    before(() => {
+      mvTestDir = `${directory}moveDir`;
+      fooPath = `${mvTestDir}/foo.txt`;
+      barPath = `${mvTestDir}/bar.txt`;
+      bazPath = `${mvTestDir}/baz.txt`;
+    });
+
+    beforeEach(async () => {
+      await sftp.mkdir(mvTestDir);
+      await sftp.put(Buffer.from('foo'), fooPath);
+      await sftp.put(Buffer.from('bar'), barPath);
+    });
+
+    afterEach(async () => {
+      await sftp.rmdir(mvTestDir, true);
+    });
+
+    it('Posix No Conflict Move', async () => {
+      const body = {
+        filename: fooPath,
+        newFilename: bazPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt', 'baz.txt']);
+      const fileContents = await sftp.get(bazPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
+    });
+
+    it('Non Posix No Conflict Move', async () => {
+      const stub = sinon.stub(SftpClient.prototype, 'posixRename');
+      stub.throws(new Error('Server does not support this extended request'));
+      const body = {
+        filename: fooPath,
+        newFilename: bazPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(stub.called).to.be.true;
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt', 'baz.txt']);
+      const fileContents = await sftp.get(bazPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
+    });
+
+    it('Posix Overwrite', async () => {
+      const body = {
+        filename: fooPath,
+        newFilename: barPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt']);
+      const fileContents = await sftp.get(barPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
+    });
+
+    it('Non-Posix Overwrite', async () => {
+      const stub = sinon.stub(SftpClient.prototype, 'posixRename');
+      stub.throws(new Error('Server does not support this extended request'));
+      const body = {
+        filename: fooPath,
+        newFilename: barPath,
+      };
+
+      await moveFile.process.call(receiver, {
+        body,
+      }, cfg);
+
+      expect(stub.called).to.be.true;
+      expect(receiver.data[0].body).to.deep.equal(body);
+      const dirResults = await sftp.list(mvTestDir);
+      const dirNames = dirResults.map((f) => f.name).sort();
+      expect(dirNames).to.deep.equal(['bar.txt']);
+      const fileContents = await sftp.get(barPath);
+      expect(fileContents).to.deep.equal(Buffer.from('foo'));
     });
   });
 });

@@ -137,7 +137,6 @@ describe('Lookup Files', () => {
     expect(context.emit.getCall(1).args[1].body).to.deep.eql(responseBody[1]);
   });
 
-
   it('emitIndividually Only metadata', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);

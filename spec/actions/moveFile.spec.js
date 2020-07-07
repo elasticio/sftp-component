@@ -28,7 +28,7 @@ describe('Lookup Files', () => {
     };
     connectStub = sinon.stub(Sftp.prototype, 'connect').callsFake();
     endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
-    renameStub = await sinon.stub(Sftp.prototype, 'rename');
+    renameStub = await sinon.stub(Sftp.prototype, 'move');
   });
 
   beforeEach(() => {
