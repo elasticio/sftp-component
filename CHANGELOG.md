@@ -1,3 +1,7 @@
+## 1.4.1 (October 19, 2020)
+    * Annual audit of the component code to check if it exposes sensitive data in the logs
+    * Update sailor to 2.6.17
+
 ## 1.4.0 (July 6, 2020)
     * Update component to new sailor version 2.6.10
     * If deleting a file that does not exist, emit the empty message.
