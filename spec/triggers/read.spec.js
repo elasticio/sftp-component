@@ -1,451 +1,174 @@
-/* eslint-disable no-unused-expressions */
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
-const { EventEmitter } = require('events');
-const bunyan = require('bunyan');
 const sinon = require('sinon');
+const chaiAsPromised = require('chai-as-promised');
+const chai = require('chai');
+const { AttachmentProcessor, Logger } = require('@elastic.io/component-commons-library');
+
+chai.use(chaiAsPromised);
 const { expect } = require('chai');
-const attachments = require('../../lib/attachments');
-const readFile = require('../utils/readFile');
 const Sftp = require('../../lib/Sftp');
-const component = require('../../lib/triggers/read');
-require('dotenv').config();
+const trigger = require('../../lib/triggers/read');
 
-describe('SFTP', () => {
-  const sftp = new Sftp(bunyan.createLogger({ name: 'dummy' }), {
-    host: process.env.SFTP_HOSTNAME,
-    port: Number(process.env.PORT),
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-  });
-  let endStub;
-  let connectStub;
-  let attachmentsStub;
-  let opendirStub;
-  let mkdirStub;
-  let renameStub;
-  const client = {
-    opendir: () => null,
-    readdir: () => null,
-    rename: () => null,
-    mkdir: () => null,
-    createReadStream: () => null,
+const logger = Logger.getLogger();
+
+describe('SFTP test - read trigger', () => {
+  const self = {
+    emit: sinon.spy(),
+    logger,
+  };
+  const buffer = Buffer.from('Hello');
+  const res = { config: { url: 'https://url' } };
+  const cfg = {
+    directory: 'www/test',
   };
 
-  let files = [];
-  let opendirError = null;
-  let readDirError = null;
-  let readdirCalled = false;
+  it('Failed to connect', async () => {
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').throws(new Error('Connection failed'));
 
-  beforeEach(() => {
-    connectStub = sinon.stub(sftp, 'connect').callsFake();
-
-    opendirStub = sinon.stub(client, 'opendir').callsFake((dir, callback) => {
-      callback(opendirError);
-    });
-
-    sinon.stub(client, 'readdir').callsFake((handle, callback) => {
-      const result = readdirCalled ? false : files;
-
-      readdirCalled = true;
-
-      callback(readDirError, result);
-    });
-
-    endStub = sinon.stub(sftp, 'end').callsFake();
-
-    attachmentsStub = sinon.stub(attachments, 'addAttachment').callsFake((msg, fileName) => {
-      // eslint-disable-next-line no-param-reassign
-      msg.attachments[fileName] = {
-        url: 'http://loremipsum',
-      };
-      return new Promise((res) => res(msg));
-    });
-
-    renameStub = sinon.stub(client, 'rename').callsFake((oldName, newName, callback) => {
-      callback();
-    });
-
-    mkdirStub = sinon.stub(client, 'mkdir').callsFake((path, opts, cb) => {
-      cb(null);
-    });
+    await expect(trigger.process.call(self, {}, cfg)).be.rejectedWith('Connection failed');
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    sftpClientConnectStub.restore();
   });
 
-  afterEach(() => {
-    files = [];
-    opendirError = null;
-    readDirError = null;
-    readdirCalled = false;
-    sinon.restore();
-  });
-  const runAndExpect = async (msg, cfg, cb) => {
-    let newMsg; let newSnapshot; let err;
-    const emitter = new EventEmitter();
+  it('No such directory', async () => {
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').returns({});
+    const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').throws(new Error('No such directory'));
 
-    emitter.logger = bunyan.createLogger({ name: 'dummy' });
-    emitter
-      .on('data', (data) => {
-        newMsg = data;
-      })
-      .on('error', (e) => {
-        err = e;
-      })
-      .on('end', () => {});
+    await expect(trigger.process.call(self, {}, cfg)).be.rejectedWith('No such directory');
 
-    await component.process.call(emitter, msg, cfg);
-
-    cb(err, newMsg, newSnapshot);
-  };
-
-  it('Failed to connect', () => {
-    const msg = {};
-    const cfg = {};
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).to.equal('Ouch!');
-
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount).to.equal(0);
-    });
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    expect(sftpClientListStub.calledOnce).to.be.equal(true);
+    sftpClientConnectStub.restore();
+    sftpClientListStub.restore();
   });
 
-  it('No such directory', () => {
-    const msg = {};
-    const cfg = {};
+  it('Invalid file pattern causes exception', async () => {
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').returns({});
+    await expect(trigger.process.call(self, {}, { ...cfg, pattern: '***' })).be.rejectedWith('Invalid regular expression: /***/: Nothing to repeat');
 
-    opendirError = new Error('No such file or directory');
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).to.equal('No such file or directory');
-
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount).to.equal(1);
-    });
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    sftpClientConnectStub.restore();
   });
 
-  it('Failed to read directory', () => {
-    const msg = {};
-    const cfg = {};
-
-    readDirError = new Error('Failed to read given directory');
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).to.equal('Failed to read given directory');
-
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
-  });
-
-  it('Invalid file pattern causes exception', () => {
-    const msg = {};
-
-    const cfg = {
-      pattern: '***',
-    };
-
-    files = false;
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err.message).to.equal('Invalid regular expression: /***/: Nothing to repeat');
-
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
-  });
-
-  it('No files available', () => {
-    const msg = {};
-    const cfg = {};
-
-    files = false;
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
-
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
-  });
-
-  it('No files available in given directory', () => {
-    const msg = {};
-    const cfg = {
-      directory: 'aDir',
-    };
-
-    files = false;
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
-
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
-  });
-
-  it('File name does not match given pattern', () => {
-    const msg = {};
-    const cfg = {
-      pattern: 'aaa',
-    };
-
-    files = [
+  it('No files available', async () => {
+    const list = [
       {
-        filename: 'foo.xml',
-        longname: '-rw-r--r--    1 democommercetools ftpcreator       94 Aug 14 08:25 foo.xml',
-        attrs: {
-          size: 94,
-        },
+        type: 'd',
+        name: '.elasticio_processed',
+        size: 4096,
       },
     ];
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').returns({});
+    const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
+    const sftpClientEndStub = sinon.stub(Sftp.prototype, 'end').returns(true);
 
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
+    await trigger.process.call(self, {}, cfg);
 
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
+    expect(self.emit.called).to.be.equal(false);
+    expect(sftpClientEndStub.calledOnce).to.be.equal(true);
+    expect(sftpClientListStub.calledOnce).to.be.equal(true);
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    sftpClientConnectStub.restore();
+    sftpClientListStub.restore();
+    sftpClientEndStub.restore();
   });
 
-  it('File is a folder', () => {
-    const msg = {};
-    const cfg = {};
-
-    files = [
+  it('File name does not match given pattern', async () => {
+    const list = [
       {
-        filename: 'aFolder',
-        longname: 'drwxr-xr-x    1 democommercetools ftpcreator       94 Aug 14 08:25 aFolder',
-        attrs: {
-          size: 120,
-        },
+        type: 'd',
+        name: '.elasticio_processed',
+        size: 4096,
+      },
+      {
+        type: '-',
+        name: '1.txt',
+        size: 7,
+        accessTime: '1575379317000',
+        modifyTime: '1575291942000',
       },
     ];
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').returns({});
+    const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
+    const sftpClientEndStub = sinon.stub(Sftp.prototype, 'end').returns(true);
 
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
+    await trigger.process.call(self, {}, { ...cfg, pattern: 'aaa' });
 
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
+    expect(self.emit.called).to.be.equal(false);
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    sftpClientEndStub.restore();
+    sftpClientConnectStub.restore();
+    sftpClientListStub.restore();
   });
 
-  it('File exceeds maximal file size', () => {
-    const msg = {};
-    const cfg = {};
-
-    files = [
+  it('File exceeds maximal file size', async () => {
+    const list = [
       {
-        filename: 'data.xml',
-        longname: '-rw-r--r--    1 democommercetools ftpcreator       94 Aug 14 08:25 data.xml',
-        attrs: {
-          size: 104857601,
-        },
-
+        type: 'd',
+        name: '.elasticio_processed',
+        size: 4096,
+      },
+      {
+        type: '-',
+        name: '1.txt',
+        size: 204857600,
+        accessTime: '1575379317000',
+        modifyTime: '1575291942000',
       },
     ];
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').returns({});
+    const sftpClientEndStub = sinon.stub(Sftp.prototype, 'end').returns(true);
+    const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
 
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
+    await trigger.process.call(self, {}, cfg);
 
-      expect(newMsg).to.be.undefined;
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(endStub.callCount > 0).to.equal(true);
-    });
+    expect(self.emit.called).to.be.equal(false);
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    expect(sftpClientEndStub.calledOnce).to.be.equal(true);
+    expect(sftpClientListStub.calledOnce).to.be.equal(true);
+    sftpClientEndStub.restore();
+    sftpClientConnectStub.restore();
+    sftpClientListStub.restore();
   });
 
-  it('File read successfully', () => {
-    const msg = {};
-    const cfg = {};
-
-    files = [
+  it('File read successfully', async () => {
+    const list = [
       {
-        filename: 'data.xml',
-        longname: '-rw-r--r--    1 democommercetools ftpcreator       94 Aug 14 08:25 data.xml',
-        attrs: {
-          size: 10,
-        },
+        type: 'd',
+        name: '.elasticio_processed',
+        size: 4096,
       },
       {
-        filename: '.elasticio_processed',
-        longname: 'drwxr-xr-x    1 democommercetools ftpcreator       94 Aug 14 08:25 .elasticio_processed',
-        attrs: {
-          size: 10,
-        },
+        type: '-',
+        name: '1.txt',
+        size: 7,
+        accessTime: '1575379317000',
+        modifyTime: '1575291942000',
       },
     ];
+    const sftpClientConnectStub = sinon.stub(Sftp.prototype, 'connect').returns({});
+    const sftpClientExistsStub = sinon.stub(Sftp.prototype, 'exists').returns(true);
+    const sftpClientMoveStub = sinon.stub(Sftp.prototype, 'move').returns(true);
+    const sftpClientEndStub = sinon.stub(Sftp.prototype, 'end').returns(true);
+    const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
+    const sftpClientGetStub = sinon.stub(Sftp.prototype, 'get').returns(buffer);
+    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
 
-    const attachmentProcessor = new AttachmentProcessor();
+    await trigger.process.call(self, {}, cfg);
 
-    sinon.stub(attachmentProcessor, 'getAttachment').callsFake(() => ({
-      filename: 'data.xml',
-      size: 10,
-    }));
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
-
-      const attachment = newMsg.attachments['data.xml'];
-
-      expect(attachment.url).to.equal('http://loremipsum');
-      expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
-      expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
-      // expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
-      expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
-      expect(newSnapshot).to.be.undefined;
-      expect(connectStub.getCall(0).args[0]).to.equal(cfg);
-      expect(opendirStub.getCall(0).args[0]).to.equal('/');
-      expect(endStub.callCount > 0).to.equal(true);
-      expect(renameStub.callCount > 0).to.equal(true);
-
-      const renameCall = renameStub.getCall(0);
-      expect(renameCall.args[0]).to.equal('/data.xml');
-      expect(renameCall.args[1].includes('/.elasticio_processed/data.xml')).to.equal(true);
+    expect(self.emit.calledOnce).to.be.equal(true);
+    expect(self.emit.getCall(0).args[0]).to.be.equal('data');
+    expect(self.emit.getCall(0).args[1].body).to.be.deep.equal({
+      filename: '1.txt',
+      size: 7,
     });
-  });
-
-  it('File read and create processed folder', () => {
-    const msg = {};
-    const cfg = {};
-
-    files = [
-      {
-        filename: 'data.xml',
-        longname: '-rw-r--r--    1 democommercetools ftpcreator       94 Aug 14 08:25 data.xml',
-        attrs: {
-          size: 10,
-        },
-      },
-    ];
-
-    const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
-
-    sinon.stub(readFile, 'readFile').callsFake((client2, path, callback) => {
-      callback(null, Buffer.from(xml));
-    });
-
-    const attachmentProcessor = new AttachmentProcessor();
-
-    sinon.stub(attachmentProcessor, 'getAttachment').callsFake(() => ({
-      data: 'stream',
-    }));
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
-
-      const attachment = newMsg.attachments['data.xml'];
-
-      expect(attachment.url).to.equal('http://loremipsum');
-
-      expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
-      expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
-      // expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
-      expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(connectStub.getCall(0).args[0]).to.equal(cfg);
-
-      expect(opendirStub.getCall(0).args[0]).to.equal('/');
-      expect(endStub.callCount > 0).to.equal(true);
-
-      expect(mkdirStub.getCall(0).args[0]).to.equal('/.elasticio_processed');
-      expect(mkdirStub.getCall(0).args[1]).to.deep.equal({
-        mode: 16877,
-      });
-
-      expect(renameStub.callCount > 0).to.equal(true);
-
-      const renameCall = renameStub.getCall(0);
-      expect(renameCall.args[0]).to.equal('/data.xml');
-      expect(renameCall.args[1].includes('/.elasticio_processed/data.xml')).to.equal(true);
-    });
-  });
-
-  it('File read and create processed folder in a configured directory', () => {
-    const msg = {};
-    const cfg = {
-      directory: '/verylongdirectoryname',
-    };
-
-    files = [
-      {
-        filename: 'data.xml',
-        longname: '-rw-r--r--    1 democommercetools ftpcreator       94 Aug 14 08:25 data.xml',
-        attrs: {
-          size: 10,
-        },
-      },
-    ];
-
-    const xml = '<?xml version=\'1.0\' encoding=\'UTF-8\' ?><root><child/></root>';
-
-    sinon.stub(readFile, 'readFile').callsFake((client2, path, callback) => {
-      callback(null, Buffer.from(xml));
-    });
-
-    const attachmentProcessor = new AttachmentProcessor();
-
-    sinon.stub(attachmentProcessor, 'getAttachment').callsFake(() => ({
-      data: 'stream',
-    }));
-
-    runAndExpect(msg, cfg, (err, newMsg, newSnapshot) => {
-      expect(err).to.be.undefined;
-
-      const attachment = newMsg.attachments['data.xml'];
-
-      expect(attachment.url).to.equal('http://loremipsum');
-
-      expect(attachmentsStub.callCount > 0).to.equal(true);
-      expect(attachmentsStub.getCall(0).args[0]).to.equal(newMsg);
-      expect(attachmentsStub.getCall(0).args[1]).to.equal('data.xml');
-      // expect(attachmentsStub.getCall(0).args[2]).to.equal(stream);
-      expect(attachmentsStub.getCall(0).args[3]).to.equal(10);
-
-      expect(newSnapshot).to.be.undefined;
-
-      expect(connectStub.getCall(0).args[0]).to.equal(cfg);
-
-      expect(opendirStub.getCall(0).args[0]).to.equal('/verylongdirectoryname');
-
-      expect(endStub.callCount > 0).to.equal(true);
-
-      expect(mkdirStub.getCall(0).args[0]).to.equal('/verylongdirectoryname/.elasticio_processed');
-      expect(mkdirStub.getCall(0).args[1]).to.deep.equal({
-        mode: 16877,
-      });
-
-      expect(renameStub.callCount > 0).to.equal(true);
-
-      const renameCall = renameStub.getCall(0);
-      expect(renameCall.args[0]).to.equal('/verylongdirectoryname/data.xml');
-      expect(renameCall.args[1].includes('/verylongdirectoryname/.elasticio_processed/data.xml')).to.equal(true);
-    });
+    expect(sftpClientConnectStub.calledOnce).to.be.equal(true);
+    expect(attachStub.calledOnce).to.be.equal(true);
+    sftpClientEndStub.restore();
+    sftpClientMoveStub.restore();
+    sftpClientExistsStub.restore();
+    sftpClientConnectStub.restore();
+    sftpClientListStub.restore();
+    sftpClientGetStub.restore();
+    attachStub.restore();
   });
 });
