@@ -333,7 +333,7 @@ describe('SFTP integration test - upload then download', () => {
       expect(list[0].name).to.equal('test.file');
       expect(list[0].size).to.equal(attachmentUrl1ContentSize);
 
-      await expect(upsertFile.process.call(sender, msg, cfg)).to.be.rejectedWith(`File ${filename} exists. File updates are not permissible as per the current configuration.`);
+      await expect(upsertFile.process.call(sender, msg, cfg)).to.be.rejectedWith('File with given name exists. File updates are not permissible as per the current configuration');
     });
 
     it('Overwrite Mode', async () => {

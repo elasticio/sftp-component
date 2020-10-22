@@ -1,10 +1,10 @@
 {
   "name": "sftp-component",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "elastic.io SFTP component",
   "scripts": {
     "pretest": "eslint spec spec-integration lib verifyCredentials.js --fix",
-    "test": "mocha spec --recursive --timeout 50000",
+    "test": "LOG_LEVEL=trace;mocha spec --recursive --timeout 50000",
     "integration-test": "LOG_LEVEL=trace;LOG_OUTPUT_MODE=short mocha spec-integration/* --timeout 50000"
   },
   "repository": {
@@ -17,12 +17,12 @@
   "author": "elastic.io GmbH",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@elastic.io/component-commons-library": "1.1.2",
-    "@elastic.io/oih-standard-library": "1.1.1",
+    "@elastic.io/component-commons-library": "1.1.4",
+    "@elastic.io/oih-standard-library": "1.1.4",
     "async": "3.2.0",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.6",
-    "elasticio-sailor-nodejs": "2.6.10",
+    "elasticio-sailor-nodejs": "2.6.17",
     "micromatch": "4.0.2",
     "moment": "2.27.0",
     "ssh2-sftp-client": "5.2.0"
@@ -30,7 +30,7 @@
   "devDependencies": {
     "bunyan": "1.8.14",
     "chai": "4.2.0",
-    "chai-as-promised": "^7.1.1",
+    "chai-as-promised": "7.1.1",
     "dotenv": "8.2.0",
     "eslint": "7.3.1",
     "eslint-config-airbnb-base": "14.2.0",

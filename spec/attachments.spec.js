@@ -42,7 +42,7 @@ describe('Attachment tests', () => {
       modifyTime: '1575291942000',
     };
     await attachments.addAttachment.call(self, msg, file.name, stream, file.size);
-    expect(self.emit.getCall(0).args[1].message).to.be.equal('File is 70000000000 bytes, and is too large to upload as an attachment. Max attachment size is 10485760 bytes');
+    expect(self.emit.getCall(0).args[1].message).to.be.equal('File is 70000000000 bytes, and is too large to upload as an attachment. Max attachment size is 104857600 bytes');
   });
 
   it('Emits an error upon failure', async () => {
