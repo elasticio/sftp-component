@@ -1,3 +1,6 @@
+## 1.4.2 (October 23, 2020)
+    * Delete error logs from verifyCredentials  
+    
 ## 1.4.1 (October 19, 2020)
     * Annual audit of the component code to check if it exposes sensitive data in the logs
     * Update sailor to 2.6.17

@@ -15,7 +15,7 @@ module.exports = function verify(cfg, cb) {
     cb(null, { verified: true });
     return { verified: true };
   }).catch((err) => {
-    this.logger.error('Error occurred', err.stack || err);
+    this.logger.error('Error occurred');
     cb(err, { verified: false });
     return { verified: false };
   });
