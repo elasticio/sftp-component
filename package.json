@@ -15,7 +15,7 @@
     "node": "14"
   },
   "author": "elastic.io GmbH",
-  "license": "BSD-2-Clause",
+  "license": "Apache-2.0",
   "dependencies": {
     "@elastic.io/component-commons-library": "1.1.4",
     "@elastic.io/oih-standard-library": "1.1.4",
