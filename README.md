@@ -1,4 +1,4 @@
-# SFTP Component [![CircleCI](https://circleci.com/gh/elasticio/sftp-component.svg?style=svg)](https://circleci.com/gh/elasticio/sftp-component)
+# SFTP Component [![CircleCI](https://circleci.com/gh/elasticio/sftp-component.svg?style=svg)](https://circleci.com/gh/elasticio/sftp-component) [![CLA assistant](https://cla-assistant.io/readme/badge/elasticio/sftp-component)](https://cla-assistant.io/elasticio/sftp-component)
 
 ## Table of Contents
 * [General information](#general-information)
@@ -19,6 +19,8 @@
    * [Delete File](#delete-file)
    * [Download File by name](#download-file-by-name)
 * [Known limitations](#known-limitations)
+* [LICENSE](LICENSE)
+* [Contributing](https://github.com/elasticio/microsoft-onedrive-component/blob/master/CONTRIBUTING.md)
 * [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
 
 ## General Information
