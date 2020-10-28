@@ -14,7 +14,7 @@ module.exports = function verify(cfg, cb) {
     this.logger.info('SFTP credentials are verified');
     cb(null, { verified: true });
     return { verified: true };
-  }).catch((err) => {
+  }).catch(() => {
     this.logger.error('SFTP credentials verification failed');
     cb(err, { verified: false });
     return { verified: false };
