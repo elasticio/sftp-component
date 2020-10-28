@@ -1,3 +1,7 @@
+## 1.4.2 (October 30, 2020)
+    * More logging improvements
+    * Update sailor to 2.6.18
+
 ## 1.4.1 (October 19, 2020)
     * Annual audit of the component code to check if it exposes sensitive data in the logs
     * Update sailor to 2.6.17
@@ -28,7 +32,7 @@
     * Add max to file size and environment variable to configure
     * Add key-based authentication
     * Add Download files action
-    * Add Upload File From URL action    
+    * Add Upload File From URL action
     * The following actions are renamed:
       - Upload files -> Upload files From Attachments Header
       - Lookup file by name -> Download file by name
@@ -41,14 +45,14 @@
     * Migrate integration tests to another SFTP Server
     * Fix integration tests error during local running
     * Migrate SFTP-->Attachment upload logic to streams
-    
+
 ## Actions
 ### Poll files
-    * Fix 0kb file download bug  
+    * Fix 0kb file download bug
 ### Action: Download file by name
-    * Fix 0kb file download bug  
+    * Fix 0kb file download bug
 
-    
+
 # 1.1.1 (December 6 2019)
 
 ## General Changes
