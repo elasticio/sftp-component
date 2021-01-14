@@ -1,3 +1,6 @@
+## 1.4.3 (January 15, 2021)
+    * Update sailor version to 2.6.23
+
 ## 1.4.2 (October 30, 2020)
     * More logging improvements
     * Update sailor to 2.6.18
