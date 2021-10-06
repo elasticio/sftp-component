@@ -1,4 +1,6 @@
-# SFTP Component [![CircleCI](https://circleci.com/gh/elasticio/sftp-component.svg?style=svg)](https://circleci.com/gh/elasticio/sftp-component) [![CLA assistant](https://cla-assistant.io/readme/badge/elasticio/sftp-component)](https://cla-assistant.io/elasticio/sftp-component)
+# SFTP Component 
+![](https://github.com/elasticio/splitter-component/blob/master/elastic.io%20Logo%20pure-01.png)
+[![CircleCI](https://circleci.com/gh/elasticio/sftp-component.svg?style=svg)](https://circleci.com/gh/elasticio/sftp-component) [![CLA assistant](https://cla-assistant.io/readme/badge/elasticio/sftp-component)](https://cla-assistant.io/elasticio/sftp-component)
 
 ## Table of Contents
 * [General information](#general-information)
