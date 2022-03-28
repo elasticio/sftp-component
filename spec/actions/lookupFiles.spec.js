@@ -15,7 +15,7 @@ const context = {
 let cfg;
 let msg;
 
-xdescribe('Lookup Files', () => {
+describe('Lookup Files', () => {
   let connectStub;
   let endStub;
   let listStub;
