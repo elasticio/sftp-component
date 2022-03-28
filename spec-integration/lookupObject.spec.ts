@@ -44,18 +44,6 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
     throw new Error(`File size is ${fileSize} bytes, it violates the variable MAX_FILE_SIZE, which is currently set to ${MAX_FILE_SIZE} bytes`);
   }
 
-  const transform = new Transform({
-    writableObjectMode: true,
-    readableObjectMode: true,
-    transform: (chunk, _, cb) => {
-      cb(null, chunk);
-    },
-  });
-
-  logger.info('About to start saving file');
-  const a = client.get(filePath, transform);
-  console.log(a);
-
   // const attachmentProcessor = new AttachmentProcessor();
   // const uploadResult = await attachmentProcessor.uploadAttachment(transform);
   // const attachmentUrl = uploadResult.config.url;
