@@ -39,8 +39,7 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   const { logger, client } = context;
   const filePath = path.join(dir, body.name);
   const fileSize = body.size;
-  const MAX_FILE_SIZE = 1024 * 1024 || 104857600;
-  console.log(filePath, fileSize, MAX_FILE_SIZE);
+  const MAX_FILE_SIZE = 104857600;
   if (fileSize > MAX_FILE_SIZE) {
     throw new Error(`File size is ${fileSize} bytes, it violates the variable MAX_FILE_SIZE, which is currently set to ${MAX_FILE_SIZE} bytes`);
   }
@@ -54,8 +53,8 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   });
 
   logger.info('About to start saving file');
-  client.get(filePath, transform);
-  console.log(transform);
+  const a = client.get(filePath, transform);
+  console.log(a);
 
   // const attachmentProcessor = new AttachmentProcessor();
   // const uploadResult = await attachmentProcessor.uploadAttachment(transform);
