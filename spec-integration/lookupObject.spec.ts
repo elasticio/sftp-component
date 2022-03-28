@@ -57,7 +57,8 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   //////////////////
 
   const attachmentProcessor = new AttachmentProcessor();
-  const uploadResult = await attachmentProcessor.uploadAttachment(readStream);
+  // const uploadResult = await attachmentProcessor.uploadAttachment(readStream);
+  const uploadResult = await attachmentProcessor.getAttachment('http://localhost:3002/objects/8753f20f-4b3e-4615-91ed-31cf4dde5249');
   console.log(uploadResult);
 
   // const attachmentUrl = uploadResult.config.url;
