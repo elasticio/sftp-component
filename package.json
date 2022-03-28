@@ -24,7 +24,7 @@
     "elasticio-sailor-nodejs": "2.6.26",
     "micromatch": "4.0.2",
     "moment": "2.27.0",
-    "ssh2-sftp-client": "5.2.0"
+    "ssh2-sftp-client": "5.3.2"
   },
   "devDependencies": {
     "bunyan": "1.8.14",
