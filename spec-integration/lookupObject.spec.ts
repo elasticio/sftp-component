@@ -1,9 +1,11 @@
 require('dotenv').config();
 
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const path = require('path');
 const Sftp = require('../lib/Sftp');
 const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
 const { Transform, Readable } = require('stream');
+const fs = require('fs');
 
 const host = process.env.SFTP_HOSTNAME;
 const username = process.env.SFTP_USER;
@@ -43,9 +45,21 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   if (fileSize > MAX_FILE_SIZE) {
     throw new Error(`File size is ${fileSize} bytes, it violates the variable MAX_FILE_SIZE, which is currently set to ${MAX_FILE_SIZE} bytes`);
   }
+  const buffer = await client.get(filePath);
+  const readStream = new Readable();
+  readStream.push(buffer);
+  readStream.push(null);
 
-  // const attachmentProcessor = new AttachmentProcessor();
-  // const uploadResult = await attachmentProcessor.uploadAttachment(transform);
+  // it works //////
+  // const ws = fs.createWriteStream('./myOutput.csv');
+  // readStream.pipe(ws);
+  // readStream.on('end', () => console.log('done'));
+  //////////////////
+
+  const attachmentProcessor = new AttachmentProcessor();
+  const uploadResult = await attachmentProcessor.uploadAttachment(readStream);
+  console.log(uploadResult);
+
   // const attachmentUrl = uploadResult.config.url;
   // logger.info('File is successfully uploaded to URL');
   // const attachments = {
@@ -63,7 +77,7 @@ describe('SFTP integration test - lookup object', () => {
   it.only('lookup object', async () => {
     const sftpClient = new Sftp(logger, cfg);
     await sftpClient.connect();
-    const filePath = '/www/ilya_s/lnuno_sftp_50k_1_csv50.csv';
+    const filePath = '/www/ilya_s/1.csv';
     const directory = path.posix.dirname(filePath);
     const filename = path.basename(filePath);
     const file = await getFile(sftpClient, directory, filename);
