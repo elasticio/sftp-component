@@ -42,6 +42,8 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   const filePath = path.join(dir, body.name);
   const fileSize = body.size;
   const MAX_FILE_SIZE = 104857600;
+  console.log(fileSize > 104857600, fileSize, 104857600);
+
   if (fileSize > MAX_FILE_SIZE) {
     throw new Error(`File size is ${fileSize} bytes, it violates the variable MAX_FILE_SIZE, which is currently set to ${MAX_FILE_SIZE} bytes`);
   }
@@ -56,10 +58,10 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   // readStream.on('end', () => console.log('done'));
   //////////////////
 
-  const attachmentProcessor = new AttachmentProcessor();
+  // const attachmentProcessor = new AttachmentProcessor();
   // const uploadResult = await attachmentProcessor.uploadAttachment(readStream);
-  const uploadResult = await attachmentProcessor.getAttachment('http://localhost:3002/objects/8753f20f-4b3e-4615-91ed-31cf4dde5249');
-  console.log(uploadResult);
+  // const uploadResult = await attachmentProcessor.getAttachment('http://localhost:3002/objects/8753f20f-4b3e-4615-91ed-31cf4dde5249');
+  // console.log(uploadResult);
 
   // const attachmentUrl = uploadResult.config.url;
   // logger.info('File is successfully uploaded to URL');
@@ -78,7 +80,7 @@ describe('SFTP integration test - lookup object', () => {
   it.only('lookup object', async () => {
     const sftpClient = new Sftp(logger, cfg);
     await sftpClient.connect();
-    const filePath = '/www/ilya_s/1.csv';
+    const filePath = '/www/ilya_s/11.csv';
     const directory = path.posix.dirname(filePath);
     const filename = path.basename(filePath);
     const file = await getFile(sftpClient, directory, filename);
