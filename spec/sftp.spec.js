@@ -84,7 +84,7 @@ describe('SFTP', () => {
   });
 });
 
-describe('Tests for SFTP functions', () => {
+xdescribe('Tests for SFTP functions', () => {
   it('Creates a path properly', () => {
     const result = Sftp.createPath(dir, file);
     expect(result).to.be.equal('/home/tests/testFile.xml');

@@ -7,7 +7,7 @@ const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 
 const logger = bunyan.createLogger({ name: 'dummy' });
 
-describe('SFTP test - lookup file by file name', () => {
+xdescribe('SFTP test - lookup file by file name', () => {
   const buffer = Buffer.from('Hello');
   const res = { config: { url: 'https://url' } };
   const cfg = {
