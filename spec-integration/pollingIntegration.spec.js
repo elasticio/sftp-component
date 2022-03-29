@@ -2,11 +2,13 @@ require('dotenv').config();
 
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
+const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
 const nock = require('nock');
 const Sftp = require('../lib/Sftp');
 const upload = require('../lib/actions/upload');
 const poll = require('../lib/triggers/polling');
+
+const logger = getLogger();
 
 class TestEmitter extends EventEmitter {
   constructor() {
@@ -14,7 +16,7 @@ class TestEmitter extends EventEmitter {
     this.data = [];
     this.end = 0;
     this.error = [];
-    this.logger = logger;
+    this.logger = getLogger();
 
     this.on('data', (value) => this.data.push(value));
     this.on('error', (value) => this.error.push(value));

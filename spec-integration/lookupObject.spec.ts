@@ -1,11 +1,13 @@
 require('dotenv').config();
 
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
 const path = require('path');
 const Sftp = require('../lib/Sftp');
-const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
+const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
 const { Transform, Readable } = require('stream');
 const fs = require('fs');
+
+const logger = getLogger();
 
 const host = process.env.SFTP_HOSTNAME;
 const username = process.env.SFTP_USER;

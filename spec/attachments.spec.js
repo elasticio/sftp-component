@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const Stream = require('stream');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
 const attachments = require('../lib/attachments');
 
 // stub things
@@ -14,7 +14,7 @@ const name = 'file';
 const stream = new Stream();
 const contentLength = 10;
 
-xdescribe('Attachment tests', () => {
+describe('Attachment tests', () => {
   let uploadAttachment;
   before(() => {
   });

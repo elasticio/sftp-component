@@ -1,21 +1,21 @@
 require('dotenv').config();
-const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
+const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
 const sinon = require('sinon');
 const { expect } = require('chai');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
 const lookupFiles = require('../../lib/actions/lookupObjects');
 const { DIR } = require('../../lib/constants');
 const Sftp = require('../../lib/Sftp');
 
 const context = {
   emit: sinon.spy(),
-  logger,
+  logger: getLogger(),
 };
 
 let cfg;
 let msg;
 
-xdescribe('Lookup Files', () => {
+describe('Lookup Files', () => {
   let connectStub;
   let endStub;
   let listStub;

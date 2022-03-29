@@ -1,13 +1,13 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
 const Sftp = require('../../lib/Sftp');
 const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 
 const logger = bunyan.createLogger({ name: 'dummy' });
 
-xdescribe('SFTP test - lookup file by file name', () => {
+describe('SFTP test - lookup file by file name', () => {
   const buffer = Buffer.from('Hello');
   const res = { config: { url: 'https://url' } };
   const cfg = {
