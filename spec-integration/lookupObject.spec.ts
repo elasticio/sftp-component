@@ -62,7 +62,7 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
 
   const attachmentProcessor = new AttachmentProcessor();
   const uploadResult = await attachmentProcessor.uploadAttachment(readStream, 'stream');
-  console.log(uploadResult);
+  console.log(uploadResult.data);
 }
 
 describe('SFTP integration test - lookup object', () => {
