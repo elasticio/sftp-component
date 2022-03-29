@@ -6,6 +6,7 @@ const Sftp = require('../lib/Sftp');
 const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
 const { Transform, Readable } = require('stream');
 const fs = require('fs');
+const { SftpUpsertObject } = require('../lib/utils/upsertUtil');
 
 const logger = getLogger();
 
@@ -63,31 +64,31 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   const attachmentProcessor = new AttachmentProcessor();
   const uploadResult = await attachmentProcessor.uploadAttachment(readStream, 'stream');
   console.log(uploadResult);
-
-  // const uploadResult = await attachmentProcessor.getAttachment('http://localhost:3002/objects/8753f20f-4b3e-4615-91ed-31cf4dde5249');
-  // console.log(uploadResult);
-
-  // const attachmentUrl = uploadResult.config.url;
-  // logger.info('File is successfully uploaded to URL');
-  // const attachments = {
-  //   [body.name]: {
-  //     url: uploadResult.config.url,
-  //     size: body.size,
-  //   },
-  // };
-  // body.attachment_url = attachmentUrl;
-  // fillOutputBody(body, dir);
-  // return { body, attachments };
 }
 
 describe('SFTP integration test - lookup object', () => {
-  it.only('lookup object', async () => {
+  it('lookup object', async () => {
     const sftpClient = new Sftp(logger, cfg);
     await sftpClient.connect();
-    const filePath = '/www/ilya_s/1.csv';
+    const filePath = '/www/ilya_s/11.csv';
     const directory = path.posix.dirname(filePath);
     const filename = path.basename(filePath);
     const file = await getFile(sftpClient, directory, filename);
     await uploadFromSftpToAttachment({ client: sftpClient, logger }, file, directory);
+  })
+  it.only('upsert object', async () => {
+    const sftpClient = new Sftp(logger, cfg);
+    await sftpClient.connect();
+
+    const msg = {
+      body: {
+        attachmentUrl: 'http://localhost:3002/objects/3d6228cc-f969-4642-82e6-92cea5c2d119?storage_type=maester',
+        filename: '/www/ilya_s/test_res.csv'
+      }
+    };
+
+    const upsertObjectAction = new SftpUpsertObject(logger, sftpClient);
+    const result = await upsertObjectAction.process(msg, { ...cfg, updateBehavior: 'overwrite' }, {});
+    console.log(result);
   })
 });
