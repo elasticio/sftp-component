@@ -60,8 +60,10 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   // readStream.on('end', () => console.log('done'));
   //////////////////
 
-  // const attachmentProcessor = new AttachmentProcessor();
-  // const uploadResult = await attachmentProcessor.uploadAttachment(readStream);
+  const attachmentProcessor = new AttachmentProcessor();
+  const uploadResult = await attachmentProcessor.uploadAttachment(readStream, 'stream');
+  console.log(uploadResult);
+
   // const uploadResult = await attachmentProcessor.getAttachment('http://localhost:3002/objects/8753f20f-4b3e-4615-91ed-31cf4dde5249');
   // console.log(uploadResult);
 
@@ -82,7 +84,7 @@ describe('SFTP integration test - lookup object', () => {
   it.only('lookup object', async () => {
     const sftpClient = new Sftp(logger, cfg);
     await sftpClient.connect();
-    const filePath = '/www/ilya_s/11.csv';
+    const filePath = '/www/ilya_s/1.csv';
     const directory = path.posix.dirname(filePath);
     const filename = path.basename(filePath);
     const file = await getFile(sftpClient, directory, filename);
