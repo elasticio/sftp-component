@@ -1,6 +1,5 @@
 {
   "title": "SFTP",
-  "version": "1.5.16",
   "buildType": "docker",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
   "credentials": {
