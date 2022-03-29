@@ -45,7 +45,6 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
   const filePath = path.join(dir, body.name);
   const fileSize = body.size;
   const MAX_FILE_SIZE = 104857600;
-  console.log(fileSize > 104857600, fileSize, 104857600);
 
   if (fileSize > MAX_FILE_SIZE) {
     throw new Error(`File size is ${fileSize} bytes, it violates the variable MAX_FILE_SIZE, which is currently set to ${MAX_FILE_SIZE} bytes`);
@@ -67,7 +66,7 @@ const uploadFromSftpToAttachment = async (context, body, dir) => {
 }
 
 describe('SFTP integration test - lookup object', () => {
-  it('lookup object', async () => {
+  it.only('lookup object', async () => {
     const sftpClient = new Sftp(logger, cfg);
     await sftpClient.connect();
     const filePath = '/www/ilya_s/11.csv';
@@ -76,7 +75,7 @@ describe('SFTP integration test - lookup object', () => {
     const file = await getFile(sftpClient, directory, filename);
     await uploadFromSftpToAttachment({ client: sftpClient, logger }, file, directory);
   })
-  it.only('upsert object', async () => {
+  it('upsert object', async () => {
     const sftpClient = new Sftp(logger, cfg);
     await sftpClient.connect();
 
