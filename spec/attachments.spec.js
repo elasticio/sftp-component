@@ -14,7 +14,7 @@ const name = 'file';
 const stream = new Stream();
 const contentLength = 10;
 
-xdescribe('Attachment tests', () => {
+describe('Attachment tests', () => {
   let uploadAttachment;
   before(() => {
   });

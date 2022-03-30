@@ -11,7 +11,7 @@ const trigger = require('../../lib/triggers/read');
 
 const logger = getLogger();
 
-xdescribe('SFTP test - read trigger', () => {
+describe('SFTP test - read trigger', () => {
   const self = {
     emit: sinon.spy(),
     logger,
