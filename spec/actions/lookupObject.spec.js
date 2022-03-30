@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/dist/src/attachment/AttachmentProcessor');
 const Sftp = require('../../lib/Sftp');
 const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 

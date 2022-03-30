@@ -1,8 +1,8 @@
 require('dotenv').config();
-const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
+const { getLogger } = require('@elastic.io/component-commons-library/dist/src/logger/logger');
 const sinon = require('sinon');
 const { expect } = require('chai');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/dist/src/attachment/AttachmentProcessor');
 const lookupFiles = require('../../lib/actions/lookupObjects');
 const { DIR } = require('../../lib/constants');
 const Sftp = require('../../lib/Sftp');

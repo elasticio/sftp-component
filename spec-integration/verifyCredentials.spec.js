@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
+const { getLogger } = require('@elastic.io/component-commons-library/dist/src/logger/logger');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const verifyCredentials = require('../verifyCredentials');

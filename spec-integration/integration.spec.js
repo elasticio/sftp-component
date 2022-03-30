@@ -1,10 +1,10 @@
 require('dotenv').config();
 const chai = require('chai');
 const EventEmitter = require('events');
-const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
+const { getLogger } = require('@elastic.io/component-commons-library/dist/src/logger/logger');
 const sinon = require('sinon');
 const SftpClient = require('ssh2-sftp-client');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library/lib/lib/attachment/AttachmentProcessor');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library/dist/src/attachment/AttachmentProcessor');
 const Sftp = require('../lib/Sftp');
 const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');

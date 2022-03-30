@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { expect } = require('chai');
 const EventEmitter = require('events');
-const { getLogger } = require('@elastic.io/component-commons-library/lib/lib/logger/logger');
+const { getLogger } = require('@elastic.io/component-commons-library/dist/src/logger/logger');
 const nock = require('nock');
 const Sftp = require('../lib/Sftp');
 const upload = require('../lib/actions/upload');
