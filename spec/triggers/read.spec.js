@@ -1,8 +1,8 @@
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library/dist/src/attachment/AttachmentProcessor');
-const { getLogger } = require('@elastic.io/component-commons-library/dist/src/logger/logger');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
+const { getLogger } = require('@elastic.io/component-commons-library');
 
 chai.use(chaiAsPromised);
 const { expect } = require('chai');

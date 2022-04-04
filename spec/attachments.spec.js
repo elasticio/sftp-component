@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const Stream = require('stream');
-const { AttachmentProcessor } = require('@elastic.io/component-commons-library/dist/src/attachment/AttachmentProcessor');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const attachments = require('../lib/attachments');
 
 // stub things
