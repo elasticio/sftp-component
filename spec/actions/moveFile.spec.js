@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { getLogger } = require('@elastic.io/component-commons-library');
+const { getLogger } = require('@elastic.io/component-commons-library/dist/src/logger/logger');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const moveFile = require('../../lib/actions/moveFile');
