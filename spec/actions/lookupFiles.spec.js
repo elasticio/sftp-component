@@ -1,5 +1,5 @@
 require('dotenv').config();
-const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
+const { getLogger } = require('@elastic.io/component-commons-library');
 const sinon = require('sinon');
 const { expect } = require('chai');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
@@ -9,7 +9,7 @@ const Sftp = require('../../lib/Sftp');
 
 const context = {
   emit: sinon.spy(),
-  logger,
+  logger: getLogger(),
 };
 
 let cfg;

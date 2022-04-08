@@ -1,14 +1,15 @@
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
-const { AttachmentProcessor, Logger } = require('@elastic.io/component-commons-library');
+const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
+const { getLogger } = require('@elastic.io/component-commons-library');
 
 chai.use(chaiAsPromised);
 const { expect } = require('chai');
 const Sftp = require('../../lib/Sftp');
 const trigger = require('../../lib/triggers/read');
 
-const logger = Logger.getLogger();
+const logger = getLogger();
 
 describe('SFTP test - read trigger', () => {
   const self = {

@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-expressions */
-const logger = require('@elastic.io/component-commons-library/lib/logger/logger').getLogger();
+const { getLogger } = require('@elastic.io/component-commons-library');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const verifyCredentials = require('../verifyCredentials');
 require('dotenv').config();
+
+const logger = getLogger();
 
 describe('verifyCredentials', () => {
   const spy = sinon.spy();
