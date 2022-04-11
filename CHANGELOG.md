@@ -1,3 +1,7 @@
+## 1.4.7 (April 12, 2022)
+
+* Fix uploading attachments
+
 ## 1.4.6 (April 08, 2022)
 
 * Fix downloading files of size > 10MB

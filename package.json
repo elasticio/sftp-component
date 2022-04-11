@@ -23,7 +23,7 @@
     "elasticio-rest-node": "1.2.7",
     "elasticio-sailor-nodejs": "2.6.27",
     "micromatch": "4.0.2",
-    "moment": "2.27.0",
+    "moment": "2.29.2",
     "ssh2-sftp-client": "7.2.2"
   },
   "devDependencies": {
