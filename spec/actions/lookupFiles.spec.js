@@ -112,11 +112,11 @@ describe('Lookup Files', () => {
     uploadAttachmentStub.resetHistory();
   });
 
-  xit('fetchAll', async () => {
+  it('fetchAll', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'fetchAll';
@@ -125,11 +125,11 @@ describe('Lookup Files', () => {
     expect(context.emit.getCall(0).args[1].body).to.deep.eql({ results: responseBody });
   });
 
-  xit('emitIndividually', async () => {
+  it('emitIndividually', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns({});
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns({});
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
+    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';
