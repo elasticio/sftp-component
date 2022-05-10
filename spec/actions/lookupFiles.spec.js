@@ -20,6 +20,7 @@ describe('Lookup Files', () => {
   let endStub;
   let listStub;
   let getStub;
+  let getReadStreamStub;
   let existsStub;
   let uploadAttachmentStub;
   let resp;
@@ -38,6 +39,7 @@ describe('Lookup Files', () => {
     endStub = sinon.stub(Sftp.prototype, 'end').callsFake();
     listStub = await sinon.stub(Sftp.prototype, 'list');
     getStub = await sinon.stub(Sftp.prototype, 'get');
+    getReadStreamStub = await sinon.stub(Sftp.prototype, 'getReadStream');
     existsStub = await sinon.stub(Sftp.prototype, 'exists');
     uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
     await lookupFiles.init(cfg);
@@ -100,6 +102,7 @@ describe('Lookup Files', () => {
     endStub.restore();
     listStub.restore();
     getStub.restore();
+    getReadStreamStub.restore();
     existsStub.restore();
     uploadAttachmentStub.restore();
   });
@@ -108,6 +111,7 @@ describe('Lookup Files', () => {
     context.emit.resetHistory();
     listStub.resetHistory();
     getStub.resetHistory();
+    getReadStreamStub.resetHistory();
     existsStub.resetHistory();
     uploadAttachmentStub.resetHistory();
   });
@@ -115,8 +119,8 @@ describe('Lookup Files', () => {
   it('fetchAll', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'fetchAll';
@@ -128,8 +132,8 @@ describe('Lookup Files', () => {
   it('emitIndividually', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
-    if (getStub) getStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';
