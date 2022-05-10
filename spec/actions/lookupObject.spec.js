@@ -101,7 +101,7 @@ describe('SFTP test - lookup file by file name', () => {
     sftpClientListStub.restore();
   });
 
-  xit('Rejects a file that is too large', async () => {
+  it('Rejects a file that is too large', async () => {
     const msg = {
       body: {
         path: 'www/olhav/1.txt',

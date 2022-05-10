@@ -33,7 +33,7 @@ describe('Attachment tests', () => {
     uploadAttachment.restore();
   });
 
-  xit('Throws an error if attachment file is too large', async () => {
+  it('Throws an error if attachment file is too large', async () => {
     const file = {
       type: '-',
       name: '1.txt',

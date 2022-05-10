@@ -101,7 +101,7 @@ describe('SFTP test - read trigger', () => {
     sftpClientListStub.restore();
   });
 
-  xit('File exceeds maximal file size', async () => {
+  it('File exceeds maximal file size', async () => {
     const list = [
       {
         type: 'd',
