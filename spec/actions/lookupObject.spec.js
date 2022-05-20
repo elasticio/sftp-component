@@ -39,7 +39,7 @@ describe('SFTP test - lookup file by file name', () => {
       },
     ];
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
-    const sftpClientGetStub = sinon.stub(Sftp.prototype, 'get').returns(buffer);
+    const sftpGetReadStream = sinon.stub(Sftp.prototype, 'getReadStream').returns(buffer);
     const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
 
     const expectedAttachments = {
@@ -64,10 +64,10 @@ describe('SFTP test - lookup file by file name', () => {
     expect(result.body).to.deep.equal(expectedBody);
     expect(result.attachments).to.deep.equal(expectedAttachments);
     expect(sftpClientListStub.calledOnce).to.be.equal(true);
-    expect(sftpClientGetStub.calledOnce).to.be.equal(true);
+    expect(sftpGetReadStream.calledOnce).to.be.equal(true);
     expect(attachStub.calledOnce).to.be.equal(true);
     sftpClientListStub.restore();
-    sftpClientGetStub.restore();
+    sftpGetReadStream.restore();
     attachStub.restore();
   });
 

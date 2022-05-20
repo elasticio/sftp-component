@@ -17,7 +17,7 @@ describe('SFTP test - read trigger', () => {
     logger,
   };
   const buffer = Buffer.from('Hello');
-  const res = { config: { url: 'https://url' } };
+  const res = { config: { url: 'https://url' }, data: { objectId: 1111 } };
   const cfg = {
     directory: 'www/test',
   };
@@ -152,6 +152,7 @@ describe('SFTP test - read trigger', () => {
     const sftpClientEndStub = sinon.stub(Sftp.prototype, 'end').returns(true);
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
     const sftpClientGetStub = sinon.stub(Sftp.prototype, 'get').returns(buffer);
+    const sftpClientGetReadStreamStub = sinon.stub(Sftp.prototype, 'getReadStream').returns(buffer);
     const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
 
     await trigger.process.call(self, {}, cfg);
@@ -170,6 +171,7 @@ describe('SFTP test - read trigger', () => {
     sftpClientConnectStub.restore();
     sftpClientListStub.restore();
     sftpClientGetStub.restore();
+    sftpClientGetReadStreamStub.restore();
     attachStub.restore();
   });
 });

@@ -1,3 +1,7 @@
+## 1.4.8 (April 20, 2022)
+* Fix memory leak for `Download Files/File by name` actions and `Read Files` trigger
+* Get rid of vulnerabilities in dependencies
+
 ## 1.4.7 (April 12, 2022)
 
 * Fix uploading attachments
