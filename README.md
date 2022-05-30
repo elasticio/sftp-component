@@ -91,6 +91,7 @@ The following configuration fields are available:
 * **Emit Behaviour**: Options are: default is `Emit Individually` emits each object in separate message, `Fetch All` emits all objects in one message
 * **Start Time**: Start datetime of polling. Default min date:`-271821-04-20T00:00:00.000Z`
 * **End Time**: End datetime of polling. Default max date: `+275760-09-13T00:00:00.000Z`
+* **Pattern**: Optional regex pattern for file names. If no pattern is given, no matching is done.
 
 
 #### Expected output metadata
@@ -662,7 +663,7 @@ Schema of output metadata depends on Behaviour configuration:
 
 `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
-#### Known limitations
+#### Action Known limitations
 Action does not support `Fetch Page` mode (according to OIH standards)
 
 
