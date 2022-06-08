@@ -2,7 +2,7 @@
   "title": "SFTP",
   "buildType": "docker",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.4.8",
+  "version": "1.4.9-dev.1",
   "credentials": {
     "fields": {
       "host": {
@@ -402,6 +402,7 @@
       "main": "./lib/triggers/read.js",
       "title": "Read Files",
       "type": "polling",
+      "deprecated": true,
       "help": {
         "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component",
         "link": "/components/sftp/triggers#read-files"
@@ -452,6 +453,12 @@
           "label": "Directory Name",
           "required": true,
           "placeholder": "Directory"
+        },
+        "pattern": {
+          "viewClass": "TextFieldView",
+          "label": "Pattern to Match Files",
+          "required": false,
+          "placeholder": "Pattern"
         },
         "emitBehaviour": {
           "label": "Emit Behaviour",
