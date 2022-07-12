@@ -42,7 +42,7 @@
         "label": "Passphrase",
         "required": false,
         "placeholder": "Paste your passphrase",
-        "note": "If Private Key use passphrase, put it here"
+        "note": "If private key is protected by a passphrase, put it here"
       }
     }
   },
