@@ -8,7 +8,6 @@ const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 const logger = bunyan.createLogger({ name: 'dummy' });
 
 describe('SFTP test - lookup file by file name', () => {
-  const buffer = Buffer.from('Hello');
   const res = {
     config: { url: 'https://storage/' },
     data: { objectId: 'objectId' },
@@ -39,7 +38,6 @@ describe('SFTP test - lookup file by file name', () => {
       },
     ];
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
-    const sftpGetReadStream = sinon.stub(Sftp.prototype, 'getReadStream').returns(buffer);
     const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
 
     const expectedAttachments = {
@@ -64,10 +62,8 @@ describe('SFTP test - lookup file by file name', () => {
     expect(result.body).to.deep.equal(expectedBody);
     expect(result.attachments).to.deep.equal(expectedAttachments);
     expect(sftpClientListStub.calledOnce).to.be.equal(true);
-    expect(sftpGetReadStream.calledOnce).to.be.equal(true);
     expect(attachStub.calledOnce).to.be.equal(true);
     sftpClientListStub.restore();
-    sftpGetReadStream.restore();
     attachStub.restore();
   });
 
