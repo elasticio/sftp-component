@@ -1,3 +1,7 @@
+## 1.5.0 (July 15, 2022)
+* Add support `passphrase` to credentials
+* README improvements
+
 ## 1.4.9 (June 03, 2022)
 * Add a file filter to the `Poll Files` trigger
 
