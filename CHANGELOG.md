@@ -1,3 +1,8 @@
+## 1.5.0 (July 15, 2022)
+* Added retries on errors while connecting SFTP client
+* Upgrade component-commons-library version to 3.0.0
+* Upgrade oih-standard-library version to 2.0.3
+
 ## 1.4.8 (April 20, 2022)
 * Fix memory leak for `Download Files/File by name` actions and `Read Files` trigger
 * Get rid of vulnerabilities in dependencies
