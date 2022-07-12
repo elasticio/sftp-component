@@ -5,7 +5,6 @@ const { AttachmentProcessor, getLogger } = require('@elastic.io/component-common
 const attachments = require('../lib/attachments');
 
 // stub things
-const result = { config: { url: '/hello/world' }, data: { objectId: 1111 } };
 const self = { emit: sinon.spy(), logger: getLogger() };
 
 // parameters
@@ -26,10 +25,17 @@ describe('Attachment tests', () => {
   });
 
   it('Adds an attachment correctly and returns the correct message', async () => {
-    uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves(result);
+    uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').resolves('objectId');
     await attachments.addAttachment.call(self, msg, name, getStream, contentLength);
     expect(uploadAttachment.calledOnceWithExactly(getStream)).to.be.equal(true);
-    expect(msg).to.be.deep.equal({ attachments: { file: { url: '/hello/world1111?storage_type=maester', size: 10 } } });
+    expect(msg).to.be.deep.equal({
+      attachments: {
+        file: {
+          url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
+          size: 10,
+        },
+      },
+    });
     uploadAttachment.restore();
   });
 

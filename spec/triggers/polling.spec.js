@@ -14,7 +14,6 @@ let self;
 
 describe('SFTP test - polling trigger', () => {
   const buffer = Buffer.from('Hello');
-  const res = { config: { url: 'https://url' }, data: { objectId: 1111 } };
   const cfg = {
     directory: 'www/test',
   };
@@ -167,7 +166,7 @@ describe('SFTP test - polling trigger', () => {
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
     const sftpClientGetStub = sinon.stub(Sftp.prototype, 'get').returns(buffer);
     const sftpClientGetReadStreamStub = sinon.stub(Sftp.prototype, 'getReadStream').returns(buffer);
-    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
+    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns('objectId');
 
     await trigger.process.call(self, {}, cfg);
 
@@ -175,7 +174,7 @@ describe('SFTP test - polling trigger', () => {
     expect(self.emit.getCall(0).args[0]).to.be.equal('data');
     expect(self.emit.getCall(0).args[1].body).to.be.deep.equal({
       accessTime: '2019-12-03T13:21:57.000Z',
-      attachment_url: 'https://url1111?storage_type=maester',
+      attachment_url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
       directory: 'www/test',
       modifyTime: '2022-05-08T06:55:42.000Z',
       name: '1.txt',

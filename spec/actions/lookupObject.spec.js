@@ -8,10 +8,6 @@ const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 const logger = bunyan.createLogger({ name: 'dummy' });
 
 describe('SFTP test - lookup file by file name', () => {
-  const res = {
-    config: { url: 'https://storage/' },
-    data: { objectId: 'objectId' },
-  };
   const cfg = {
     directory: 'www/test',
   };
@@ -38,19 +34,19 @@ describe('SFTP test - lookup file by file name', () => {
       },
     ];
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
-    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
+    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns('objectId');
 
     const expectedAttachments = {
       '1.txt': {
         size: 7,
-        url: 'https://storage/objectId?storage_type=maester',
+        url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
       },
     };
     const expectedBody = {
       type: '-',
       name: '1.txt',
       size: 7,
-      attachment_url: 'https://storage/objectId?storage_type=maester',
+      attachment_url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
       accessTime: '2019-12-03T13:21:57.000Z',
       modifyTime: '2019-12-02T13:05:42.000Z',
       directory: 'www/olhav',
