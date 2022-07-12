@@ -21,9 +21,9 @@
     "async": "3.2.3",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.7",
-    "elasticio-sailor-nodejs": "2.6.27",
+    "elasticio-sailor-nodejs": "2.6.28",
     "micromatch": "4.0.2",
-    "moment": "^2.29.4",
+    "moment": "2.29.4",
     "ssh2-sftp-client": "7.2.2"
   },
   "devDependencies": {

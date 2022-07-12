@@ -2,6 +2,11 @@
 * Added retries on errors while connecting SFTP client
 * Upgrade component-commons-library version to 3.0.0
 * Upgrade oih-standard-library version to 2.0.3
+* Add support `passphrase` to credentials
+* README improvements
+
+## 1.4.9 (June 03, 2022)
+* Add a file filter to the `Poll Files` trigger
 
 ## 1.4.8 (April 20, 2022)
 * Fix memory leak for `Download Files/File by name` actions and `Read Files` trigger
