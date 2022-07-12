@@ -5,6 +5,8 @@ const { AttachmentProcessor } = require('@elastic.io/component-commons-library')
 const Sftp = require('../../lib/Sftp');
 const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 
+const maesterUrl = process.env.ELASTICIO_OBJECT_STORAGE_URI || '';
+
 const logger = bunyan.createLogger({ name: 'dummy' });
 
 describe('SFTP test - lookup file by file name', () => {
@@ -39,14 +41,14 @@ describe('SFTP test - lookup file by file name', () => {
     const expectedAttachments = {
       '1.txt': {
         size: 7,
-        url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
+        url: `${maesterUrl}/objects/objectId?storage_type=maester`,
       },
     };
     const expectedBody = {
       type: '-',
       name: '1.txt',
       size: 7,
-      attachment_url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
+      attachment_url: `${maesterUrl}/objects/objectId?storage_type=maester`,
       accessTime: '2019-12-03T13:21:57.000Z',
       modifyTime: '2019-12-02T13:05:42.000Z',
       directory: 'www/olhav',

@@ -4,6 +4,8 @@ const Stream = require('stream');
 const { AttachmentProcessor, getLogger } = require('@elastic.io/component-commons-library');
 const attachments = require('../lib/attachments');
 
+const maesterUrl = process.env.ELASTICIO_OBJECT_STORAGE_URI || '';
+
 // stub things
 const self = { emit: sinon.spy(), logger: getLogger() };
 
@@ -31,7 +33,7 @@ describe('Attachment tests', () => {
     expect(msg).to.be.deep.equal({
       attachments: {
         file: {
-          url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
+          url: `${maesterUrl}/objects/objectId?storage_type=maester`,
           size: 10,
         },
       },

@@ -4,6 +4,8 @@ const chai = require('chai');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const { getLogger } = require('@elastic.io/component-commons-library');
 
+const maesterUrl = process.env.ELASTICIO_OBJECT_STORAGE_URI || '';
+
 chai.use(chaiAsPromised);
 const { expect } = require('chai');
 const Sftp = require('../../lib/Sftp');
@@ -174,7 +176,7 @@ describe('SFTP test - polling trigger', () => {
     expect(self.emit.getCall(0).args[0]).to.be.equal('data');
     expect(self.emit.getCall(0).args[1].body).to.be.deep.equal({
       accessTime: '2019-12-03T13:21:57.000Z',
-      attachment_url: `${process.env.ELASTICIO_OBJECT_STORAGE_URI}/objects/objectId?storage_type=maester`,
+      attachment_url: `${maesterUrl}/objects/objectId?storage_type=maester`,
       directory: 'www/test',
       modifyTime: '2022-05-08T06:55:42.000Z',
       name: '1.txt',
