@@ -53,7 +53,7 @@ describe('Attachment tests', () => {
     expect(self.emit.getCall(0).args[1].message).to.be.equal('File size is 70000000000 bytes, it violates the variable MAX_FILE_SIZE, which is currently set to 104857600 bytes');
   });
 
-  it('Emits an error upon failure', async () => { // ????????
+  it('Emits an error upon failure', async () => {
     uploadAttachment = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').throws(new Error('This input should be rejected'));
 
     await attachments.addAttachment.call(self, msg, name, 'not a stream', contentLength)
