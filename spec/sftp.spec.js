@@ -18,7 +18,7 @@ const connectCfg = {
   port: 22,
   username: 'root',
   password: 'secret',
-  retries: 1,
+  retries: 5,
   readyTimeout: 10000,
 };
 
@@ -47,7 +47,7 @@ describe('SFTP', () => {
       port: 88,
       username: 'root',
       password: 'secret',
-      retries: 1,
+      retries: 5,
       readyTimeout: 10000,
     });
   });
