@@ -1,4 +1,4 @@
-## 1.5.0 (July 15, 2022)
+## 1.5.0 (July 29, 2022)
 * Added retries on errors while connecting SFTP client
 * Upgrade component-commons-library version to 3.0.0
 * Upgrade oih-standard-library version to 2.0.3
