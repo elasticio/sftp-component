@@ -5,14 +5,11 @@ const { AttachmentProcessor } = require('@elastic.io/component-commons-library')
 const Sftp = require('../../lib/Sftp');
 const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
 
+const maesterUrl = process.env.ELASTICIO_OBJECT_STORAGE_URI || '';
+
 const logger = bunyan.createLogger({ name: 'dummy' });
 
 describe('SFTP test - lookup file by file name', () => {
-  const buffer = Buffer.from('Hello');
-  const res = {
-    config: { url: 'https://storage/' },
-    data: { objectId: 'objectId' },
-  };
   const cfg = {
     directory: 'www/test',
   };
@@ -39,20 +36,19 @@ describe('SFTP test - lookup file by file name', () => {
       },
     ];
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
-    const sftpGetReadStream = sinon.stub(Sftp.prototype, 'getReadStream').returns(buffer);
-    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns(res);
+    const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns('objectId');
 
     const expectedAttachments = {
       '1.txt': {
         size: 7,
-        url: 'https://storage/objectId?storage_type=maester',
+        url: `${maesterUrl}/objects/objectId?storage_type=maester`,
       },
     };
     const expectedBody = {
       type: '-',
       name: '1.txt',
       size: 7,
-      attachment_url: 'https://storage/objectId?storage_type=maester',
+      attachment_url: `${maesterUrl}/objects/objectId?storage_type=maester`,
       accessTime: '2019-12-03T13:21:57.000Z',
       modifyTime: '2019-12-02T13:05:42.000Z',
       directory: 'www/olhav',
@@ -64,10 +60,8 @@ describe('SFTP test - lookup file by file name', () => {
     expect(result.body).to.deep.equal(expectedBody);
     expect(result.attachments).to.deep.equal(expectedAttachments);
     expect(sftpClientListStub.calledOnce).to.be.equal(true);
-    expect(sftpGetReadStream.calledOnce).to.be.equal(true);
     expect(attachStub.calledOnce).to.be.equal(true);
     sftpClientListStub.restore();
-    sftpGetReadStream.restore();
     attachStub.restore();
   });
 

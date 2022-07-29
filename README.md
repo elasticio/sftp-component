@@ -3,680 +3,229 @@
 [![CircleCI](https://circleci.com/gh/elasticio/sftp-component.svg?style=svg)](https://circleci.com/gh/elasticio/sftp-component) [![CLA assistant](https://cla-assistant.io/readme/badge/elasticio/sftp-component)](https://cla-assistant.io/elasticio/sftp-component)
 
 ## Table of Contents
-* [General information](#general-information)
-   * [Description and Purpose](#description-and-purpose)
+* [Description](#description)
+* [Environment variables](#environment-variables)
 * [Credentials](#credentials)
-     * [User Name](#user-name)
-     * [Password](#password)
-     * [Host](#host)
-     * [Port](#port)
 * [Triggers](#triggers)
-   * [Read Files](#read-files)
    * [Poll Files](#poll-files)
+   * [Deprecated triggers](#deprecated-triggers)
 * [Actions](#actions)
-   * [Upload Files From Attachments Header](#upload-files-from-attachments-header)
-   * [Upload File From URL](#upload-file-from-url)
-   * [Download Files](#download-files)
-   * [Move File](#move-file)
    * [Delete File](#delete-file)
    * [Download File by name](#download-file-by-name)
-* [Known limitations](#known-limitations)
-* [LICENSE](LICENSE)
-* [Contributing](https://github.com/elasticio/microsoft-onedrive-component/blob/master/CONTRIBUTING.md)
-* [SSH2 SFTP Client API and Documentation links](#ssh2-sftp-client-api-and-documentation-links)
+   * [Download Files](#download-files)
+   * [Move File](#move-file)
+   * [Upload File From URL](#upload-file-from-url)
+   * [Upload Files From Attachments Header](#upload-files-from-attachments-header)
 
-## General Information
-
-### Description and Purpose
-
+## Description
 This component creates a connection to an SFTP server to read and upload files.
 
-The optional environment variable `MAX_FILE_SIZE` should be set in settings to provide the maximum file size that can be uploaded in **megabytes (mb)**. The default value for `MAX_FILE_SIZE` is 100MB.
+## Environment variables
+Name|Mandatory|Description|Values|
+|----|---------|-----------|------|
+|`MAX_FILE_SIZE`| false |  Maximum file size that can be uploaded in **megabytes (mb)** (100MB by default) | any `integer` above 0|
 
 ## Credentials
-### Host
-Host name of SFTP server
-### Port
-Optional, port of SFTP server. Defaults to 22 if not set.
-### User Name
-Username for SFTP server
-### Password
-Password for SFTP server.
-
-**Note**: field `Private Key` should stay empty in case you fill a password.
-### Private Key
-To access a secure SFTP servers that is configured with a key-based authentication you must at first upload your `Public key` to the SFTP server (please contact your server administrator to do this) and fill in this field with your `Private key`.
-
-Also please pay attention that the field `Password` should be empty in this case.
-
-![image](https://user-images.githubusercontent.com/16806832/71006042-5db98a00-20ed-11ea-8e75-5a58b4207330.png)
+* **Host** - (string, required): Host name of SFTP server
+* **Port** - (number, optional, defaults to 22): Port of SFTP server
+* **User Name** - (string, required): Username for SFTP server
+* **Password** - (string, optional): Password for SFTP server
+    * **Note**: field `Password` should be empty in case you fill a `Private Key`
+* **Private Key** - (string, optional): To access a secure SFTP servers that is configured with a key-based authentication you must at first upload your `Public key` to the SFTP server (please contact your server administrator to do this) and fill in this field with your `Private key`
+* **Passphrase** - (string, optional): If Private Key was created using passphrase, put it here
+  * **Note**: field `Private Key` should stay empty in case you fill a password
 
 ## Triggers
-
-### Read Files
-
-The following configuration fields are available:
-* **Directory**: The directory of the files to read from.
-* **Pattern**: Optional regex pattern for file names. If no pattern is given, no matching is done.
-
-After a file is found:
- * It is moved to the (hidden) directory `.elasticio_processed`
- * It is pulled and uploaded (streamed) to the attachment storage (a.k.a. steward)
- * After the upload, the READ-URL of the file will be used to generate a message with content like below:
-
-```json
-{
-  "id": "5e00ca80-f2a3-11e6-9fdd-e7b75b43e28b",
-  "attachments": {
-    "large.xml": {
-      "url": "https://steward.eio.cloud/foo&Signature=5%2FsrvmbGGfVoYpKeMH3ugaEL"
-    }
-  },
-  "body": {
-    "filename": "large.xml",
-    "size": 2508908
-  }
-}
-```
-
-The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data. Please note that if multiple files are found, SFTP component will generate one message per file.
-
-* Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
 
 ### Poll Files
 Triggers to get all new and updated files since last polling.
 
-The following configuration fields are available:
-* **Directory**: The directory of the files to read from.
-* **Emit Behaviour**: Options are: default is `Emit Individually` emits each object in separate message, `Fetch All` emits all objects in one message
-* **Start Time**: Start datetime of polling. Default min date:`-271821-04-20T00:00:00.000Z`
-* **End Time**: End datetime of polling. Default max date: `+275760-09-13T00:00:00.000Z`
-* **Pattern**: Optional regex pattern for file names. If no pattern is given, no matching is done.
+#### Configuration Fields
+* **Directory** - (string, required): The directory of the files to read from
+* **Emit Behaviour** - (dropdown, optional): Defines the way result objects will be emitted, defaults to `Emit individually`
+    * **Fetch All** - All objects will be emitted as array in one object with key `results`
+    * **Emit Individually** - Each object will be emitted separately filling the entire message
+* **Start Time** - (string, optional): Start datetime of polling, defaults to`-271821-04-20T00:00:00.000Z`
+* **End Time** - (string, optional): End datetime of polling, defaults to `+275760-09-13T00:00:00.000Z`
+* **Pattern** - (string, optional): Regex pattern for file names. If no pattern is given, no matching is done
 
 
-#### Expected output metadata
-<details>
-<summary>Output metadata</summary>
+#### Output Metadata
+* **filename** - (string, required): File Name
+* **size** - (number, required): File Size
+* **type** - (string, required): File Type
+* **modifyTime** - (string, required): Last Modification Time
+* **accessTime** - (string, required): Last Access Time
+* **directory** - (string, required): Directory
+* **path** - (string, required): Full Path
 
+#### Known limitations
+* Trigger mechanism is based on SFTP file `modifyTime` metadata field. For correct processing the trigger requires correct time configuration on the SFTP server.
 
-```json
-{
-  "type": "object",
-  "properties": {
-    "filename": {
-      "title": "File Name",
-      "type": "string",
-      "required": true
-    },
-    "size": {
-      "title": "File Size",
-      "type": "number",
-      "required": true
-    },
-    "type": {
-      "title": "File Type",
-      "type": "string",
-      "required": true
-    },
-    "modifyTime": {
-      "title": "Last Modification Time",
-      "type": "number",
-      "required": true
-    },
-    "accessTime": {
-      "title": "Last Access Time",
-      "type": "number",
-      "required": true
-    },
-    "directory": {
-      "title": "Directory",
-      "type": "string",
-      "required": true
-    },
-    "path": {
-      "title": "Full Path",
-      "type": "string",
-      "required": true
-    }
-  }
-}
-```
+### Deprecated Triggers
+
+<details> 
+  <summary>Read Files</summary>
+
+### Read Files
+Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component
+
+After a file is found:
+ * It is moved to the (hidden) directory `.elasticio_processed` and to name of the file will be added timestamp, ex.: file `test.txt` will be renamed to `test.txt_1657621889133`
+ * It is pulled and uploaded (streamed) to the attachment storage
+
+Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
+
+#### Configuration Fields
+* **Directory** - (string, required): The directory of the files to read from
+* **Pattern** - (string, optional): Regex pattern for file names. If no pattern is given, no matching is done.
+#### Input Metadata
+none
+#### Output Metadata
+* **filename** - (string, required): Name of the file
+* **size** - (number, required): File size
 </details>
-
-**Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
 
 ## Actions
 
-### Upload Files From Attachments Header
+### Delete File
+Action to delete file by provided full file path.If the file does not exist, the empty message (`{}`) is returned
 
-The following configuration fields are available:
-- **Directory**: The directory where the file will be uploaded to.
+#### Configuration Fields
+none
 
-* Note: if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
+#### Input Metadata
+- **Full Path** - (string, required): Full filename and path to the file
 
-Input metadata:
+#### Output Metadata
+- **id** - (string, required): Full filename and path to the file
 
-- **Filename**: Custom name for uploaded file.
+### Download File by name
+Finds a file by name in the provided directory and uploads (streams) to the attachment storage
+#### Configuration Fields
+* **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not thrown error when no objects were found
+* **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not thrown error when object id is missing
 
-Notes:
-* Uploaded file name will get filename of income file if new `Filename` doesn't provided
-* `Filename` will be added at the beggining of attachment name if income message contains multiple attachments: `[SpecifiedFilename]_[NameOfExistedFile]`
-* File will be overwritten in case when file with specified name already exists in directory
+#### Input Metadata
+- **Path and File Name** - (string, required if `Allow ID to be Omitted` set to `No`): Full filename and path to the file
 
-### Upload File From URL
-Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server.  The component returns a summary of the written file.
 
-The following configuration fields are available:
+#### Output Metadata
+* **type** - (string, required): File type
+* **name** - (number, required): File name
+* **size** - (number, required): File size
+* **owner** - (number, required): User identifier
+* **group** - (number, required): Group identifier
+* **accessTime** - (string, required): Last Access Time
+* **modifyTime** - (string, required): Last Modify Time
+* **rights** - (object, required): Rights to file on SFTP server
+* **directory** - (string, required): Directory
+* **path** - (string, required): Full Path
+* **attachment_url** - (string, required): Url to file in storage
 
-- **Behavior When File Already Exists**: The expected behavior of the component when trying to write to a file that already exists
+### Download Files
+Finds a file by criteria in the provided directory and uploads (streams) to the attachment storage
 
-  - **Throw an Error**: Does not write data to the file and the component produces an error
-  - **Overwrite the File**: Replace the existing file contents with the contents of the attachment stored in the platform.
-  - **Append the File Contents**: Adds the contents of the attachment stored in the platform to the end of the file. No intermediate characters (e.g. newlines or spaces) will be added.
+#### Configuration Fields
+* **Behavior** - (dropdown, required): Defines the way result objects will be emitted
+    * **Fetch All** - All objects will be emitted as array in one object with key `results`
+    * **Emit Individually** - Each object will be emitted separately filling the entire message
+* **Number of search terms** - (number, optional, between 0 and 99): Defines the number of search terms that the entity must match
+* **Upload files to attachment** - (dropdown, optional): If set to `Yes` files will be uploaded to platform storage
 
-* Note: If the filename provided contains directories that do not exist, those directories will be created.
+#### Input Metadata
+* **Directory Path** - (string, required): The directory of the files to read from
+* **Max Size** - (number, optional, defaults to 250): Maximum number of objects to fetch
+* **Search term** - (object, required and appears if `Number of search terms` > 0): Criteria of the file to search:
+    * **Field Name** - (string, required): options are:
+      * **name** - File name
+      * **modifyTime** - Last Modify Time
+      * **accessTime** - Last Access Time
+      * **size** - File size
+    * **Condition** - (string, required): options are:
+      * **like** - like
+      * **eq** - equal
+      * **ne** - not equal
+      * **gt** - greater than
+      * **gte** - greater than or equal
+      * **lt** - less than
+      * **lte** - less than or equal
+    * **Field Value** - (string, required): Value for selected term
+* **Criteria Link** - (string, required and appears if `Number of search terms` > 1): Determinate how to combine `Search terms`:
+  * **and** - All search term match
+  * **or** - One or more search terms match
 
-#### Expected input metadata
-
-- **File Name and Path**: Full filename and path to the file to write.  Both absolute (e.g. `/home/myuser/somefolder/some.file`) and relative (e.g. `./somefolder/some.file`) paths are supported.  Tilde (`~`) expansion is not supported.
-- **Attachment URL**: URL of the stored attachment to store in the file.
-- **Encoding**: The encoding (if any) that should be applied to the written file.
-- **File Mode**: The read/write/execute permissions for the file.
-
-```json
-{
-  "type": "object",
-  "required": true,
-  "properties": {
-    "filename": {
-      "title": "File Name and Path",
-      "type": "string",
-      "required": true
-    },
-    "attachmentUrl": {
-      "title": "Attachment URL",
-      "type": "string",
-      "required": true
-    },
-    "encoding": {
-      "title": "Encoding (defaults to null)",
-      "type": "string",
-      "required": false
-    },
-    "fileMod": {
-      "title": "File Mode (i.e. read/write permissions) (defaults to 0o666 (rwx))",
-      "type": "string",
-      "required": false
-    }
-  }
-}
-```
-
-#### Expected output metadata
-```json
-{
-  "type": "object",
-  "properties": {
-    "type": "object",
-    "properties": {
-      "type": {
-        "title": "Type",
-        "type": "string",
-        "required": true
-      },
-      "name": {
-        "title": "File Name",
-        "type": "string",
-        "required": true
-      },
-      "size": {
-        "title": "File Size",
-        "type": "number",
-        "required": true
-      },
-      "modifyTime": {
-        "title": "modifyTime",
-        "type": "string",
-        "required": true
-      },
-      "accessTime": {
-        "title": "accessTime",
-        "type": "string",
-        "required": true
-      },
-      "directory": {
-        "title": "directory",
-        "type": "string",
-        "required": true
-      },
-      "path": {
-        "title": "path",
-        "type": "string",
-        "required": true
-      },
-      "attachment_url": {
-        "title": "File Size",
-        "type": "number",
-        "required": true
-      }
-    }
-  }
-}
-```
+#### Output Metadata
+* **type** - (string, required): File type
+* **name** - (number, required): File name
+* **size** - (number, required): File size
+* **owner** - (number, required): User identifier
+* **group** - (number, required): Group identifier
+* **accessTime** - (string, required): Last Access Time
+* **modifyTime** - (string, required): Last Modify Time
+* **rights** - (object, required): Rights to file on SFTP server
+* **directory** - (string, required): Directory
+* **path** - (string, required): Full Path
+* **attachment_url** - (string, required): Url to file in storage
 
 ### Move File
 Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
 Target location MUST exist.  If the target filename already exists it will be overwritten. This action uses the openssh POSIX rename extension introduced in OpenSSH 4.8 if it is available. The advantage of this version of rename over standard SFTP rename is that it is an atomic operation and will allow renaming a resource where the destination name exists. If the openssh POSIX rename mechanism is not available, then a delete operation and then rename operation will be completed. 
 
-#### Expected input metadata
-```json
-{
-  "type": "object",
-  "required": true,
-  "properties": {
-    "filename": {
-      "title": "Current file Name and Path",
-      "type": "string",
-      "required": true
-    },
-    "newFilename": {
-      "title": "New file Name and Path (location must exist)",
-      "type": "string",
-      "required": true
-    }
-  }
-}
-```
+#### Configuration Fields
+none
+#### Input Metadata
 
-#### Expected output metadata
-```json
-{
-  "type": "object",
-  "required": true,
-  "properties": {
-    "filename": {
-      "title": "Current file Name and Path",
-      "type": "string",
-      "required": true
-    },
-    "newFilename": {
-      "title": "New file Name and Path",
-      "type": "string",
-      "required": true
-    }
-  }
-}
-```
+- **Current file Name and Path** - (string, required): Full filename and path to the file
+- **New file Name and Path** - (string, required): Full filename and path to the file to move
+
+#### Output Metadata
+- **filename** - (string, required): Full filename and path to the file where it was
+- **newFilename** - (string, required): Full filename and path to the file where is moved
+
+### Upload File From URL
+Given a filename and a URL to an attachment, transfers the contents of the attachment to the SFTP server
+
+#### Configuration Fields
+* **Behavior When File Already Exists** - (dropdown, required): The expected behavior of the component when trying to write to a file that already exists:
+  * **Throw an Error**: Does not write data to the file and the component produces an error
+  * **Overwrite the File**: Replace the existing file contents with the contents of the attachment stored in the platform.
+  * **Append the File Contents**: Adds the contents of the attachment stored in the platform to the end of the file. No intermediate characters (e.g. newlines or spaces) will be added.
+
+Note: If the filename provided contains directories that do not exist, those directories will be created.
+
+#### Input Metadata
+- **File Name and Path** - (string, required): Full filename and path to the file to write.  Both absolute (e.g. `/home/myuser/somefolder/some.file`) and relative (e.g. `./somefolder/some.file`) paths are supported.  Tilde (`~`) expansion is not supported.
+- **Attachment URL** - (string, required): URL of the stored attachment to store in the file.
+- **Encoding** - (string, optional): The encoding (if any) that should be applied to the written file.
+- **File Mode** - (string/number, optional): The read/write/execute permissions for the file, defaults to 00666 (rwx)
+
+#### Output Metadata
+* **mode** - (number, required): permissions for the file
+* **size** - (number, required): File Size
+* **uid** - (number, required): User identifier
+* **gid** - (number, required): Group identifier
+* **accessTime** - (string, required): Last Access Time
+* **modifyTime** - (string, required): Last Modify Time
+* **isDirectory** - (boolean, required): Is it directory
+* **isFile** - (string, required): Is it file
 
 
-### Delete File
-Action to delete file by provided full file path. If the file does not exist, the empty message (`{}`) is returned. If the file is removed, the filename of the removed file is returned in the `id` property.
+### Upload Files From Attachments Header
 
-#### Expected input metadata
-```json
-{
-  "type": "object",
-  "properties": {
-    "path": {
-      "title": "Full Path",
-      "type": "string",
-      "required": true
-    }
-  }
-}
-```
+#### Configuration Fields
+- **Directory** - (string, required): The directory where the file will be uploaded to, if the directory does not exist, it will create it at the risk of possibly overwriting any files that may have the same name.
 
-#### Expected output metadata
-```json
-{
-  "type": "object",
-  "properties": {
-    "id": {
-      "title": "Full Path",
-      "type": "string",
-      "required": true
-    }
-  }
-}
+#### Input Metadata
 
-```
+* **Filename** - (string, optional): Custom name for uploaded file
+  * **Note 1** Uploaded file name will get filename of income file if new `Filename` doesn't provided
+  * **Note 2** `Filename` will be added at the beggining of attachment name if income message contains multiple attachments: `[SpecifiedFilename]_[NameOfExistedFile]`
+  * **Note 3** File will be overwritten in case when file with specified name already exists in directory
 
-### Download File by name
-Finds a file by name in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
-After the upload, the READ-URL of the file will be used to generate a message with content like below:
+#### Output Metadata
+An object, with key `results` that has an array as its value
 
-```json
-{
-  "id": "0c196dca-4187-4b49-bf90-5cfe9030955b",
-  "attachments": {
-    "1.txt": {
-      "url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
-      "size": 7
-    }
-  },
-  "body": {
-    "type": "-",
-    "name": "1.txt",
-    "size": 7,
-    "modifyTime": "2019-12-02T13:05:42.000Z",
-    "accessTime": "2019-12-04T14:14:54.000Z",
-    "rights": {
-      "user": "rw",
-      "group": "r",
-      "other": "r"
-    },
-    "owner": 1002,
-    "group": 1002,
-    "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
-    "directory": "/www/olhav",
-    "path": "/www/olhav/1.txt"
-  }
-}
-```
-
-The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data.
-
-#### List of Expected Config fields
-##### Allow Empty Result
-Default `No`. In case `No` is selected - an error will be thrown when no objects were found,
-If `Yes` is selected -  an empty object will be returned instead of throwing an error.
-
-##### Allow ID to be Omitted
-Default `No`. In case `No` is selected - an error will be thrown when object id is missing in metadata, if `Yes` is selected - an empty object will be returned instead of throwing an error.
-
-#### Expected input metadata
-```json
-{
-  "type": "object",
-  "properties": {
-    "path": {
-      "title": "Path and File Name",
-      "type": "string"
-    }
-  }
-}
-```
-
-#### Expected output metadata
-
-<details>
-<summary>Output metadata</summary>
-
-```json
-
-{
-  "type": "object",
-  "properties": {
-    "type": {
-      "title": "Type",
-      "type": "string",
-      "required": true
-    },
-    "name": {
-      "title": "File Name",
-      "type": "string",
-      "required": true
-    },
-    "size": {
-      "title": "File Size",
-      "type": "number",
-      "required": true
-    },
-    "modifyTime": {
-      "title": "modifyTime",
-      "type": "string",
-      "required": true
-    },
-    "accessTime": {
-      "title": "accessTime",
-      "type": "string",
-      "required": true
-    },
-    "directory": {
-      "title": "directory",
-      "type": "string",
-      "required": true
-    },
-    "path": {
-      "title": "path",
-      "type": "string",
-      "required": true
-    },
-    "attachment_url": {
-      "title": "File Size",
-      "type": "number",
-      "required": true
-    }
-  }
-}
-
-```
-</details>
-
-**Note:** `type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
-
-### Download Files
-Finds a file by criterias in the provided directory and uploads (streams) to the attachment storage (a.k.a. steward).
-After the upload, the READ-URL of the file will be used to generate a message with content like below:
-
-```json
-{
-  "id": "0c196dca-4187-4b49-bf90-5cfe9030955b",
-  "attachments": {
-    "1.txt": {
-      "url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
-      "size": 7
-    }
-  },
-  "body": {
-    "type": "-",
-    "name": "1.txt",
-    "size": 7,
-    "modifyTime": "2019-12-02T13:05:42.000Z",
-    "accessTime": "2019-12-04T14:14:54.000Z",
-    "rights": {
-      "user": "rw",
-      "group": "r",
-      "other": "r"
-    },
-    "owner": 1002,
-    "group": 1002,
-    "attachment_url": "http://steward-service.platform.svc.cluster.local:8200/files/99999-6613-410a-9da8-c5f6d529b683",
-    "directory": "/www/test",
-    "path": "/www/test/1.txt"
-  }
-}
-```
-
-The next component may read from `url` in `attachments` for a memory-efficient way to read/parse data.
-
-#### List of Expected Config fields
-##### Behavior
-`Fetch All` - fetch all objects in one message in form of array, `Emit Individually` - emit each fetched object as separate message.
-##### Number of search terms
-Not required field, number of search terms. Determines the number of search terms that the entity must match. Need to be an integer value from 1 to 99. If this field is empty, action emits all entities with selected type.
-##### Upload files to attachment
- Not required field. If `Yes` - all files will be downloaded to the attachments and action will return files metadata as JSON object. If `No` - No files will be downloaded to the attachments and action returns files metadata in JSON object
-
-
-#### Expected input metadata
-**Directory Path** - required field, Path of lookup directory.
-**Max Size** - Maximum number of objects to fetch. Default `250`, maximum value is `250`.
-
-Metadata is depending on the input field `Number of search terms`.
-
-If `Number of search terms` is empty, metadata does not exist.
-
-If `Number of search terms` = 1, metadata has only one search term.
-
-If `Number of search terms` > 1, metadata has a number of search term equal `Number of search terms` and a number of criteria link equal '`Number of search terms` - 1'.
-
-Each search term has 3 fields:
- ![image](https://user-images.githubusercontent.com/13310949/70321165-54980580-182f-11ea-9442-e6234163deb6.png)
- - **Field Name** - chosen entity's field name. You need to select the one field from `Value` section:
- ![image](https://user-images.githubusercontent.com/13310949/70224021-31992300-1755-11ea-83e0-6023a2d67503.png)
- - **Condition** - You need to select the one condition from `Value` section:
- ![image](https://user-images.githubusercontent.com/13310949/70224020-31992300-1755-11ea-8f5d-375a77acf1c6.png)
- - **Field Value** - the value that the field must match with the specified condition.
-
-  You can use wildcard in the condition value for the `like` operator. See [micromatch documentation.](https://www.npmjs.com/package/micromatch)
-
-Between search terms, there is **Criteria Link**. You need to select the one criteria from `Value` section:
-![image](https://user-images.githubusercontent.com/13310949/70224278-ae2c0180-1755-11ea-9445-441a0e2c8f87.png)
-`And` Criteria Link has precedence over `Or`. If you configure 3 search Terms:
-```iso92-sql
- searchTerm1 and SearchTerm2 or SearchTerm3
-```
-, it will be executed as
- ```iso92-sql
-(searchTerm1 and SearchTerm2) or SearchTerm3                       
-```
-
-For example, if you want to find all files where field `name` starts from `123` or field `size` grater than `10000`:
-![image](https://user-images.githubusercontent.com/13310949/70224450-f6e3ba80-1755-11ea-9a9c-de573f74d370.png)
-
-
-#### Output metadata
-
-Schema of output metadata depends on Behaviour configuration:
-##### Fetch All
-<details>
-<summary>Output metadata</summary>
-
-```json
-{
-   "type": "object",
-   "properties": {
-      "results": {
-         "type": "array",
-         "properties": {
-            "type": "object",
-            "properties": {
-               "type": {
-                  "type": "string"
-               },
-               "name": {
-                  "type": "string"
-               },
-               "size": {
-                  "type": "number"
-               },
-               "modifyTime": {
-                  "type": "number"
-               },
-               "accessTime": {
-                  "type": "number"
-               },
-               "rights": {
-                  "type": "object",
-                  "properties": {
-                     "user": {
-                        "type": "string"
-                     },
-                     "group": {
-                        "type": "string"
-                     },
-                     "other": {
-                        "type": "string"
-                     }
-                  }
-               },
-               "owner": {
-                  "type": "number"
-               },
-               "group": {
-                  "type": "number"
-               },
-               "attachment_url": {
-                  "type": "string"
-               },
-               "directory": {
-                  "type": "string"
-               },               
-               "path": {
-                  "type": "string"
-               }
-            }
-         }
-      }
-   }
-}
-```
-</details>
-
-##### Emit Individually
-<details>
-<summary>Output metadata</summary>
-
-```json
-{
-   "type": "object",
-   "properties": {
-      "type": {
-         "type": "string"
-      },
-      "name": {
-         "type": "string"
-      },
-      "size": {
-         "type": "number"
-      },
-      "modifyTime": {
-         "type": "number"
-      },
-      "accessTime": {
-         "type": "number"
-      },
-      "rights": {
-         "type": "object",
-         "properties": {
-            "user": {
-               "type": "string"
-            },
-            "group": {
-               "type": "string"
-            },
-            "other": {
-               "type": "string"
-            }
-         }
-      },
-      "owner": {
-         "type": "number"
-      },
-      "group": {
-         "type": "number"
-      },
-      "attachment_url": {
-         "type": "string"
-      },
-      "directory": {
-          "type": "string"
-      },               
-      "path": {
-          "type": "string"
-      }
-   }
-}
-```
-</details>
-
-`type` field represents type of the file. You can find additional information about Unix file types [below](#ssh2-sftp-client-api-and-documentation-links);
-
-#### Action Known limitations
-Action does not support `Fetch Page` mode (according to OIH standards)
-
-
-## Known limitations
-
-* The maximum file size accepted by the SFTP component is limited to 100 MB.
-* The attachments mechanism does not work with [Local Agent Installation](https://support.elastic.io/support/solutions/articles/14000076461-announcing-the-local-agent-)
-* `Get new and updated files` trigger mechanism is based on SFTP file `modifyTime` metadata field. For correct processing the trigger requires correct time configuration on the SFTP server.
-* `Get new and updated files` trigger does not support empty files processing.
-* `Get new and updated files` trigger does not support `fetch page` Emit Behaviour
-
-## SSH2 SFTP Client API and Documentation links
-
-The SFTP component uses [ssh2-sftp-client](https://www.npmjs.com/package/ssh2-sftp-client).
-
-Explanation of [Unix file types](https://en.wikipedia.org/wiki/Unix_file_types)
+* **attachment** - (string, required): File Name
+* **uploadedOn** - (string, required): Upload datetime
+* **path** - (string, required): Full Path to file

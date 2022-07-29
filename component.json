@@ -1,8 +1,7 @@
 {
   "title": "SFTP",
-  "buildType": "docker",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.4.9",
+  "version": "1.5.0",
   "credentials": {
     "fields": {
       "host": {
@@ -36,6 +35,13 @@
         "required": false,
         "placeholder": "Paste your SFTP Private Key",
         "note": "For using Private Key based authentication, leave Password field empty"
+      },
+      "passphrase": {
+        "viewClass": "PasswordFieldView",
+        "label": "Passphrase",
+        "required": false,
+        "placeholder": "Paste your passphrase",
+        "note": "If private key is protected by a passphrase, put it here"
       }
     }
   },
