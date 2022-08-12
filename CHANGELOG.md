@@ -1,3 +1,6 @@
+## 1.5.1 (August 12, 2022)
+* Updated @elasticio/component-commons-library to v3.0.1
+
 ## 1.5.0 (July 29, 2022)
 * Added retries on errors while connecting SFTP client
 * Upgrade component-commons-library version to 3.0.0
