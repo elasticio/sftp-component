@@ -1,3 +1,6 @@
+## 1.5.2 (August 26, 2022)
+* Updated @elasticio/component-commons-library to v3.0.2
+
 ## 1.5.1 (August 12, 2022)
 * Updated @elasticio/component-commons-library to v3.0.1
 
