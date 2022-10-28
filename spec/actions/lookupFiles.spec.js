@@ -2,6 +2,7 @@ require('dotenv').config();
 const { getLogger } = require('@elastic.io/component-commons-library');
 const sinon = require('sinon');
 const { expect } = require('chai');
+const { Readable } = require('stream');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const lookupFiles = require('../../lib/actions/lookupObjects');
 const { DIR } = require('../../lib/constants');
@@ -42,7 +43,7 @@ describe('Lookup Files', () => {
     getReadStreamStub = await sinon.stub(Sftp.prototype, 'getReadStream');
     existsStub = await sinon.stub(Sftp.prototype, 'exists');
     uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
-    await lookupFiles.init(cfg);
+    // await lookupFiles.init(cfg);
   });
 
   beforeEach(() => {
@@ -97,7 +98,7 @@ describe('Lookup Files', () => {
   });
 
   after(async () => {
-    await lookupFiles.shutdown(cfg);
+    // await lookupFiles.shutdown(cfg);
     connectStub.restore();
     endStub.restore();
     listStub.restore();
@@ -119,8 +120,8 @@ describe('Lookup Files', () => {
   it('fetchAll', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
-    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str', 'utf-8')));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Readable.from(Buffer.from('str', 'utf-8')));
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'fetchAll';
@@ -132,8 +133,8 @@ describe('Lookup Files', () => {
   it('emitIndividually', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
-    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Buffer.from('str', 'utf-8'));
-    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Buffer.from('str', 'utf-8'));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str', 'utf-8')));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Readable.from(Buffer.from('str', 'utf-8')));
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';

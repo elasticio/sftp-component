@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const chai = require('chai');
+const { Readable } = require('stream');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const { getLogger } = require('@elastic.io/component-commons-library');
 
@@ -167,7 +168,7 @@ describe('SFTP test - polling trigger', () => {
     const sftpClientEndStub = sinon.stub(Sftp.prototype, 'end').returns(true);
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
     const sftpClientGetStub = sinon.stub(Sftp.prototype, 'get').returns(buffer);
-    const sftpClientGetReadStreamStub = sinon.stub(Sftp.prototype, 'getReadStream').returns(buffer);
+    const sftpClientGetReadStreamStub = sinon.stub(Sftp.prototype, 'getReadStream').returns(Readable.from(Buffer.from('str', 'utf-8')));
     const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns('objectId');
 
     await trigger.process.call(self, {}, cfg);
