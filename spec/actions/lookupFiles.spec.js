@@ -43,7 +43,6 @@ describe('Lookup Files', () => {
     getReadStreamStub = await sinon.stub(Sftp.prototype, 'getReadStream');
     existsStub = await sinon.stub(Sftp.prototype, 'exists');
     uploadAttachmentStub = await sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
-    // await lookupFiles.init(cfg);
   });
 
   beforeEach(() => {
@@ -98,7 +97,6 @@ describe('Lookup Files', () => {
   });
 
   after(async () => {
-    // await lookupFiles.shutdown(cfg);
     connectStub.restore();
     endStub.restore();
     listStub.restore();
