@@ -1,6 +1,6 @@
 ## 1.6.0 (November 04, 2022)
 * Added configurable retries on file upload to platform in `Download Files` action
-* Update sailor version to 2.7.1
+* Update Sailor version to 2.7.1
 
 ## 1.5.2 (August 26, 2022)
 * Updated @elasticio/component-commons-library to v3.0.2
