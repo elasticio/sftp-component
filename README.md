@@ -132,6 +132,9 @@ Finds a file by criteria in the provided directory and uploads (streams) to the 
     * **Emit Individually** - Each object will be emitted separately filling the entire message
 * **Number of search terms** - (number, optional, between 0 and 99): Defines the number of search terms that the entity must match
 * **Upload files to attachment** - (dropdown, optional): If set to `Yes` files will be uploaded to platform storage
+* **File Upload Retry** - (number, optional, default 5): How many times to retry file upload as attachment to platform storage
+* **Retry Timeout** - (number, optional, default 10000): How long to wait between retry attempts in milliseconds
+* **File Upload Timeout** - (number, optional, default 10000): If file upload process will be longer than specified number of milliseconds and will not processing any data (receiving or uploading), timeout will be thrown (process will be retried if \"File Upload Retry\" set)
 
 #### Input Metadata
 * **Directory Path** - (string, required): The directory of the files to read from
