@@ -409,7 +409,7 @@
           "order": 25,
           "placeholder": "5",
           "help": {
-            "description": "How many times to retry file upload as attachment"
+            "description": "How many times to retry file upload as attachment (Default: 5)"
           }
         },
         "retryTimeout": {
@@ -419,7 +419,7 @@
           "order": 20,
           "placeholder": "10000",
           "help": {
-            "description": "How long to wait between retry attempts in milliseconds"
+            "description": "How long to wait between retry attempts in milliseconds (Default: 10000)"
           }
         },
         "fileUploadTimeout": {
@@ -429,7 +429,7 @@
           "order": 15,
           "placeholder": "10000",
           "help": {
-            "description": "If file upload process will be longer than specified number of milliseconds and will not processing any data (receiving or uploading), timeout will be thrown (process will be retried if \"File Upload Retry\" set)"
+            "description": "If file upload process will be longer than specified number of milliseconds and will not processing any data (receiving or uploading), timeout will be thrown (process will be retried if \"File Upload Retry\" set) (Default: 10000)"
           }
         }
       },
