@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
+const { Readable } = require('stream');
 const { AttachmentProcessor } = require('@elastic.io/component-commons-library');
 const Sftp = require('../../lib/Sftp');
 const { SftpLookupObject } = require('../../lib/utils/lookupObjectUtil');
@@ -37,6 +38,7 @@ describe('SFTP test - lookup file by file name', () => {
     ];
     const sftpClientListStub = sinon.stub(Sftp.prototype, 'list').returns(list);
     const attachStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment').returns('objectId');
+    sinon.stub(Sftp.prototype, 'getReadStream').returns(Readable.from(Buffer.from('str', 'utf-8')));
 
     const expectedAttachments = {
       '1.txt': {

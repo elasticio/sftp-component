@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "credentials": {
     "fields": {
       "host": {
@@ -377,6 +377,7 @@
           "viewClass": "SelectView",
           "label": "Behavior",
           "required": true,
+          "order": 50,
           "model": {
             "emitIndividually": "Emit Individually",
             "fetchAll": "Fetch All"
@@ -387,6 +388,7 @@
           "viewClass": "TextFieldView",
           "label": "Number of search terms",
           "required": false,
+          "order": 40,
           "placeholder": "0",
           "note": "Enter an integer number from interval: [0-99] or leave empty. Defaults to [0]"
         },
@@ -397,7 +399,38 @@
             "Yes": "Yes",
             "No": "No"
           },
+          "order": 30,
           "prompt": "Include attachments to the output message? Default: Yes."
+        },
+        "fileUploadRetry": {
+          "viewClass": "TextFieldView",
+          "label": "File Upload Retry",
+          "required": false,
+          "order": 25,
+          "placeholder": "5",
+          "help": {
+            "description": "How many times to retry file upload as attachment (Default: 5)"
+          }
+        },
+        "retryTimeout": {
+          "viewClass": "TextFieldView",
+          "label": "Retry Timeout",
+          "required": false,
+          "order": 20,
+          "placeholder": "10000",
+          "help": {
+            "description": "How long to wait between retry attempts in milliseconds (Default: 10000)"
+          }
+        },
+        "fileUploadTimeout": {
+          "viewClass": "TextFieldView",
+          "label": "File Upload Timeout",
+          "required": false,
+          "order": 15,
+          "placeholder": "10000",
+          "help": {
+            "description": "If file upload process will be longer than specified number of milliseconds and will not processing any data (receiving or uploading), timeout will be thrown (process will be retried if \"File Upload Retry\" set) (Default: 10000)"
+          }
         }
       },
       "dynamicMetadata": true
