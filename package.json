@@ -16,7 +16,7 @@
   "author": "elastic.io GmbH",
   "license": "Apache-2.0",
   "dependencies": {
-    "@elastic.io/component-commons-library": "3.0.2",
+    "@elastic.io/component-commons-library": "3.1.5",
     "@elastic.io/oih-standard-library": "2.0.3",
     "async": "3.2.3",
     "elasticio-node": "0.0.9",
