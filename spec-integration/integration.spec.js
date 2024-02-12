@@ -266,11 +266,13 @@ describe('SFTP integration test - upload then download', () => {
         path: `${directory}/logo.svg`,
       },
     };
+    // TODO delete
+    cfg.emitFileContent = true;
     const result = await lookupObject.process.call(receiver, msg, cfg);
     expect(result.body.name).to.equal('logo.svg');
     expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
-    await sftp.delete(`${cfg.directory}logo.svg`);
-    await sftp.rmdir(cfg.directory, false);
+    // await sftp.delete(`${cfg.directory}logo.svg`);
+    // await sftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
   });
 

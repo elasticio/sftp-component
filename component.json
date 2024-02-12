@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.6.0",
+  "version": "1.7.0-dev.1",
   "credentials": {
     "fields": {
       "host": {
@@ -306,6 +306,10 @@
             "No": "No"
           },
           "prompt": "Allow File name to be omitted? Default: No."
+        },
+        "emitFileContent": {
+          "viewClass": "CheckBoxView",
+          "label": "Emit file content (Base64) instead of putting it to the storage"
         }
       },
       "metadata": {
