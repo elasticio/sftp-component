@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.7.0-dev.1",
+  "version": "1.7.0-dev.2",
   "credentials": {
     "fields": {
       "host": {
@@ -361,9 +361,14 @@
               "required": true
             },
             "attachment_url": {
-              "title": "File Size",
-              "type": "number",
+              "title": "URL in the internal storage",
+              "type": "string",
               "required": true
+            },
+            "base64StringFromStream": {
+              "title": "File content in Base64",
+              "type": "string",
+              "required": false
             }
           }
         }

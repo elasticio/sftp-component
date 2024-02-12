@@ -105,10 +105,10 @@ Finds a file by name in the provided directory and uploads (streams) to the atta
 #### Configuration Fields
 * **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not thrown error when no objects were found
 * **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not thrown error when object id is missing
+* **Emit file content (Base64) instead of putting it to the storage** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message
 
 #### Input Metadata
 - **Path and File Name** - (string, required if `Allow ID to be Omitted` set to `No`): Full filename and path to the file
-
 
 #### Output Metadata
 * **type** - (string, required): File type
@@ -122,6 +122,7 @@ Finds a file by name in the provided directory and uploads (streams) to the atta
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
 * **attachment_url** - (string, required): Url to file in storage
+* **base64StringFromStream** - (string, optional): Base64 file content
 
 ### Download Files
 Finds a file by criteria in the provided directory and uploads (streams) to the attachment storage
