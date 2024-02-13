@@ -121,8 +121,8 @@ Finds a file by name in the provided directory and uploads (streams) to the atta
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage
-* **base64StringFromStream** - (string, optional): Base64 file content
+* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64) instead of putting it to the storage` is checked
+* **base64Content** - (string, optional): Base64 file content
 
 ### Download Files
 Finds a file by criteria in the provided directory and uploads (streams) to the attachment storage

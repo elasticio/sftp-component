@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.7.0-dev.2",
+  "version": "1.7.0-dev.3",
   "credentials": {
     "fields": {
       "host": {
@@ -440,6 +440,11 @@
           "help": {
             "description": "If file upload process will be longer than specified number of milliseconds and will not processing any data (receiving or uploading), timeout will be thrown (process will be retried if \"File Upload Retry\" set) (Default: 10000)"
           }
+        },
+        "emitFileContent": {
+          "viewClass": "CheckBoxView",
+          "label": "Emit file content (Base64) instead of putting it to the storage",
+          "order": 10
         }
       },
       "dynamicMetadata": true
