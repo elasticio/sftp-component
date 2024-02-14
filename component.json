@@ -309,7 +309,10 @@
         },
         "emitFileContent": {
           "viewClass": "CheckBoxView",
-          "label": "Emit file content (Base64) instead of putting it to the storage"
+          "label": "Emit file content (Base64)",
+          "help": {
+            "description": "Emit file content (Base64) instead of putting it to the storage"
+          }
         }
       },
       "metadata": {
@@ -443,7 +446,10 @@
         },
         "emitFileContent": {
           "viewClass": "CheckBoxView",
-          "label": "Emit file content (Base64) instead of putting it to the storage",
+          "label": "Emit file content (Base64)",
+          "help": {
+            "description": "Emit file content (Base64) instead of putting it to the storage"
+          },
           "order": 10
         }
       },

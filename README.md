@@ -106,7 +106,7 @@ Finds a file by name in the provided directory and either uploads (streams) its 
 #### Configuration Fields
 * **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not thrown error when no objects were found
 * **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not thrown error when object id is missing
-* **Emit file content (Base64) instead of putting it to the storage** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message. 
+* **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message. 
 **Be careful!** Retrieve sample of a huge file may freeze the UI.
 
 #### Input Metadata
@@ -138,7 +138,7 @@ Finds files by criteria in the provided directory and either uploads (streams) t
 * **File Upload Retry** - (number, optional, default 5): How many times to retry file upload as attachment to platform storage
 * **Retry Timeout** - (number, optional, default 10000): How long to wait between retry attempts in milliseconds
 * **File Upload Timeout** - (number, optional, default 10000): If a file upload process is longer than the specified number of milliseconds and is not processing any data (receiving or uploading), the timeout will be thrown (the process will be retried if \"File Upload Retry\" set)
-* **Emit file content (Base64) instead of putting it to the storage** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message.
+* **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message.
 **Be careful!** Retrieve sample of a huge file may freeze the UI.
 
 #### Input Metadata
