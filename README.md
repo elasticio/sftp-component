@@ -104,12 +104,10 @@ none
 Finds a file by name in the provided directory and either uploads (streams) its content to the attachment storage or emits its in Base64 representation as a message.
 
 #### Configuration Fields
-* **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not thrown error when no objects were found
-* **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not thrown error when object id is missing
-* **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message. 
-**Be careful:**
-  * Maximum message size supported on the platform is 10MB. This is why files bigger than 10MB will not be processed.
-  * Retrieve sample of a huge file may freeze the UI.
+* **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not throw an error when no objects were found
+* **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not throw an error when object id is missing
+* **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message.
+  **Be careful:** Maximum message size supported on the platform is 10MB. This is why files bigger than 10MB will not be processed.
 
 #### Input Metadata
 - **Path and File Name** - (string, required if `Allow ID to be Omitted` set to `No`): Full filename and path to the file
@@ -125,7 +123,7 @@ Finds a file by name in the provided directory and either uploads (streams) its 
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64) instead of putting it to the storage` is checked
+* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64)` is checked
 * **base64Content** - (string, optional): Base64 file content
 
 ### Download Files
@@ -141,9 +139,7 @@ Finds files by criteria in the provided directory and either uploads (streams) t
 * **Retry Timeout** - (number, optional, default 10000): How long to wait between retry attempts in milliseconds
 * **File Upload Timeout** - (number, optional, default 10000): If a file upload process is longer than the specified number of milliseconds and is not processing any data (receiving or uploading), the timeout will be thrown (the process will be retried if \"File Upload Retry\" set)
 * **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message.
-  **Be careful:**
-    * Maximum message size supported on the platform is 10MB. This is why files bigger than 10MB will not be processed.
-    * Retrieve sample of a huge file may freeze the UI.
+**Be careful:** Maximum message size supported on the platform is 10MB. This is why files bigger than 10MB will not be processed.
 
 
 #### Input Metadata
@@ -179,7 +175,7 @@ Finds files by criteria in the provided directory and either uploads (streams) t
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64) instead of putting it to the storage` is checked
+* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64)` is checked
 * **base64Content** - (string, optional): Base64 file content
 * 
 ### Move File
