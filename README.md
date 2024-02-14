@@ -101,7 +101,8 @@ none
 - **id** - (string, required): Full filename and path to the file
 
 ### Download File by name
-Finds a file by name in the provided directory and uploads (streams) to the attachment storage
+Finds a file by name in the provided directory and either uploads (streams) its content to the attachment storage or emits its in Base64 representation as a message.
+
 #### Configuration Fields
 * **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not thrown error when no objects were found
 * **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not thrown error when object id is missing
@@ -125,7 +126,7 @@ Finds a file by name in the provided directory and uploads (streams) to the atta
 * **base64Content** - (string, optional): Base64 file content
 
 ### Download Files
-Finds a file by criteria in the provided directory and uploads (streams) to the attachment storage
+Finds files by criteria in the provided directory and either uploads (streams) their content to the attachment storage or emits it in Base64 representation as a message. 
 
 #### Configuration Fields
 * **Behavior** - (dropdown, required): Defines the way result objects will be emitted
@@ -136,6 +137,7 @@ Finds a file by criteria in the provided directory and uploads (streams) to the 
 * **File Upload Retry** - (number, optional, default 5): How many times to retry file upload as attachment to platform storage
 * **Retry Timeout** - (number, optional, default 10000): How long to wait between retry attempts in milliseconds
 * **File Upload Timeout** - (number, optional, default 10000): If a file upload process is longer than the specified number of milliseconds and is not processing any data (receiving or uploading), the timeout will be thrown (the process will be retried if \"File Upload Retry\" set)
+* **Emit file content (Base64) instead of putting it to the storage** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message
 
 #### Input Metadata
 * **Directory Path** - (string, required): The directory of the files to read from
@@ -170,8 +172,9 @@ Finds a file by criteria in the provided directory and uploads (streams) to the 
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage
-
+* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64) instead of putting it to the storage` is checked
+* **base64Content** - (string, optional): Base64 file content
+* 
 ### Move File
 Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
 Target location MUST exist.  If the target filename already exists it will be overwritten. This action uses the openssh POSIX rename extension introduced in OpenSSH 4.8 if it is available. The advantage of this version of rename over standard SFTP rename is that it is an atomic operation and will allow renaming a resource where the destination name exists. If the openssh POSIX rename mechanism is not available, then a delete operation and then rename operation will be completed. 
