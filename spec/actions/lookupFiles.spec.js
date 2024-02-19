@@ -115,7 +115,26 @@ describe('Lookup Files', () => {
     uploadAttachmentStub.resetHistory();
   });
 
-  it('fetchAll, Maester', async () => {
+  it('fetchAll, not emitFileContent, not uploadFilesToAttachments', async () => {
+    if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str123', 'utf-8')));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Readable.from(Buffer.from('str456', 'utf-8')));
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'fetchAll';
+    cfg.emitFileContent = false;
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {});
+    expect(context.emit.getCalls().length).to.be.eql(1);
+    expect(context.emit.getCall(0).args[1].body).to.deep.eql({ results: responseBody });
+    expect(context.emit.getCall(0).args[1].body.results[0].base64Content).to.eq(undefined);
+    expect(context.emit.getCall(0).args[1].body.results[1].base64Content).to.eq(undefined);
+    expect(context.emit.getCall(0).args[1].body.results[0].attachment_url).to.eq(undefined);
+    expect(context.emit.getCall(0).args[1].body.results[1].attachment_url).to.eq(undefined);
+  });
+
+  it('fetchAll, not emitFileContent, uploadFilesToAttachments', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
     if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str', 'utf-8')));
@@ -123,6 +142,8 @@ describe('Lookup Files', () => {
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'fetchAll';
+    cfg.emitFileContent = false;
+    cfg.uploadFilesToAttachments = 'Yes';
     await lookupFiles.process.call(context, msg, cfg, {});
     expect(context.emit.getCalls().length).to.be.eql(1);
     expect(context.emit.getCall(0).args[1].body).to.deep.eql({ results: responseBody });
@@ -132,7 +153,7 @@ describe('Lookup Files', () => {
     expect(context.emit.getCall(0).args[1].body.results[1].attachment_url).to.deep.eql('/objects/[object Object]?storage_type=maester');
   });
 
-  it('fetchAll, emitFileContent', async () => {
+  it('fetchAll, emitFileContent, uploadFilesToAttachments', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
     if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str123', 'utf-8')));
@@ -141,15 +162,35 @@ describe('Lookup Files', () => {
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'fetchAll';
     cfg.emitFileContent = true;
+    cfg.uploadFilesToAttachments = 'Yes';
     await lookupFiles.process.call(context, msg, cfg, {});
     expect(context.emit.getCalls().length).to.be.eql(1);
     expect(context.emit.getCall(0).args[1].body.results[0].base64Content).to.deep.eql('c3RyMTIz');
     expect(context.emit.getCall(0).args[1].body.results[1].base64Content).to.deep.eql('c3RyNDU2');
-    expect(context.emit.getCall(0).args[1].body.results[0].attachment_url).to.deep.eql('');
-    expect(context.emit.getCall(0).args[1].body.results[1].attachment_url).to.deep.eql('');
+    expect(context.emit.getCall(0).args[1].body.results[0].attachment_url).to.deep.eql('/objects/[object Object]?storage_type=maester');
+    expect(context.emit.getCall(0).args[1].body.results[1].attachment_url).to.deep.eql('/objects/[object Object]?storage_type=maester');
   });
 
-  it('emitIndividually, Maester', async () => {
+  it('fetchAll, emitFileContent, not uploadFilesToAttachments', async () => {
+    if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str123', 'utf-8')));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Readable.from(Buffer.from('str456', 'utf-8')));
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'fetchAll';
+    cfg.emitFileContent = true;
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {});
+    expect(context.emit.getCalls().length).to.be.eql(1);
+    expect(context.emit.getCall(0).args[1].body).to.deep.eql({ results: responseBody });
+    expect(context.emit.getCall(0).args[1].body.results[0].base64Content).to.deep.eql('c3RyMTIz');
+    expect(context.emit.getCall(0).args[1].body.results[1].base64Content).to.deep.eql('c3RyNDU2');
+    expect(context.emit.getCall(0).args[1].body.results[0].attachment_url).to.deep.eql(undefined);
+    expect(context.emit.getCall(0).args[1].body.results[1].attachment_url).to.deep.eql(undefined);
+  });
+
+  it('emitIndividually, not emitFileContent, not uploadFilesToAttachments', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
     if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str', 'utf-8')));
@@ -157,6 +198,27 @@ describe('Lookup Files', () => {
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';
+    cfg.emitFileContent = false;
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {});
+    expect(context.emit.getCalls().length).to.be.eql(2);
+    expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody[0]);
+    expect(context.emit.getCall(1).args[1].body).to.deep.eql(responseBody[1]);
+    expect(context.emit.getCall(0).args[1].body.base64Content).to.eq(undefined);
+    expect(context.emit.getCall(1).args[1].body.base64Content).to.eq(undefined);
+    expect(context.emit.getCall(0).args[1].body.attachment_url).to.eq(undefined);
+    expect(context.emit.getCall(1).args[1].body.attachment_url).to.eq(undefined);
+  });
+
+  it('emitIndividually, not emitFileContent, uploadFilesToAttachments', async () => {
+    if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str', 'utf-8')));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Readable.from(Buffer.from('str', 'utf-8')));
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'emitIndividually';
+    cfg.emitFileContent = false;
     cfg.uploadFilesToAttachments = 'Yes';
     await lookupFiles.process.call(context, msg, cfg, {});
     expect(context.emit.getCalls().length).to.be.eql(2);
@@ -168,7 +230,7 @@ describe('Lookup Files', () => {
     expect(context.emit.getCall(1).args[1].body.attachment_url).to.deep.eql('/objects/[object Object]?storage_type=maester');
   });
 
-  it('emitIndividually, emitFileContent', async () => {
+  it('emitIndividually, emitFileContent, uploadFilesToAttachments', async () => {
     if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
     if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
     if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str123', 'utf-8')));
@@ -176,16 +238,36 @@ describe('Lookup Files', () => {
     if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
     cfg.numSearchTerms = 1;
     cfg.emitBehaviour = 'emitIndividually';
-    cfg.uploadFilesToAttachments = 'Yes';
     cfg.emitFileContent = true;
+    cfg.uploadFilesToAttachments = 'Yes';
     await lookupFiles.process.call(context, msg, cfg, {});
     expect(context.emit.getCalls().length).to.be.eql(2);
     expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody[0]);
     expect(context.emit.getCall(1).args[1].body).to.deep.eql(responseBody[1]);
     expect(context.emit.getCall(0).args[1].body.base64Content).to.deep.eql('c3RyMTIz');
     expect(context.emit.getCall(1).args[1].body.base64Content).to.deep.eql('c3RyNDU2');
-    expect(context.emit.getCall(0).args[1].body.attachment_url).to.deep.eql('');
-    expect(context.emit.getCall(1).args[1].body.attachment_url).to.deep.eql('');
+    expect(context.emit.getCall(0).args[1].body.attachment_url).to.deep.eql('/objects/[object Object]?storage_type=maester');
+    expect(context.emit.getCall(1).args[1].body.attachment_url).to.deep.eql('/objects/[object Object]?storage_type=maester');
+  });
+
+  it('emitIndividually, emitFileContent, not uploadFilesToAttachments', async () => {
+    if (listStub) listStub.withArgs(msg.body[DIR]).returns(responseBody);
+    if (existsStub) existsStub.withArgs(msg.body[DIR]).returns(true);
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558428893007').returns(Readable.from(Buffer.from('str123', 'utf-8')));
+    if (getReadStreamStub) getReadStreamStub.withArgs('/www/nick/test/123.json_1558460387824').returns(Readable.from(Buffer.from('str456', 'utf-8')));
+    if (uploadAttachmentStub) uploadAttachmentStub.withArgs(sinon.match.any).returns(resp);
+    cfg.numSearchTerms = 1;
+    cfg.emitBehaviour = 'emitIndividually';
+    cfg.emitFileContent = true;
+    cfg.uploadFilesToAttachments = 'No';
+    await lookupFiles.process.call(context, msg, cfg, {});
+    expect(context.emit.getCalls().length).to.be.eql(2);
+    expect(context.emit.getCall(0).args[1].body).to.deep.eql(responseBody[0]);
+    expect(context.emit.getCall(1).args[1].body).to.deep.eql(responseBody[1]);
+    expect(context.emit.getCall(0).args[1].body.base64Content).to.deep.eql('c3RyMTIz');
+    expect(context.emit.getCall(1).args[1].body.base64Content).to.deep.eql('c3RyNDU2');
+    expect(context.emit.getCall(0).args[1].body.attachment_url).to.deep.eql(undefined);
+    expect(context.emit.getCall(1).args[1].body.attachment_url).to.deep.eql(undefined);
   });
 
   it('emitIndividually Only metadata', async () => {

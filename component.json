@@ -448,7 +448,7 @@
           "viewClass": "CheckBoxView",
           "label": "Emit file content (Base64)",
           "help": {
-            "description": "Emit file content (Base64) instead of putting it to the storage"
+            "description": "Emit file content (Base64)"
           },
           "order": 10
         }

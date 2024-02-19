@@ -138,8 +138,13 @@ Finds files by criteria in the provided directory and either uploads (streams) t
 * **File Upload Retry** - (number, optional, default 5): How many times to retry file upload as attachment to platform storage
 * **Retry Timeout** - (number, optional, default 10000): How long to wait between retry attempts in milliseconds
 * **File Upload Timeout** - (number, optional, default 10000): If a file upload process is longer than the specified number of milliseconds and is not processing any data (receiving or uploading), the timeout will be thrown (the process will be retried if \"File Upload Retry\" set)
-* **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message.
-**Be careful:** Maximum message size supported on the platform is 10MB. This is why files bigger than 10MB will not be processed.
+* **Emit File Content (Base64)** - (checkbox, optional, defaults to `No`): When checked, the file will not be stored internally. Instead, its content will be emitted as part of the message, encoded in Base64.
+  * **Note**: The maximum supported message size on the platform is 10MB. Files larger than 10MB will not be processed.
+  * **Important**: This checkbox functions differently from the `Download File by Name` action. In the latter, file content is either attached to the message or emitted within the message body. However, in this action, the output depends on both this checkbox and the `Upload Files to Attachment` dropdown. The combination of these two fields can result in one of four outcomes:
+    * Upload file to attachment. Emit file content as a message.
+    * Upload file to attachment. Do not emit file content as a message.
+    * Do not upload file to attachment. Emit file content as a message.
+    * Do not upload file to attachment. Do not emit file content as a message.
 
 
 #### Input Metadata
@@ -175,7 +180,7 @@ Finds files by criteria in the provided directory and either uploads (streams) t
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64)` is checked
+* **attachment_url** - (string, optional): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64)` is checked
 * **base64Content** - (string, optional): Base64 file content
 * 
 ### Move File
