@@ -1,7 +1,6 @@
-## 1.7.0 (February 19, 2024)
-* Added a new option `Emit file content (Base64) instead of putting it to the storage` to the configuration of two actions - `Download Files` and `Download Files by name`.
-This option makes file content to be emitted as a message instead of putting it to the Maester storage.
-* Be careful! Retrieve sample of a huge file may freeze the UI.
+## 1.7.0 (February 20, 2024)
+* Added a new option `Emit file content (Base64)` to the configuration of two actions - `Download Files` and `Download Files by name`.
+This option makes file content to be emitted as a message. Read the documentation to learn more how this feature works.
 
 ## 1.6.0 (November 04, 2022)
 * Added configurable retries on file upload to platform in `Download Files` action
