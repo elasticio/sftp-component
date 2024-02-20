@@ -101,14 +101,16 @@ none
 - **id** - (string, required): Full filename and path to the file
 
 ### Download File by name
-Finds a file by name in the provided directory and uploads (streams) to the attachment storage
+Finds a file by name in the provided directory and either uploads (streams) its content to the attachment storage or emits its in Base64 representation as a message.
+
 #### Configuration Fields
-* **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not thrown error when no objects were found
-* **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not thrown error when object id is missing
+* **Allow Empty Result** - (dropdown, optional, defaults to `No`): Do not throw an error when no objects were found
+* **Allow ID to be Omitted** - (dropdown, optional, defaults to `No`): Do not throw an error when object id is missing
+* **Emit file content (Base64)** - (checkbox, optional, defaults to `No`): When checked, a file will not be put into the internal storage. The file content in Base64 representation will be emitted as a part of the message.
+  **Be careful:** Maximum message size supported on the platform is 10MB. This is why files bigger than 10MB will not be processed.
 
 #### Input Metadata
 - **Path and File Name** - (string, required if `Allow ID to be Omitted` set to `No`): Full filename and path to the file
-
 
 #### Output Metadata
 * **type** - (string, required): File type
@@ -121,10 +123,11 @@ Finds a file by name in the provided directory and uploads (streams) to the atta
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage
+* **attachment_url** - (string, required): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64)` is checked
+* **base64Content** - (string, optional): Base64 file content
 
 ### Download Files
-Finds a file by criteria in the provided directory and uploads (streams) to the attachment storage
+Finds files by criteria in the provided directory and either uploads (streams) their content to the attachment storage or emits it in Base64 representation as a message. 
 
 #### Configuration Fields
 * **Behavior** - (dropdown, required): Defines the way result objects will be emitted
@@ -135,6 +138,14 @@ Finds a file by criteria in the provided directory and uploads (streams) to the 
 * **File Upload Retry** - (number, optional, default 5): How many times to retry file upload as attachment to platform storage
 * **Retry Timeout** - (number, optional, default 10000): How long to wait between retry attempts in milliseconds
 * **File Upload Timeout** - (number, optional, default 10000): If a file upload process is longer than the specified number of milliseconds and is not processing any data (receiving or uploading), the timeout will be thrown (the process will be retried if \"File Upload Retry\" set)
+* **Emit File Content (Base64)** - (checkbox, optional, defaults to `No`): When checked, the file will not be stored internally. Instead, its content will be emitted as part of the message, encoded in Base64.
+  * **Note**: The maximum supported message size on the platform is 10MB. Files larger than 10MB will not be processed.
+  * **Important**: This checkbox functions differently from the `Download File by Name` action. In the latter, file content is either attached to the message or emitted within the message body. However, in this action, the output depends on both this checkbox and the `Upload Files to Attachment` dropdown. The combination of these two fields can result in one of four outcomes:
+    * Upload file to attachment. Emit file content as a message.
+    * Upload file to attachment. Do not emit file content as a message.
+    * Do not upload file to attachment. Emit file content as a message.
+    * Do not upload file to attachment. Do not emit file content as a message.
+
 
 #### Input Metadata
 * **Directory Path** - (string, required): The directory of the files to read from
@@ -169,8 +180,9 @@ Finds a file by criteria in the provided directory and uploads (streams) to the 
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, required): Url to file in storage
-
+* **attachment_url** - (string, optional): Url to file in storage. This field exists if the `Upload files to attachment` configuration set to true
+* **base64Content** - (string, optional): Base64 file content
+* 
 ### Move File
 Action to move file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server.
 Target location MUST exist.  If the target filename already exists it will be overwritten. This action uses the openssh POSIX rename extension introduced in OpenSSH 4.8 if it is available. The advantage of this version of rename over standard SFTP rename is that it is an atomic operation and will allow renaming a resource where the destination name exists. If the openssh POSIX rename mechanism is not available, then a delete operation and then rename operation will be completed. 

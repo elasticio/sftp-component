@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "credentials": {
     "fields": {
       "host": {
@@ -306,6 +306,13 @@
             "No": "No"
           },
           "prompt": "Allow File name to be omitted? Default: No."
+        },
+        "emitFileContent": {
+          "viewClass": "CheckBoxView",
+          "label": "Emit file content (Base64)",
+          "help": {
+            "description": "Emit file content (Base64) instead of putting it to the storage"
+          }
         }
       },
       "metadata": {
@@ -357,9 +364,14 @@
               "required": true
             },
             "attachment_url": {
-              "title": "File Size",
-              "type": "number",
+              "title": "URL in the internal storage",
+              "type": "string",
               "required": true
+            },
+            "base64StringFromStream": {
+              "title": "File content in Base64",
+              "type": "string",
+              "required": false
             }
           }
         }
@@ -431,6 +443,14 @@
           "help": {
             "description": "If file upload process will be longer than specified number of milliseconds and will not processing any data (receiving or uploading), timeout will be thrown (process will be retried if \"File Upload Retry\" set) (Default: 10000)"
           }
+        },
+        "emitFileContent": {
+          "viewClass": "CheckBoxView",
+          "label": "Emit file content (Base64)",
+          "help": {
+            "description": "Emit file content (Base64)"
+          },
+          "order": 10
         }
       },
       "dynamicMetadata": true

@@ -10,6 +10,7 @@ const deleteAction = require('../lib/actions/delete');
 const upload = require('../lib/actions/upload');
 const read = require('../lib/triggers/read');
 const lookupObject = require('../lib/actions/lookupObject');
+const lookupObjects = require('../lib/actions/lookupObjects');
 const upsertFile = require('../lib/actions/upsertFile');
 const moveFile = require('../lib/actions/moveFile');
 
@@ -270,6 +271,50 @@ describe('SFTP integration test - upload then download', () => {
     expect(result.body.name).to.equal('logo.svg');
     expect(callAttachmentProcessor.calledOnce).to.be.equal(true);
     await sftp.delete(`${cfg.directory}logo.svg`);
+    await sftp.rmdir(cfg.directory, false);
+    attachmentProcessorStub.restore();
+  });
+
+  it('Uploads and lookup multiple', async () => {
+    const attachmentProcessorStub = sinon.stub(AttachmentProcessor.prototype, 'uploadAttachment');
+    const callAttachmentProcessor = attachmentProcessorStub.returns({ config: { url: 'https://url' } });
+
+    await upload.process.call(new TestEmitter(), {
+      body: {
+        filename: 'logo.svg',
+      },
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+    await upload.process.call(new TestEmitter(), {
+      body: {
+        filename: 'logo2.svg',
+      },
+      attachments: {
+        'logo.svg': {
+          url: 'https://app.elastic.io/img/logo.svg',
+        },
+      },
+    }, cfg);
+
+    const list = await sftp.list(cfg.directory);
+    expect(list.length).to.equal(2);
+    expect(list[0].name).to.equal('logo.svg');
+    expect(list[1].name).to.equal('logo2.svg');
+
+    const msg = {
+      body: {
+        directoryPath: `${directory}`,
+      },
+    };
+    cfg.emitBehaviour = 'fetchAll';
+    await lookupObjects.process.call(receiver, msg, cfg);
+    expect(callAttachmentProcessor.callCount).to.be.equal(2);
+    await sftp.delete(`${cfg.directory}logo.svg`);
+    await sftp.delete(`${cfg.directory}logo2.svg`);
     await sftp.rmdir(cfg.directory, false);
     attachmentProcessorStub.restore();
   });

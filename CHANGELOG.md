@@ -1,3 +1,7 @@
+## 1.7.0 (February 20, 2024)
+* Added a new option `Emit file content (Base64)` to the configuration of two actions - `Download Files` and `Download Files by name`.
+This option makes file content to be emitted as a message. Read the documentation to learn more how this feature works.
+
 ## 1.6.0 (November 04, 2022)
 * Added configurable retries on file upload to platform in `Download Files` action
 * Update Sailor version to 2.7.1
