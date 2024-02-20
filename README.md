@@ -180,7 +180,7 @@ Finds files by criteria in the provided directory and either uploads (streams) t
 * **rights** - (object, required): Rights to file on SFTP server
 * **directory** - (string, required): Directory
 * **path** - (string, required): Full Path
-* **attachment_url** - (string, optional): Url to file in storage. This field will always be empty if the checkbox `Emit file content (Base64)` is checked
+* **attachment_url** - (string, optional): Url to file in storage. This field exists if the `Upload files to attachment` configuration set to true
 * **base64Content** - (string, optional): Base64 file content
 * 
 ### Move File
