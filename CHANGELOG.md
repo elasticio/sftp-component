@@ -1,5 +1,7 @@
 ## 1.7.1 (July 02, 2024)
 * Super minor test fix
+* Update Sailor version to 2.7.2
+* Update component-commons-library version to 3.2.0
 
 ## 1.7.0 (February 20, 2024)
 * Added a new option `Emit file content (Base64)` to the configuration of two actions - `Download Files` and `Download Files by name`.
