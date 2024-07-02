@@ -13,7 +13,7 @@ describe('SFTP IP', async () => {
   });
 
   it('Host', async () => {
-    const result = await ip.resolve('localhost');
-    expect(result).to.deep.equal(['127.0.0.1', 4]);
+    const result = await ip.resolve('::1');
+    expect(result).to.deep.equal(['::1', 6]);
   });
 });
