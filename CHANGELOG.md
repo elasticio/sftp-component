@@ -1,3 +1,6 @@
+## 1.7.2 (July 25, 2024)
+* Updated ssh2-sftp-client to 10.0.3 to fix the issue [All configured authentication methods failed ](https://github.com/mscdex/ssh2/issues/1277). [Link to the Eio issue](https://github.com/elasticio/sftp-component/issues/133)
+
 ## 1.7.1 (July 02, 2024)
 * Super minor test fix
 * Update Sailor version to 2.7.2
