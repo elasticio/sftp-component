@@ -29,11 +29,16 @@ Name|Mandatory|Description|Values|
 * **Host** - (string, required): Host name of SFTP server
 * **Port** - (number, optional, defaults to 22): Port of SFTP server
 * **User Name** - (string, required): Username for SFTP server
-* **Password** - (string, optional): Password for SFTP server
-    * **Note**: field `Password` should be empty in case you fill a `Private Key`
-* **Private Key** - (string, optional): To access a secure SFTP servers that is configured with a key-based authentication you must at first upload your `Public key` to the SFTP server (please contact your server administrator to do this) and fill in this field with your `Private key`
+* **Password** - (string, optional): Password for SFTP server. Must stay empty in case you fill a private key field 
+* **Private Key** - (string, optional): To access a secure SFTP servers that is configured with a key-based authentication you must at first upload your `Public key` to the SFTP server (please contact your server administrator to do this) and fill in this field with your `Private key.
+  Must stay empty in case you fill a password key field. 
+  The component has been tested with the following keys:
+  * rsa (Minimum allowed key length - 2048 bits, minimum recommended - 3072 bits)
+  * rsa-sha2-256
+  * rsa-sha2-512
+  * ed25519
+  * ecdsa
 * **Passphrase** - (string, optional): If Private Key was created using passphrase, put it here
-  * **Note**: field `Private Key` should stay empty in case you fill a password
 
 ## Triggers
 
