@@ -34,8 +34,8 @@ Name|Mandatory|Description|Values|
   Must stay empty in case you fill a password key field. 
   The component has been tested with the following keys:
   * rsa (Minimum allowed key length - 2048 bits, minimum recommended - 3072 bits)
-  * rsa_sha2-256
-  * rsa_sha2-512
+  * rsa-sha2-256
+  * rsa-sha2-512
   * ed25519
   * ecdsa
 * **Passphrase** - (string, optional): If Private Key was created using passphrase, put it here
