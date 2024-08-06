@@ -1,3 +1,6 @@
+## 1.7.3 (August 9, 2024)
+* Fix the issue when a SFTP connection drops in realtime flows [Link to the Eio issue](https://github.com/elasticio/sftp-component/issues/135)
+
 ## 1.7.2 (July 25, 2024)
 * Updated ssh2-sftp-client to 10.0.3 to fix the issue [All configured authentication methods failed ](https://github.com/mscdex/ssh2/issues/1277). 
 [Link to the Eio issue](https://github.com/elasticio/sftp-component/issues/133)
