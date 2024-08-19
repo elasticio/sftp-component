@@ -1,4 +1,4 @@
-## 1.7.3 (August 9, 2024)
+## 1.7.3 (August 19, 2024)
 * Fix the issue when a SFTP connection drops in realtime flows [Link to the Eio issue](https://github.com/elasticio/sftp-component/issues/135)
 
 ## 1.7.2 (July 25, 2024)
