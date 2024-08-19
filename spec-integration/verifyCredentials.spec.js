@@ -25,15 +25,14 @@ describe('verifyCredentials', () => {
   });
 
   it('verifies authentic credentials successfully', async () => {
-    const cbObj = await verifyCredentials.call(
+    const result = await verifyCredentials.call(
       {
         emit: spy,
         logger,
       },
       credentials,
-      (_, verifiedObj) => verifiedObj,
     );
-    expect(cbObj.verified).to.be.true;
+    expect(result.verified).to.be.true;
   });
 
   it('verifies authentic credentials with private key successfully', async () => {
@@ -43,42 +42,39 @@ describe('verifyCredentials', () => {
       username: process.env.SFTP_USER,
       privateKey: process.env.SFTP_KEY.replace(/\\n/g, '\n'),
     };
-    const cbObj = await verifyCredentials.call(
+    const result = await verifyCredentials.call(
       {
         emit: spy,
         logger,
       },
       credentialsWithKey,
-      (_, verifiedObj) => verifiedObj,
     );
-    expect(cbObj.verified).to.be.true;
+    expect(result.verified).to.be.true;
   });
 
   it('fails to verify credentials with an incorrect password', async () => {
     const incorrectPasswordCredentials = JSON.parse(JSON.stringify(credentials));
     incorrectPasswordCredentials.password = 'IncorrectPassword';
-    const cbObj = await verifyCredentials.call(
+    const result = await verifyCredentials.call(
       {
         emit: spy,
         logger,
       },
       incorrectPasswordCredentials,
-      (_, verifiedObj) => verifiedObj,
     );
-    expect(cbObj.verified).to.be.false;
+    expect(result.verified).to.be.false;
   });
 
   it('fails to verify credentials with an incorrect port', async () => {
     const incorrectPortCredentials = JSON.parse(JSON.stringify(credentials));
     incorrectPortCredentials.port += 1;
-    const cbObj = await verifyCredentials.call(
+    const result = await verifyCredentials.call(
       {
         emit: spy,
         logger,
       },
       incorrectPortCredentials,
-      (_, verifiedObj) => verifiedObj,
     );
-    expect(cbObj.verified).to.be.false;
+    expect(result.verified).to.be.false;
   });
 });
