@@ -1,3 +1,6 @@
+## 1.7.4 (September 13, 2024)
+* Update Sailor version to 2.7.3
+
 ## 1.7.3 (August 19, 2024)
 * Fix the issue when a SFTP connection drops in realtime flows [Link to the Eio issue](https://github.com/elasticio/sftp-component/issues/135)
 
