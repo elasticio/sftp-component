@@ -16,13 +16,13 @@
   "author": "elastic.io GmbH",
   "license": "Apache-2.0",
   "dependencies": {
-    "@elastic.io/component-commons-library": "3.2.0",
+    "@elastic.io/component-commons-library": "3.2.1",
     "@elastic.io/oih-standard-library": "2.0.3",
     "async": "3.2.3",
     "elasticio-node": "0.0.9",
     "elasticio-rest-node": "1.2.7",
-    "elasticio-sailor-nodejs": "2.7.2",
-    "micromatch": "4.0.2",
+    "elasticio-sailor-nodejs": "2.7.3",
+    "micromatch": "4.0.8",
     "moment": "2.29.4",
     "ssh2-sftp-client": "10.0.3"
   },
