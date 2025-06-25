@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "1.7.4",
+  "version": "1.8.0-dev.7",
   "credentials": {
     "fields": {
       "host": {
@@ -53,7 +53,7 @@
   },
   "actions": {
     "upload": {
-      "main": "./lib/actions/upload.js",
+      "main": "./src/actions/upload.js",
       "title": "Upload Files From Attachments Header",
       "help": {
         "description": "Upload all files from the attachments header to a defined SFTP directory",
@@ -117,7 +117,7 @@
       }
     },
     "upsertFile": {
-      "main": "./lib/actions/upsertFile.js",
+      "main": "./src/actions/upsertFile.js",
       "title": "Upload File From URL",
       "help": {
         "description": "Given a filename and a URL to an attachment stored in the platform, transfers the contents of the attachment to the SFTP server. The component returns a summary of the written file",
@@ -209,7 +209,7 @@
       }
     },
     "moveFile": {
-      "main": "./lib/actions/moveFile.js",
+      "main": "./src/actions/moveFile.js",
       "title": "Move File",
       "help": {
         "description": "Moves file on SFTP already exists in one location on an sftp server to be moved to another location on the same SFTP server",
@@ -251,7 +251,7 @@
       }
     },
     "delete": {
-      "main": "./lib/actions/delete.js",
+      "main": "./src/actions/delete.js",
       "title": "Delete File",
       "description": "Delete file by name in provided path",
       "help": {
@@ -282,7 +282,7 @@
       }
     },
     "lookupObject": {
-      "main": "./lib/actions/lookupObject.js",
+      "main": "./src/actions/lookupObject.js",
       "title": "Download File by name",
       "help": {
         "description": "Lookup file by name in a defined SFTP directory",
@@ -378,7 +378,7 @@
       }
     },
     "lookupObjects": {
-      "main": "./lib/actions/lookupObjects.js",
+      "main": "./src/actions/lookupObjects.js",
       "title": "Download Files",
       "help": {
         "description": "Load list of files to attachments",
@@ -457,49 +457,8 @@
     }
   },
   "triggers": {
-    "read": {
-      "main": "./lib/triggers/read.js",
-      "title": "Read Files",
-      "type": "polling",
-      "deprecated": true,
-      "help": {
-        "description": "Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component",
-        "link": "/components/sftp/triggers#read-files"
-      },
-      "fields": {
-        "directory": {
-          "viewClass": "TextFieldView",
-          "label": "Directory Name",
-          "required": true,
-          "placeholder": "Directory"
-        },
-        "pattern": {
-          "viewClass": "TextFieldView",
-          "label": "Pattern to Match Files",
-          "required": false,
-          "placeholder": "Pattern"
-        }
-      },
-      "metadata": {
-        "out": {
-          "type": "object",
-          "properties": {
-            "path": {
-              "title": "Full Path",
-              "type": "string",
-              "required": true
-            },
-            "size": {
-              "title": "File Size",
-              "type": "number",
-              "required": true
-            }
-          }
-        }
-      }
-    },
     "pollingTrigger": {
-      "main": "./lib/triggers/polling.js",
+      "main": "./src/triggers/polling.js",
       "title": "Poll Files",
       "type": "polling",
       "help": {
