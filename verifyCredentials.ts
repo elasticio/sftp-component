@@ -1,6 +1,6 @@
 import Sftp from './src/Sftp';
 
-async function verifyCredentials(cfg) {
+export = async function verifyCredentials(cfg: any) {
   const sftp = new Sftp(this.logger, cfg);
   try {
     await sftp.connect();
@@ -13,5 +13,3 @@ async function verifyCredentials(cfg) {
     return { verified: false };
   }
 }
-
-export { verifyCredentials as verify };

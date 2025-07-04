@@ -2,7 +2,7 @@
   "name": "sftp-component",
   "description": "elastic.io SFTP component",
   "scripts": {
-    "pretest": "eslint --ext .ts --quiet --fix && find src -name \"*.js\" -type f -delete",
+    "pretest": "eslint --ext .ts --quiet --fix && find src spec spec-integration -name \"*.js\" -type f -delete && rm -f verifyCredentials.js",
     "test": "LOG_OUTPUT_MODE='short' LOG_LEVEL='DEBUG' node --import tsx --test ./spec/*/*test.ts",
     "integration-test": "npm run pretest && LOG_OUTPUT_MODE='short' LOG_LEVEL='DEBUG' node --import tsx --test ./spec-integration/*/*test.ts",
     "posttest": "tsc"
