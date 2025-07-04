@@ -22,7 +22,7 @@ export const streamToBuffer = (stream: Transform): Promise<Buffer> => new Promis
 });
 
 export const getTermNumber = (cfg) => {
-  const termNumber = cfg.termNumber ? parseInt(cfg.termNumber, 10) : 0;
+  const termNumber = cfg.numSearchTerms ? parseInt(cfg.numSearchTerms, 10) : 0;
   if (!isNumberInInterval(termNumber, 0, 99)) throw new Error('Number of search terms must be an integer value from the interval [0-99]');
   return termNumber;
 };
