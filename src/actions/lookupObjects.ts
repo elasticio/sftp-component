@@ -129,7 +129,7 @@ export async function getMetaModel(cfg) {
         },
       };
 
-      if (i !== termNumber) {
+      if (i !== (termNumber - 1)) {
         termProperties[`criteriaLink${i}`] = {
           title: 'Criteria Link',
           type: 'string',
