@@ -1,33 +1,62 @@
 module.exports = {
-  "extends": "airbnb-base",
-  "rules": {
+  env: {
+    es6: true,
+    node: true,
+    mocha: true,
   },
-  "env": {
-    "node": true,
-    "mocha": true
+  extends: [
+    'airbnb-base',
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
   },
-  "overrides": [
-    {
-      "files": [
-        "*.test.js",
-        "*.spec*"
-      ],
-      "rules": {
-        "no-unused-expressions": "off"
-      }
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
+  },
+  plugins: [
+    '@typescript-eslint',
+  ],
+  rules: {
+    'linebreak-style': 0,
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'import/no-import-module-exports': 0,
+    'no-plusplus': 0,
+    'no-underscore-dangle': 0,
+    'no-unused-vars': 0,
+    'no-await-in-loop': 0,
+    'no-restricted-syntax': 0,
+    'prefer-default-export': 0,
+    'import/prefer-default-export': 0,
+    'class-methods-use-this': 1,
+    'max-len': ['error', { code: 240 }],
+    'no-param-reassign': 1,
+    'no-return-assign': 1,
+    'no-use-before-define': 0,
+    'comma-dangle': 0,
+    'object-curly-newline': 0,
+    camelcase: 0,
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
+  },
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
-    {
-      "files": [
-        "*"
-      ],
-      "rules": {
-        "class-methods-use-this": "off",
-        "import/no-extraneous-dependencies" : "off",
-        "no-plusplus": "off",
-        "no-await-in-loop": "off",
-        "max-len": ["error", { "code": 180 }]
-
-      }
-    }
-  ]
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
 };

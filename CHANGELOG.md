@@ -1,3 +1,12 @@
+## 2.0.0 (July 08, 2025)
+* **Breaking change:** Removed the deprecated trigger - `Read Files`
+* Migrated the codebase to TypeScript
+* Removed deprecated libraries:  
+  * `oih-standard-library`
+  * `moment`
+* Update Sailor from 2.7.3 to 2.7.5
+* Update component-commons-library from 3.2.0 to 3.2.2
+
 ## 1.7.4 (September 12, 2024)
 * Update Sailor version to 2.7.3
 

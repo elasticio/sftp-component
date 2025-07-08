@@ -8,7 +8,6 @@
 * [Credentials](#credentials)
 * [Triggers](#triggers)
    * [Poll Files](#poll-files)
-   * [Deprecated triggers](#deprecated-triggers)
 * [Actions](#actions)
    * [Delete File](#delete-file)
    * [Download File by name](#download-file-by-name)
@@ -20,10 +19,18 @@
 ## Description
 This component creates a connection to an SFTP server to read and upload files.
 
-## Environment variables
-Name|Mandatory|Description|Values|
-|----|---------|-----------|------|
-|`MAX_FILE_SIZE`| false |  Maximum file size that can be uploaded in **megabytes (mb)** (100MB by default) | any `integer` above 0|
+## Environment Variables
+
+| Name                          | Mandatory | Description                                                                                  | Values                   |
+|-------------------------------|-----------|----------------------------------------------------------------------------------------------|--------------------------|
+| `MAX_FILE_SIZE`               | false     | Maximum file size allowed for upload, specified in **megabytes (MB)** (default: 100 MB)     | Any `integer` greater than 0 |
+| `MAX_MESSAGE_SIZE`            | false     | Maximum file size that can be emitted as a base64 string, specified in **megabytes (MB)** (default: 10 MB) | Any `integer` greater than 0 |
+| `OPERATION_RETRY_MAX_ATTEMPTS` | false     | Number of retry attempts for an operation in case of failure (default: 5)                    | Any `integer` greater than 0 |
+| `OPERATION_RETRY_BASE_DELAY`  | false     | Initial delay between retry attempts, specified in **milliseconds** (default: 500 ms). Each subsequent retry uses exponential backoff. | Any `integer` greater than 0 |
+| `OPERATION_TIMEOUT`           | false     | Time to wait for a response from the SFTP server before throwing an error or retrying, specified in **milliseconds** (default: 10000 ms) | Any `integer` greater than 0 |
+| `CONNECTION_RETRY_MAX_ATTEMPTS` | false     | Number of retry attempts for connection failures (default: 5)                               | Any `integer` greater than 0 |
+| `CONNECTION_RETRY_BASE_DELAY` | false     | Initial delay between connection retry attempts, specified in **milliseconds** (default: 500 ms). Each subsequent retry uses exponential backoff. | Any `integer` greater than 0 |
+| `AUTO_DISCONNECT_TIMEOUT_MS`  | false     | Time before the client automatically disconnects from the SFTP server, specified in **milliseconds** (default: 15000 ms) | Any `integer` greater than 0 |
 
 ## Credentials
 * **Host** - (string, required): Host name of SFTP server
@@ -66,30 +73,6 @@ Triggers to get all new and updated files since last polling.
 
 #### Known limitations
 * Trigger mechanism is based on SFTP file `modifyTime` metadata field. For correct processing the trigger requires correct time configuration on the SFTP server.
-
-### Deprecated Triggers
-
-<details> 
-  <summary>Read Files</summary>
-
-### Read Files
-Will continuously poll remote SFTP location for files that match given pattern. Found files will be transferred as attachments to the next component
-
-After a file is found:
- * It is moved to the (hidden) directory `.elasticio_processed` and to name of the file will be added timestamp, ex.: file `test.txt` will be renamed to `test.txt_1657621889133`
- * It is pulled and uploaded (streamed) to the attachment storage
-
-Note: you may need to consider cleaning up the `.elasticio_processed` directory manually
-
-#### Configuration Fields
-* **Directory** - (string, required): The directory of the files to read from
-* **Pattern** - (string, optional): Regex pattern for file names. If no pattern is given, no matching is done.
-#### Input Metadata
-none
-#### Output Metadata
-* **filename** - (string, required): Name of the file
-* **size** - (number, required): File size
-</details>
 
 ## Actions
 
