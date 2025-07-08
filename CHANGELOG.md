@@ -1,4 +1,4 @@
-## 2.0.0 (June 25, 2025)
+## 2.0.0 (July 08, 2025)
 * **Breaking change:** Removed the deprecated trigger - `Read Files`
 * Migrated the codebase to TypeScript
 * Removed deprecated libraries:  

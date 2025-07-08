@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "2.0.0-dev.5",
+  "version": "2.0.0",
   "credentials": {
     "fields": {
       "host": {
