@@ -105,7 +105,7 @@ export async function getMetaModel(cfg) {
     const logicalOperatorEnum = ['and', 'or'];
     for (let i = 0; i < termNumber; i += 1) {
       termProperties[`searchTerm${i}`] = {
-        title: `Search term ${i}`,
+        title: `Search term ${i + 1}`,
         type: 'object',
         required: true,
         properties: {
