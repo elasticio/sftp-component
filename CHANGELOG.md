@@ -1,3 +1,11 @@
+## 2.1.0 (October 01, 2026)
+* Added a new action `Read Folder` that reads a provided or default directory and returns the list of files and folders
+* Updated core dependencies:
+  * Upgraded `@elastic.io/component-commons-library` from `3.2.2` to `4.0.3`
+  * Upgraded `elasticio-sailor-nodejs` from `2.7.5` to `2.7.9`
+* Removed deprecated `elasticio-node` and replaced with local message envelope utility
+* Migrated CI/CD workflows from CircleCI to GitHub Actions
+
 ## 2.0.0 (July 08, 2025)
 * **Breaking change:** Removed the deprecated trigger - `Read Files`
 * Migrated the codebase to TypeScript

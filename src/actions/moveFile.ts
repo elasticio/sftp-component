@@ -1,4 +1,4 @@
-import { messages } from 'elasticio-node';
+import { messages } from '../utils/messages';
 import Sftp from '../Sftp';
 
 let sftpClient: Sftp;
