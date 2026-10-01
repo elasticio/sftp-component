@@ -58,7 +58,7 @@ export default class Sftp {
     });
 
     const methodsWithConnection = [
-      'delete', 'exists', 'get', 'getFile', 'list', 'mkdir', 'put', 'move', 'stat', 'rmdir',
+      'delete', 'exists', 'get', 'getFile', 'list', 'mkdir', 'put', 'move', 'stat', 'rmdir', 'cwd'
     ];
     methodsWithConnection.forEach((method) => {
       const orig = Object.getPrototypeOf(this)[method];
@@ -345,6 +345,8 @@ export default class Sftp {
   async get(remotePath, dest) { return this._client.get(remotePath, dest); }
 
   async list(dir) { return this._client.list(dir); }
+
+  async cwd() { return this._client.cwd(); }
 
   async mkdir(dir, recursive = true) { return this._client.mkdir(dir, recursive); }
 

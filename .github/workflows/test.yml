@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - '**'
+
+env:
+  NODE_VERSION: '24.14.0'
+
+jobs:
+  test:
+    name: Running tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '${{ env.NODE_VERSION }}'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Audit dependencies
+        run: npm run audit
+
+      - name: Running tests
+        run: npm test

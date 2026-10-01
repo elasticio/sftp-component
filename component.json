@@ -1,7 +1,7 @@
 {
   "title": "SFTP",
   "description": "Provides file access and transfer using SSH File Transfer Protocol",
-  "version": "2.0.0",
+  "version": "2.1.0-dev.3",
   "credentials": {
     "fields": {
       "host": {
@@ -276,6 +276,70 @@
               "title": "Full Path",
               "type": "string",
               "required": true
+            }
+          }
+        }
+      }
+    },
+    "readFolder": {
+      "main": "./src/actions/readFolder.js",
+      "title": "Read Folder",
+      "description": "Read provided or default directory and return list of files and folders",
+      "help": {
+        "description": "Read a provided directory (or the default one) and return list of files and folders",
+        "link": "/components/sftp/actions#read-folder"
+      },
+      "metadata": {
+        "in": {
+          "type": "object",
+          "properties": {
+            "directoryPath": {
+              "title": "Directory Path",
+              "type": "string",
+              "required": false,
+              "note": "Overrides the default directory"
+            }
+          }
+        },
+        "out": {
+          "type": "object",
+          "required": true,
+          "properties": {
+            "directory": {
+              "title": "Directory",
+              "type": "string",
+              "required": true
+            },
+            "files": {
+              "title": "Files",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": { "title": "Type", "type": "string" },
+                  "name": { "title": "Name", "type": "string", "required": true },
+                  "size": { "title": "Size", "type": "number" },
+                  "modifyTime": { "title": "Last Modification Time", "type": "string" },
+                  "accessTime": { "title": "Last Access Time", "type": "string" },
+                  "directory": { "title": "Directory", "type": "string" },
+                  "path": { "title": "Full Path", "type": "string", "required": true }
+                }
+              }
+            },
+            "folders": {
+              "title": "Folders",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": { "title": "Type", "type": "string" },
+                  "name": { "title": "Name", "type": "string", "required": true },
+                  "modifyTime": { "title": "Last Modification Time", "type": "string" },
+                  "accessTime": { "title": "Last Access Time", "type": "string" },
+                  "directory": { "title": "Directory", "type": "string" },
+                  "path": { "title": "Full Path", "type": "string", "required": true }
+                }
+              }
             }
           }
         }

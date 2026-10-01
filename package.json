@@ -2,6 +2,7 @@
   "name": "sftp-component",
   "description": "elastic.io SFTP component",
   "scripts": {
+    "audit": "npm audit --omit=dev --audit-level=high",
     "pretest": "eslint --ext .ts --quiet --fix && find src spec spec-integration -name \"*.js\" -type f -delete && rm -f verifyCredentials.js",
     "test": "LOG_OUTPUT_MODE='short' LOG_LEVEL='DEBUG' node --import tsx --test ./spec/*/*test.ts",
     "integration-test": "npm run pretest && LOG_OUTPUT_MODE='short' LOG_LEVEL='DEBUG' node --import tsx --test ./spec-integration/*/*test.ts",
@@ -12,19 +13,18 @@
     "url": "git@github.com:elasticio/sftp-component.git"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "author": "elastic.io GmbH",
   "license": "Apache-2.0",
   "dependencies": {
-    "@elastic.io/component-commons-library": "3.2.2",
-    "elasticio-node": "0.0.9",
-    "elasticio-sailor-nodejs": "2.7.5",
+    "@elastic.io/component-commons-library": "4.0.3",
+    "elasticio-sailor-nodejs": "2.7.9",
     "micromatch": "4.0.8",
     "ssh2-sftp-client": "12.0.0"
   },
   "devDependencies": {
-    "@types/node": "20.16.0",
+    "@types/node": "24.0.0",
     "@typescript-eslint/eslint-plugin": "6.19.1",
     "@typescript-eslint/parser": "6.19.1",
     "dotenv": "16.5.0",
@@ -33,5 +33,9 @@
     "eslint-plugin-import": "2.28.1",
     "tsx": "4.19.1",
     "typescript": "5.6.2"
+  },
+  "overrides": {
+    "minimatch": "^3.1.5",
+    "jsonata": "^1.8.8"
   }
 }

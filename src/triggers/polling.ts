@@ -1,5 +1,5 @@
 import { isDateValid, timeToString } from '@elastic.io/component-commons-library';
-import { messages } from 'elasticio-node';
+import { messages } from '../utils/messages';
 import Sftp from '../Sftp';
 import {
   timestamp,

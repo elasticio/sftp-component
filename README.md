@@ -13,6 +13,7 @@
    * [Download File by name](#download-file-by-name)
    * [Download Files](#download-files)
    * [Move File](#move-file)
+   * [Read Folder](#read-folder)
    * [Upload File From URL](#upload-file-from-url)
    * [Upload Files From Attachments Header](#upload-files-from-attachments-header)
 
@@ -185,6 +186,27 @@ none
 #### Output Metadata
 - **filename** - (string, required): Full filename and path to the file where it was
 - **newFilename** - (string, required): Full filename and path to the file where is moved
+
+### Read Folder
+Reads a provided directory (or the default one) on the SFTP server and returns the list of files and folders it contains.
+
+#### Configuration Fields
+None
+
+#### Input Metadata
+* **Directory Path** - (string, optional): The directory to read from. If not provided, the server's current working directory is used.
+
+#### Output Metadata
+* **directory** - (string, required): Directory that was read
+* **files** - (array, required): Files found in the directory. Each item contains:
+  * **type** - (string): File type
+  * **name** - (string, required): File name
+  * **size** - (number): File size
+  * **accessTime** - (string): Last Access Time
+  * **modifyTime** - (string): Last Modify Time
+  * **directory** - (string): Directory
+  * **path** - (string, required): Full Path
+* **folders** - (array, required): Subfolders found in the directory. Each item contains the same fields as above without `size`.
 
 ### Upload File From URL
 Given a filename and a URL to an attachment, transfers the contents of the attachment to the SFTP server
